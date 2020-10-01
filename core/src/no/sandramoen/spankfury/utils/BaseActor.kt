@@ -25,9 +25,6 @@ open class BaseActor(x: Float, y: Float, s: Stage) : Group() {
     private var maxSpeed: Float = 1000f
     private var deceleration: Float = 0f
 
-    private var boundaryPolygon: Polygon? = null
-    var disableCollision = false
-
     init {
         this.x = x
         this.y = y
@@ -72,9 +69,6 @@ open class BaseActor(x: Float, y: Float, s: Stage) : Group() {
         val h: Float = tr.regionHeight.toFloat()
         setSize(w, h)
         setOrigin(w / 2, h / 2)
-
-        if (boundaryPolygon == null)
-            setBoundaryRectangle()
 
         if (loop)
             anim.playMode = Animation.PlayMode.LOOP
@@ -143,6 +137,7 @@ open class BaseActor(x: Float, y: Float, s: Stage) : Group() {
         velocityVec.setAngle(angle)
         println("$token: $angle, ${velocityVec.angle()}")
     }
+
     fun getMotionAngle() = velocityVec.angle()
     fun isMoving() = getSpeed() > 0
     fun setAcceleration(acc: Float) {
@@ -182,78 +177,17 @@ open class BaseActor(x: Float, y: Float, s: Stage) : Group() {
         accelerationVec.set(0f, 0f)
     }
 
-    // Collision detection ------------------------------------------------------------------------------------------
-    fun setBoundaryRectangle(x: Float = 0f, y: Float = 0f, w: Float = width, h: Float = height) {
-        /*val w: Float = width
-        val h: Float = height*/
-        val vertices: FloatArray = floatArrayOf(x, y, w, y, w, h, x, h)
-        boundaryPolygon = Polygon(vertices)
-    }
-
-    fun setBoundaryPolygon(numSides: Int) {
-        val w: Float = width
-        val h: Float = height
-
-        val vertices = FloatArray(2 * numSides)
-        for (i in 0 until numSides) {
-            val angle: Float = i * MathUtils.PI2 / numSides
-            vertices[2 * i] = w / 2 * MathUtils.cos(angle) + w / 2    // x-coordinates
-            vertices[2 * i + 1] = h / 2 * MathUtils.sin(angle) + h / 2  // y-coordinates
-        }
-        boundaryPolygon = Polygon(vertices)
-    }
-
-    fun getBoundaryPolygon(): Polygon {
-        boundaryPolygon!!.setPosition(x, y)
-        boundaryPolygon!!.setOrigin(originX, originY)
-        boundaryPolygon!!.rotation = rotation
-        boundaryPolygon!!.setScale(scaleX, scaleY)
-        return boundaryPolygon as Polygon
-    }
-
-    fun overlaps(other: BaseActor): Boolean {
-        if (disableCollision) return false
-        val poly1: Polygon = this.getBoundaryPolygon()
-        val poly2: Polygon = other.getBoundaryPolygon()
-
-        // initial test to improve performance
-        if (!poly1.boundingRectangle.overlaps(poly2.boundingRectangle))
-            return false
-        return Intersector.overlapConvexPolygons(poly1, poly2)
-    }
-
-    fun preventOverlap(other: BaseActor): Vector2? {
-        val poly1: Polygon = this.getBoundaryPolygon()
-        val poly2: Polygon = other.getBoundaryPolygon()
-
-        // initial test to improve performance
-        if (!poly1.boundingRectangle.overlaps(poly2.boundingRectangle))
-            return null
-
-        val mtv = Intersector.MinimumTranslationVector()
-        val polygonOverlap = Intersector.overlapConvexPolygons(poly1, poly2, mtv)
-
-        if (!polygonOverlap)
-            return null
-
-        this.moveBy(mtv.normal.x * mtv.depth, mtv.normal.y * mtv.depth)
-        return mtv.normal
-
-    }
     // camera -------------------------------------------------------------------------------------------------
     fun alignCamera(target: Vector2 = Vector2(x, y), lerp: Float = 1f) {
         if (this.stage != null) {
             val camera = this.stage.camera
-            // val viewport = this.stage.viewport
 
             // center camera on actor
             val position = camera.position
-            position.x = camera.position.x + (target.x + originX - camera.position.x) * lerp
-            // position.y = camera.position.y + (target.y + originY - camera.position.y) * lerp
+            position.x = camera.position.x + (target.x + width / 2 - camera.position.x) * lerp
+            position.y = camera.position.y + (target.y + height / 2 - camera.position.y) * lerp
             camera.position.set(position)
 
-            // bind camera to layout
-            // bindCameraToWorld(camera)
             camera.update()
         }
     }
@@ -265,37 +199,7 @@ open class BaseActor(x: Float, y: Float, s: Stage) : Group() {
         this.color.a = opacity
     }
 
-    fun boundToWorld() {
-        if (x < 0) // check left edge
-            x = 0f
-        if (x + width > worldBounds.width) // check right edge
-            x = worldBounds.width - width
-    }
-
-    fun isWithinDistance(distance: Float, other: BaseActor) : Boolean {
-        val poly1 = this.getBoundaryPolygon()
-        val scaleX = (this.width + 2 * distance) / this.width
-        val scaleY = (this.height + 2 * distance) / this.height
-        poly1.setScale(scaleX, scaleY)
-
-        val poly2 = other.getBoundaryPolygon()
-
-        // initial test to improve performance
-        if (!poly1.boundingRectangle.overlaps(poly2.boundingRectangle))
-            return false
-        return Intersector.overlapConvexPolygons(poly1, poly2)
-    }
-
     companion object {
-        private lateinit var worldBounds: Rectangle
-
-        fun setWorldBounds(width: Float, height: Float) {
-            worldBounds = Rectangle(0f, 0f, width, height)
-        }
-
-        fun setWorldBounds(ba: BaseActor) = setWorldBounds(ba.width, ba.height)
-        fun getWorldBounds() = worldBounds
-
         fun getList(stage: Stage, className: String): ArrayList<BaseActor> {
             var list: ArrayList<BaseActor> = ArrayList()
 

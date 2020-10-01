@@ -13,6 +13,5 @@ class EasyEnemy(x: Float, y: Float, s: Stage, player: Player) : Enemy(x, y, s, p
         setSize(BaseGame.WORLD_WIDTH / 12, BaseGame.WORLD_HEIGHT / 3)
         centerAtPosition(startPosition, BaseGame.WORLD_HEIGHT / 2)
         color = Color.RED
-        setBoundaryRectangle()
     }
 }

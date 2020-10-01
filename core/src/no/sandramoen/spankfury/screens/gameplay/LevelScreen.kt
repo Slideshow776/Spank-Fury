@@ -1,5 +1,6 @@
 package no.sandramoen.spankfury.screens.gameplay
 
+import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
@@ -24,7 +25,7 @@ class LevelScreen : BaseScreen() {
     var easySpawnTimer = 0f
     private val easySpawnFrequency = MathUtils.random(2f, 3f)
     var mediumSpawnTimer = 0f
-    val mediumSpawnFrequency = MathUtils.random(3f, 6f)
+    private val mediumSpawnFrequency = MathUtils.random(3f, 6f)
 
     override fun initialize() {
         player = Player(0f, 0f, mainStage)
@@ -49,45 +50,53 @@ class LevelScreen : BaseScreen() {
             MediumEnemy(0f, 0f, mainStage, player)
             mediumSpawnTimer = 0f
         }
-
-        for (enemy: BaseActor in BaseActor.getList(mainStage, Enemy::class.java.canonicalName)) {
-            if (player.overlaps(enemy)) {
-                player.setSpeed(0f)
-                player.preventOverlap(enemy)
-                hitEnemy(enemy as Enemy)
-            }
-        }
     }
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-        val worldCoordinates = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(),0f))
-        if (worldCoordinates.x <= player.x) // touch detected to the left of the player
-            player.strike(strikeLeft = true)
-        else
-            player.strike(strikeLeft = false)
+        if (enemiesExist()) return false
 
-        if (BaseActor.count(mainStage, Enemy::class.java.canonicalName) == 0) { // hitting while no enemies => a miss
-            displayMiss()
-            return super.touchDown(screenX, screenY, pointer, button)
+        // check which way player is hitting
+        val worldCoordinates = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0f))
+        val hitLeft = (worldCoordinates.x <= player.x) // touch detected to the left of the player
+
+        checkEnemyHit(hitLeft)
+        return false
+    }
+
+
+    override fun keyDown(keycode: Int): Boolean { // desktop controls
+        if (enemiesExist()) return false
+
+        if (keycode == Keys.LEFT) {
+            checkEnemyHit(true)
+        } else if (keycode == Keys.RIGHT) {
+            checkEnemyHit(false)
         }
+        return false
+    }
 
-        var closest = BaseGame.WORLD_WIDTH
+    /*
+    * Core gameplay:
+    * Checks if enemy may be hit or not, and triggers appropriate player, enemy and UI behaviour
+    * */
+    private fun checkEnemyHit(hitLeft: Boolean) {
+        println("$token: checkEnemyHit()")
         for (enemy: BaseActor in BaseActor.getList(mainStage, Enemy::class.java.canonicalName)) {
             val enemy = enemy as Enemy
-            val distance = abs(enemy.x - player.x)
-            if (distance < closest)
-                closest = distance
+            if (!enemy.alive) break
 
-            /*if (enemy.width + player.width <= distance) {
-                displayMiss()
+            val distance = enemy.x - player.x
+            val inRange = enemy.width + player.width > abs(distance)
+            val onLeftSide = enemy.x <= player.x
+
+            if ((hitLeft && inRange && onLeftSide) || (!hitLeft && inRange && !onLeftSide)) {
+                player.hit(distance)
+                hitEnemy(enemy)
                 break
-            }*/
+            } else {
+                displayMiss()
+            }
         }
-
-        println("$token $closest, ${BaseGame.WORLD_WIDTH / 3.5}")
-        if (closest >= BaseGame.WORLD_WIDTH / 3.5)
-            displayMiss()
-        return super.touchDown(screenX, screenY, pointer, button)
     }
 
     private fun displayMiss() {
@@ -102,5 +111,9 @@ class LevelScreen : BaseScreen() {
             score++
             scoreLabel.setText("score: $score")
         }
+    }
+
+    private fun enemiesExist(): Boolean {
+        return (BaseActor.count(mainStage, Enemy::class.java.canonicalName) == 0)
     }
 }

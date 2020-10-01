@@ -12,7 +12,6 @@ class MediumEnemy(x: Float, y: Float, s: Stage, player: Player) : Enemy(x, y, s,
         loadImage("whitePixel")
         setSize(BaseGame.WORLD_WIDTH / 11, BaseGame.WORLD_HEIGHT / 2.75f)
         centerAtPosition(startPosition, BaseGame.WORLD_HEIGHT / 2)
-        setBoundaryRectangle()
         color = Color.BLUE
     }
 }

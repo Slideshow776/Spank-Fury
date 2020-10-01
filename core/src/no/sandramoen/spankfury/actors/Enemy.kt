@@ -9,6 +9,7 @@ import kotlin.math.abs
 open class Enemy(x: Float, y: Float, s: Stage, private val player: Player) : BaseActor(x, y, s) {
     private val token = "Enemy.kt"
     private val stunFrequency = 2f
+    var alive = true
 
     open var health = 1
     var startPosition = player.x - 55 // ensures enemy spawns offscreen relative to players position
@@ -32,9 +33,10 @@ open class Enemy(x: Float, y: Float, s: Stage, private val player: Player) : Bas
 
         // movement
         val distance = abs(x - player.x)
-        if (stunTimer < stunFrequency) {
+        /*if (stunTimer < stunFrequency) {
             stunTimer += dt
-        } else if (width * .8f + player.width * .8f <= distance){
+        } else */
+        if (width * .8f + player.width * .8f <= distance){
             if (spawnFromLeft)
                 accelerateAtAngle(0f)
             else
@@ -44,16 +46,21 @@ open class Enemy(x: Float, y: Float, s: Stage, private val player: Player) : Bas
     }
 
     fun hit(): Boolean {
+        println("$token: hit()")
         health--
-        stunTimer = 0f
+        /*stunTimer = 0f
         if (x <= player.x) { // if player is on the left
             // jump a bit back to the right
             addAction(Actions.moveBy(-1f, 0f, .1f))
         } else
-            // jump a bit back to the left
-            addAction(Actions.moveBy(1f, 0f, .1f))
-        if (health <= 0) {
-            remove()
+        // jump a bit back to the left
+            addAction(Actions.moveBy(1f, 0f, .1f))*/
+        if (health <= 0 && actions.size == 0) {
+            alive = false
+            addAction(Actions.sequence(
+                    Actions.fadeOut(.25f),
+                    Actions.run { remove() }
+            ))
             return true
         }
         return false
