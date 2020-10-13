@@ -8,6 +8,8 @@ import com.badlogic.gdx.assets.AssetDescriptor
 import com.badlogic.gdx.assets.AssetErrorListener
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver
+import com.badlogic.gdx.audio.Music
+import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture.TextureFilter
 import com.badlogic.gdx.graphics.g2d.*
@@ -39,12 +41,14 @@ abstract class BaseGame : Game(), AssetErrorListener {
         var textureAtlas: TextureAtlas? = null
         var defaultShader: String? = null
         var shockwaveShader: String? = null
+        var levelMusic1: Music? = null
+        var hitSound1: Sound? = null
 
         // game state
         var prefs: Preferences? = null
         var highScore: Float = 0f
-        var soundVolume = .5f
-        var musicVolume = .5f
+        var soundVolume = .75f
+        var musicVolume = .125f
 
         fun setActiveScreen(s: BaseScreen) {
             game?.setScreen(s)
@@ -62,8 +66,8 @@ abstract class BaseGame : Game(), AssetErrorListener {
         assetManager = AssetManager()
         assetManager.setErrorListener(this)
         assetManager.load("images/included/packed/spankFury.pack.atlas", TextureAtlas::class.java)
-        // assetManager.load("audio/***.wav", Music::class.java)
-        // assetManager.load("audio/***.wav", Sound::class.java)
+        assetManager.load("audio/music/Guile Theme.ogg", Music::class.java)
+        assetManager.load("audio/sound/hit.wav", Sound::class.java)
         val resolver = InternalFileHandleResolver()
         assetManager.setLoader(FreeTypeFontGenerator::class.java, FreeTypeFontGeneratorLoader(resolver))
         assetManager.setLoader(BitmapFont::class.java, ".ttf", FreetypeFontLoader(resolver))
@@ -76,8 +80,8 @@ abstract class BaseGame : Game(), AssetErrorListener {
         textureAtlas = assetManager.get("images/included/packed/spankFury.pack.atlas") // all images are found in this global static variable
 
         // audio
-        // music = assetManager.get("audio/***.wav", Music::class.java)
-        // sound = assetManager.get("audio/***.wav", Sound::class.java)
+        levelMusic1 = assetManager.get("audio/music/Guile Theme.ogg", Music::class.java)
+        hitSound1 = assetManager.get("audio/sound/hit.wav", Sound::class.java)
 
         // text files
         defaultShader = assetManager.get("shaders/default.vs", Text::class.java).getString()

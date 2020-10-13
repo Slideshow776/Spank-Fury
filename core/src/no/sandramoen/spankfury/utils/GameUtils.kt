@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 
 class GameUtils {
+    private val token = "GameUtils.kt"
     companion object {
         fun isTouchDownEvent(e: Event): Boolean { // Custom type checker
             return e is InputEvent && e.type == InputEvent.Type.touchDown

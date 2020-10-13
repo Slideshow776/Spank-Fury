@@ -15,8 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.Group
 
 open class BaseActor(x: Float, y: Float, s: Stage) : Group() {
     private val token = "BaseActor.kt"
-    private var animation: Animation<TextureRegion>?
-    private var elapsedTime: Float = 0F
+    private var animation: Animation<TextureAtlas.AtlasRegion>?
+    private var animationTime: Float = 0F
     private var animationPaused: Boolean = false
 
     private var velocityVec: Vector2 = Vector2(0f, 0f)
@@ -24,19 +24,23 @@ open class BaseActor(x: Float, y: Float, s: Stage) : Group() {
     private var acceleration: Float = 0f
     private var maxSpeed: Float = 1000f
     private var deceleration: Float = 0f
+    private var boundaryPolygon: Polygon? = null
+
+    var isFacingRight = true
 
     init {
         this.x = x
         this.y = y
         s.addActor(this)
         animation = null
+        debug = true
     }
 
     override fun act(dt: Float) {
         super.act(dt)
 
         if (!animationPaused)
-            elapsedTime += dt
+            animationTime += dt
     }
 
     override fun draw(batch: Batch, parentAlpha: Float) {
@@ -45,35 +49,52 @@ open class BaseActor(x: Float, y: Float, s: Stage) : Group() {
         batch.setColor(c.r, c.g, c.b, c.a)
 
         if (animation != null && isVisible) {
-            batch.draw(
-                    animation!!.getKeyFrame(elapsedTime),
-                    x,
-                    y,
-                    originX,
-                    originY,
-                    width,
-                    height,
-                    scaleX,
-                    scaleY,
-                    rotation
-            )
+            if (isFacingRight)
+                batch.draw(
+                        animation!!.getKeyFrame(animationTime),
+                        x,
+                        y,
+                        originX,
+                        originY,
+                        width,
+                        height,
+                        scaleX,
+                        scaleY,
+                        rotation
+                )
+            else
+                batch.draw(
+                        animation!!.getKeyFrame(animationTime),
+                        x + width,
+                        y,
+                        originX,
+                        originY,
+                        -width,
+                        height,
+                        scaleX,
+                        scaleY,
+                        rotation
+                )
         }
         super.draw(batch, parentAlpha)
     }
 
     // Graphics ---------------------------------------------------------------------------------------------------
-    private fun setAnimation(anim: Animation<TextureRegion>, loop: Boolean) { // TODO: might not need this
+    fun setAnimation(anim: Animation<TextureAtlas.AtlasRegion>) {
         animation = anim
+        animationTime = 0f
         val tr: TextureRegion = animation!!.getKeyFrame(0.toFloat())
         val w: Float = tr.regionWidth.toFloat()
         val h: Float = tr.regionHeight.toFloat()
         setSize(w, h)
         setOrigin(w / 2, h / 2)
 
-        if (loop)
-            anim.playMode = Animation.PlayMode.LOOP
-        else
-            anim.playMode = Animation.PlayMode.NORMAL
+        if (boundaryPolygon == null)
+            setBoundaryRectangle()
+    }
+
+    fun flip() {
+        isFacingRight = !isFacingRight
     }
 
     fun setAnimationPaused(pause: Boolean) {
@@ -104,28 +125,27 @@ open class BaseActor(x: Float, y: Float, s: Stage) : Group() {
             anim.playMode = Animation.PlayMode.NORMAL
 
         if (animation == null)
-            setAnimation(anim, loop)
+            setAnimation(anim as Animation<TextureAtlas.AtlasRegion>)
 
         return anim
     }
 
     fun loadImage(name: String) {
         val region = BaseGame.textureAtlas!!.findRegion(name)
-        setAnimation(Animation(1f, region), false)
+        setAnimation(Animation(1f, region))
     }
 
-    fun loadAnimation(region: Array<TextureAtlas.AtlasRegion>, frameDuration: Float, loop: Boolean) {
+    /*fun loadAnimation(region: Array<TextureAtlas.AtlasRegion>, frameDuration: Float, loop: Boolean) {
         setAnimation(Animation(frameDuration, region), loop)
-    }
+    }*/
 
     fun isAnimationFinished(): Boolean {
-        return animation!!.isAnimationFinished(elapsedTime)
+        return animation!!.isAnimationFinished(animationTime)
     }
 
     // Physics ---------------------------------------------------------------------------------------------------
     fun setSpeed(speed: Float) {
         // If length is zero, then assume motion angle is zero degrees
-        // println("$token: ${velocityVec.len()}")
         if (velocityVec.len() == 0f)
             velocityVec.set(speed, 0f)
         else
@@ -135,7 +155,6 @@ open class BaseActor(x: Float, y: Float, s: Stage) : Group() {
     fun getSpeed() = velocityVec.len()
     fun setMotionAngle(angle: Float) {
         velocityVec.setAngle(angle)
-        println("$token: $angle, ${velocityVec.angle()}")
     }
 
     fun getMotionAngle() = velocityVec.angle()
@@ -177,7 +196,7 @@ open class BaseActor(x: Float, y: Float, s: Stage) : Group() {
         accelerationVec.set(0f, 0f)
     }
 
-    // camera -------------------------------------------------------------------------------------------------
+    // camera ---------------------------------------------------------------------------------------------------
     fun alignCamera(target: Vector2 = Vector2(x, y), lerp: Float = 1f) {
         if (this.stage != null) {
             val camera = this.stage.camera
@@ -192,7 +211,46 @@ open class BaseActor(x: Float, y: Float, s: Stage) : Group() {
         }
     }
 
-    // miscellaneous ------------------------------------------------------------------------------------------
+    // Collision detection --------------------------------------------------------------------------------------
+    fun setBoundaryRectangle() {
+        val w: Float = width
+        val h: Float = height
+        val vertices: FloatArray = floatArrayOf(0f, 0f, w, 0f, w, h, 0f, h)
+        boundaryPolygon = Polygon(vertices)
+    }
+
+    fun setBoundaryPolygon(numSides: Int) {
+        val w: Float = width
+        val h: Float = height
+
+        val vertices = FloatArray(2 * numSides)
+        for (i in 0 until numSides) {
+            val angle: Float = i * MathUtils.PI2 / numSides
+            vertices[2 * i] = w / 2 * MathUtils.cos(angle) + w / 2    // x-coordinates
+            vertices[2 * i + 1] = h / 2 * MathUtils.sin(angle) + h / 2  // y-coordinates
+        }
+        boundaryPolygon = Polygon(vertices)
+    }
+
+    fun getBoundaryPolygon(): Polygon {
+        boundaryPolygon!!.setPosition(x, y)
+        boundaryPolygon!!.setOrigin(originX, originY)
+        boundaryPolygon!!.rotation = rotation
+        boundaryPolygon!!.setScale(scaleX, scaleY)
+        return boundaryPolygon as Polygon
+    }
+
+    fun overlaps(other: BaseActor): Boolean {
+        val poly1: Polygon = this.getBoundaryPolygon()
+        val poly2: Polygon = other.getBoundaryPolygon()
+
+        // initial test to improve performance
+        if (!poly1.boundingRectangle.overlaps(poly2.boundingRectangle))
+            return false
+        return Intersector.overlapConvexPolygons(poly1, poly2)
+    }
+
+    // miscellaneous -------------------------------------------------------------------------------------------
     fun centerAtPosition(x: Float, y: Float) = setPosition(x - width / 2, y - height / 2)
     fun centerAtActor(other: BaseActor) = centerAtPosition(other.x + other.width / 2, other.y + other.height / 2)
     fun setOpacity(opacity: Float) {
