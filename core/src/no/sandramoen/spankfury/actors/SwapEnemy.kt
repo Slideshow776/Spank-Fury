@@ -12,13 +12,14 @@ class SwapEnemy(x: Float, y: Float, s: Stage, player: Player) : Enemy(x, y, s, p
     init {
         setSize(BaseGame.WORLD_WIDTH / 14, BaseGame.WORLD_HEIGHT / 3)
         color = Color.YELLOW
+        originalColor = Color.YELLOW
         originalWidth = width
         originalHeight = height
         points = 30
     }
 
-    override fun struck(): Boolean { // returns true if enemy died
-        BaseGame.hitSound1!!.play(BaseGame.soundVolume)
+    override fun struck(enableSound: Boolean): Boolean { // returns true if enemy died
+        if (enableSound) BaseGame.hitSound1!!.play(BaseGame.soundVolume)
         health--
         if (health <= 0)
             return handleDeath()

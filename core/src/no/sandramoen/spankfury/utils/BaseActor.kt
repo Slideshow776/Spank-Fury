@@ -27,6 +27,7 @@ open class BaseActor(x: Float, y: Float, s: Stage) : Group() {
     private var boundaryPolygon: Polygon? = null
 
     var isFacingRight = true
+    var pause = false
 
     init {
         this.x = x
@@ -37,7 +38,8 @@ open class BaseActor(x: Float, y: Float, s: Stage) : Group() {
     }
 
     override fun act(dt: Float) {
-        super.act(dt)
+        if (!pause)
+            super.act(dt)
 
         if (!animationPaused)
             animationTime += dt

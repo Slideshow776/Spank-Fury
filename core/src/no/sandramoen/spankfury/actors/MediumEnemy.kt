@@ -11,6 +11,7 @@ class MediumEnemy(x: Float, y: Float, s: Stage, player: Player) : Enemy(x, y, s,
     init {
         setSize(BaseGame.WORLD_WIDTH / 11, BaseGame.WORLD_HEIGHT / 2.75f)
         color = Color.BLUE
+        originalColor = Color.BLUE
         originalWidth = width
         originalHeight = height
         points = 20

@@ -1,5 +1,6 @@
 package no.sandramoen.spankfury.actors
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Interpolation
@@ -20,6 +21,7 @@ open class Enemy(x: Float, y: Float, s: Stage, open val player: Player) : BaseAc
     open var originalWidth = 0f
     open var originalHeight = 0f
     open var points = -1
+    open var originalColor: Color = Color.WHITE
 
     var startPosition = player.x - 60 // ensures enemy spawns offscreen relative to players position
     var spawnFromLeft = MathUtils.randomBoolean()
@@ -79,6 +81,7 @@ open class Enemy(x: Float, y: Float, s: Stage, open val player: Player) : BaseAc
 
     override fun act(dt: Float) {
         super.act(dt)
+        if (pause) return
 
         if (stunTimer < stunFrequency) {
             stunTimer += dt
@@ -111,8 +114,8 @@ open class Enemy(x: Float, y: Float, s: Stage, open val player: Player) : BaseAc
         applyPhysics(dt)
     }
 
-    open fun struck(): Boolean { // returns true if enemy died
-        BaseGame.hitSound1!!.play(BaseGame.soundVolume)
+    open fun struck(enableSound: Boolean = true): Boolean { // returns true if enemy died
+        if (enableSound) BaseGame.hitSound1!!.play(BaseGame.soundVolume)
         health--
         if (health <= 0)
             return handleDeath()

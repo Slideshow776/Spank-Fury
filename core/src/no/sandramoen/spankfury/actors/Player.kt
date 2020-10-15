@@ -61,6 +61,7 @@ class Player(x: Float, y: Float, s: Stage) : BaseActor(x, y, s) {
 
     override fun act(dt: Float) {
         super.act(dt)
+        if (pause) return
         applyPhysics(dt)
         alignCamera(lerp = .1f)
     }

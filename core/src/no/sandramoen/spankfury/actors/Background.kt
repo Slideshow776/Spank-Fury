@@ -1,6 +1,7 @@
 package no.sandramoen.spankfury.actors
 
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import no.sandramoen.spankfury.utils.BaseActor
 import no.sandramoen.spankfury.utils.BaseGame
 
@@ -35,5 +36,11 @@ class Background(s: Stage) {
             background1.setPosition(background3.x + background3.width, 0f)
             background2.setPosition(background3.x - background3.width, 0f)
         }
+    }
+
+    fun setOpacity(opacity: Float, duration: Float) {
+        background1.addAction(Actions.alpha(opacity, duration))
+        background2.addAction(Actions.alpha(opacity, duration))
+        background3.addAction(Actions.alpha(opacity, duration))
     }
 }

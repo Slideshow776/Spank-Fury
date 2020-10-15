@@ -11,6 +11,7 @@ class EasyEnemy(x: Float, y: Float, s: Stage, player: Player) : Enemy(x, y, s, p
     init {
         setSize(BaseGame.WORLD_WIDTH / 12, BaseGame.WORLD_HEIGHT / 3)
         color = Color.RED
+        originalColor = Color.RED
         originalWidth = width
         originalHeight = height
         points = 10

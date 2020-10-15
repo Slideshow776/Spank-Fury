@@ -22,7 +22,7 @@ class GameUtils {
             BaseGame.prefs!!.flush()
         }
 
-        fun pulseLabel(label: Label) { // adds an actions effect that pulses the label
+        fun pulseLabel(label: Label, lowestAlpha: Float = .5f, duration: Float = .5f) {
             label.addAction(Actions.forever(Actions.sequence(
                     Actions.alpha(1f, .5f),
                     Actions.alpha(.5f, .5f)

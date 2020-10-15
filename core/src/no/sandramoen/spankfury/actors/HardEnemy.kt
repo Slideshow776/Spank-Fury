@@ -11,6 +11,7 @@ class HardEnemy(x: Float, y: Float, s: Stage, player: Player) : Enemy(x, y, s, p
     init {
         setSize(BaseGame.WORLD_WIDTH / 9, BaseGame.WORLD_HEIGHT / 2.5f)
         color = Color.PURPLE
+        originalColor = Color.PURPLE
         originalWidth = width
         originalHeight = height
         points = 40
