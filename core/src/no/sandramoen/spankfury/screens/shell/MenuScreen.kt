@@ -5,14 +5,16 @@ import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.badlogic.gdx.scenes.scene2d.ui.Image
-import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.Stack
-import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.badlogic.gdx.scenes.scene2d.ui.*
+import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
 import com.badlogic.gdx.utils.Align
+import com.badlogic.gdx.utils.Scaling
 import no.sandramoen.spankfury.actors.*
 import no.sandramoen.spankfury.screens.gameplay.LevelScreen
 import no.sandramoen.spankfury.utils.BaseActor
@@ -25,16 +27,33 @@ class MenuScreen : BaseScreen() {
     private val token = "MenuScreen.kt"
     private var time = 0f
     private var disableTime = 1f
+    private var pressOverlay = true
 
-    // foreground
-    private lateinit var titleLabel: Label
-    private lateinit var touchToStartLabel: Label
-    private lateinit var madeByLabel: Label
-    private lateinit var leftButtonImage: Image
-    private lateinit var leftButtonLabel: Label
-    private lateinit var rightButtonImage: Image
-    private lateinit var rightButtonLabel: Label
+    // foreground - title
+    private lateinit var titleTable: Table
+    private lateinit var titleTitleLabel: Label
+    private lateinit var titleTouchToStartLabel: Label
+    private lateinit var titleMadeByLabel: Label
+    private lateinit var titleLeftButtonImage: Image
+    private lateinit var titleLeftButtonLabel: Label
+    private lateinit var titleRightButtonImage: Image
+    private lateinit var titleRightButtonLabel: Label
     private lateinit var blackOverlay: Image
+
+    // foreground - menu
+    private lateinit var menuTable: Table
+    private lateinit var menuTitleLabel: Label
+    private lateinit var startButton: TextButton
+    private lateinit var optionsButton: TextButton
+    private lateinit var exitButton: TextButton
+
+    // foreground - options
+    private lateinit var optionsTable: Table
+    private lateinit var optionsLabel: Label
+    private lateinit var optionsMusicSlider: Slider
+    private lateinit var optionsSoundSlider: Slider
+    private lateinit var optionsVibrationCheckBox: CheckBox
+    private lateinit var optionsBackButton: TextButton
 
     // background
     private lateinit var background: Background
@@ -57,50 +76,175 @@ class MenuScreen : BaseScreen() {
         BaseGame.levelMusic1!!.volume = BaseGame.musicVolume
         BaseGame.levelMusic1!!.isLooping = true
 
-        // foreground
-        val uiTable = Table()
-        uiTable.setFillParent(true)
+        // foreground - Title ---------------------------------------------------------------
+        titleTitleLabel = Label("Spank Fury!", BaseGame.labelStyle)
+        titleTitleLabel.setFontScale(4f)
+        titleTitleLabel.color = Color.RED
+        titleTitleLabel.setAlignment(Align.center)
 
-        titleLabel = Label("Spank Fury!", BaseGame.labelStyle)
-        titleLabel.setFontScale(4f)
-        titleLabel.color = Color.RED
-        titleLabel.setAlignment(Align.center)
+        titleTouchToStartLabel = Label("Touch to Play!", BaseGame.labelStyle)
+        titleTouchToStartLabel.setAlignment(Align.center)
+        titleTouchToStartLabel.setFontScale(.8f)
+        GameUtils.pulseLabel(titleTouchToStartLabel)
 
-        touchToStartLabel = Label("Touch to Play!", BaseGame.labelStyle)
-        touchToStartLabel.setAlignment(Align.center)
-        touchToStartLabel.setFontScale(.8f)
-        GameUtils.pulseLabel(touchToStartLabel)
+        titleMadeByLabel = Label("made by Sandra Moen 2020", BaseGame.labelStyle)
+        titleMadeByLabel.setFontScale(.5f)
+        titleMadeByLabel.setAlignment(Align.center)
+        titleMadeByLabel.color = Color.DARK_GRAY
 
-        madeByLabel = Label("made by Sandra Moen 2020", BaseGame.labelStyle)
-        madeByLabel.setFontScale(.5f)
-        madeByLabel.setAlignment(Align.center)
-        madeByLabel.color = Color.DARK_GRAY
+        // arcade buttons
+        var arcadeButtonWidth = Gdx.graphics.width * .125f
+        var arcadeButtonHeight = Gdx.graphics.height * .1f
 
-        // buttons
-        var buttonWidth = Gdx.graphics.width * .125f
-        var buttonHeight = Gdx.graphics.height * .1f
-        leftButtonImage = Image(BaseGame.textureAtlas!!.findRegion("arcade-button-unpressed"))
-        leftButtonLabel = Label("Left attack", BaseGame.labelStyle)
-        leftButtonLabel.setFontScale(.5f)
-        leftButtonLabel.color = Color.GRAY
+        titleLeftButtonImage = Image(BaseGame.textureAtlas!!.findRegion("arcade-button-unpressed"))
+        titleLeftButtonLabel = Label("Left attack", BaseGame.labelStyle)
+        titleLeftButtonLabel.setFontScale(.5f)
+        titleLeftButtonLabel.color = Color.GRAY
         val leftButtonTable = Table()
-        leftButtonTable.add(leftButtonImage).row()
-        leftButtonTable.add(leftButtonLabel)
+        leftButtonTable.add(titleLeftButtonImage).row()
+        leftButtonTable.add(titleLeftButtonLabel)
 
-        rightButtonImage = Image(BaseGame.textureAtlas!!.findRegion("arcade-button-unpressed"))
-        rightButtonLabel = Label("Right attack", BaseGame.labelStyle)
-        rightButtonLabel.setFontScale(.5f)
-        rightButtonLabel.color = Color.GRAY
+        titleRightButtonImage = Image(BaseGame.textureAtlas!!.findRegion("arcade-button-unpressed"))
+        titleRightButtonLabel = Label("Right attack", BaseGame.labelStyle)
+        titleRightButtonLabel.setFontScale(.5f)
+        titleRightButtonLabel.color = Color.GRAY
         val rightButtonTable = Table()
-        rightButtonTable.add(rightButtonImage).row()
-        rightButtonTable.add(rightButtonLabel)
+        rightButtonTable.add(titleRightButtonImage).row()
+        rightButtonTable.add(titleRightButtonLabel)
 
-        uiTable.add(titleLabel).expand().colspan(3).row()
-        uiTable.add(leftButtonTable).width(buttonWidth).height(buttonHeight).bottom()
-        uiTable.add(touchToStartLabel).width(Gdx.graphics.width * .33f)
-        uiTable.add(rightButtonTable).width(buttonWidth).height(buttonHeight).bottom().row()
-        uiTable.add(madeByLabel).bottom().colspan(3).padTop(Gdx.graphics.height * .2f).padBottom(Gdx.graphics.height * .01f)
-        // uiTable.debug = true
+        titleTable = Table()
+        titleTable.setFillParent(true)
+        titleTable.add(titleTitleLabel).expand().colspan(3).row()
+        titleTable.add(leftButtonTable).width(arcadeButtonWidth).height(arcadeButtonHeight).bottom()
+        titleTable.add(titleTouchToStartLabel).width(Gdx.graphics.width * .33f)
+        titleTable.add(rightButtonTable).width(arcadeButtonWidth).height(arcadeButtonHeight).bottom().row()
+        titleTable.add(titleMadeByLabel).bottom().colspan(3).padTop(Gdx.graphics.height * .2f).padBottom(Gdx.graphics.height * .01f)
+
+        // foreground - Menu ---------------------------------------------------------------
+        menuTitleLabel = Label("Spank Fury!", BaseGame.labelStyle)
+        menuTitleLabel.setFontScale(3f)
+        menuTitleLabel.color = Color.RED
+        menuTitleLabel.setAlignment(Align.center)
+
+        startButton = TextButton("Start", BaseGame.textButtonStyle)
+        startButton.touchable = Touchable.disabled
+        startButton.addListener(object : ActorGestureListener() {
+            override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
+                BaseGame.levelMusic1!!.stop()
+                blackOverlay.addAction(Actions.sequence(
+                        Actions.fadeIn(1f),
+                        Actions.run { BaseGame.setActiveScreen(LevelScreen()) }
+                ))
+            }
+        })
+
+        optionsButton = TextButton("Options", BaseGame.textButtonStyle)
+        optionsButton.touchable = Touchable.disabled
+        optionsButton.addListener(object : ActorGestureListener() {
+            override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
+                changeToOptionsOverlay()
+            }
+        })
+
+        exitButton = TextButton("Quit", BaseGame.textButtonStyle)
+        exitButton.touchable = Touchable.disabled
+        exitButton.addListener(object : ActorGestureListener() {
+            override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
+                blackOverlay.addAction(Actions.sequence(
+                        Actions.fadeIn(1f),
+                        Actions.run { Gdx.app.exit() }
+                ))
+            }
+        })
+
+        menuTable = Table()
+        menuTable.setFillParent(true)
+        menuTable.color.a = 0f
+        menuTable.add(menuTitleLabel).padBottom(Gdx.graphics.height * .125f).row()
+        menuTable.add(startButton).padBottom(Gdx.graphics.height * .02f).row()
+        menuTable.add(optionsButton).padBottom(Gdx.graphics.height * .02f).row()
+        menuTable.add(exitButton)
+
+        // foreground - Options ---------------------------------------------------------------
+        optionsLabel = Label("Options", BaseGame.labelStyle)
+        optionsLabel.setFontScale(2f)
+        optionsLabel.setAlignment(Align.center)
+        optionsLabel.color = Color.YELLOW
+
+        val optionsWidgetWidth = Gdx.graphics.width * .25f // value must be pre-determined for scaling
+        val optionsWidgetHeight = Gdx.graphics.height * .1f // value must be pre-determined for scaling
+        val optionsSliderScale = .0055f * Gdx.graphics.height // makes sure scale is device adjustable-ish
+
+        // music
+        optionsMusicSlider = Slider(0f, 1f, .1f, false, BaseGame.skin)
+        optionsMusicSlider.touchable = Touchable.disabled
+        optionsMusicSlider.value = BaseGame.musicVolume
+        optionsMusicSlider.addListener(object : ChangeListener() {
+            override fun changed(event: ChangeEvent?, actor: Actor?) {
+                BaseGame.musicVolume = optionsMusicSlider.value
+                GameUtils.setMusicVolume()
+                GameUtils.saveGameState()
+            }
+        })
+        val optionsMusicSliderContainer = Container(optionsMusicSlider)
+        optionsMusicSliderContainer.isTransform = true
+        optionsMusicSliderContainer.setOrigin((optionsWidgetWidth * 5 / 6) / 2, optionsWidgetHeight / 2)
+        optionsMusicSliderContainer.setScale(optionsSliderScale)
+
+        // sound
+        optionsSoundSlider = Slider(0f, 1f, .1f, false, BaseGame.skin)
+        optionsSoundSlider.touchable = Touchable.disabled
+        optionsSoundSlider.value = BaseGame.soundVolume
+        optionsSoundSlider.addListener(object : ChangeListener() {
+            override fun changed(event: ChangeEvent?, actor: Actor?) {
+                BaseGame.soundVolume = optionsSoundSlider.value
+                BaseGame.hitSound1!!.play(BaseGame.soundVolume)
+                GameUtils.saveGameState()
+            }
+        })
+        val optionsSoundSliderContainer = Container(optionsSoundSlider)
+        optionsSoundSliderContainer.isTransform = true
+        optionsSoundSliderContainer.setOrigin((optionsWidgetWidth * 5 / 6) / 2, optionsWidgetHeight / 2)
+        optionsSoundSliderContainer.setScale(optionsSliderScale)
+
+        // vibration
+        optionsVibrationCheckBox = CheckBox("Vibrations", BaseGame.skin)
+        optionsVibrationCheckBox.touchable = Touchable.disabled
+        optionsVibrationCheckBox.isChecked = BaseGame.vibrations
+        optionsVibrationCheckBox.addListener(object : ChangeListener() {
+            override fun changed(event: ChangeEvent?, actor: Actor?) {
+                BaseGame.vibrations = !BaseGame.vibrations
+                if (BaseGame.vibrations) Gdx.input.vibrate(100)
+                BaseGame.hitSound1!!.play(BaseGame.soundVolume)
+                GameUtils.saveGameState()
+            }
+        })
+        optionsVibrationCheckBox.isTransform = true
+        optionsVibrationCheckBox.image.setScaling(Scaling.fill)
+        optionsVibrationCheckBox.imageCell.size(optionsWidgetWidth * .125f)
+        optionsVibrationCheckBox.label.setFontScale(3f)
+        optionsVibrationCheckBox.setOrigin(optionsWidgetWidth / 2, optionsWidgetHeight / 2)
+
+        // back button
+        optionsBackButton = TextButton("Back", BaseGame.textButtonStyle)
+        optionsBackButton.touchable = Touchable.disabled
+        optionsBackButton.addListener(object : ActorGestureListener() {
+            override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
+                changeToMenuOverlay()
+            }
+        })
+
+        optionsTable = Table()
+        optionsTable.setFillParent(true)
+        optionsTable.color.a = 0f
+        optionsTable.add(optionsLabel).colspan(2).padBottom(Gdx.graphics.height * .05f).row()
+        optionsTable.add(optionsMusicSliderContainer).width(optionsWidgetWidth * 5 / 6).height(optionsWidgetHeight)
+        optionsTable.add(Label("Music", BaseGame.labelStyle)).width(optionsWidgetWidth * 1 / 6).padLeft(Gdx.graphics.width * .1f).row()
+        optionsTable.add(optionsSoundSliderContainer).width(optionsWidgetWidth * 5 / 6).height(optionsWidgetHeight)
+        optionsTable.add(Label("Sounds", BaseGame.labelStyle)).width(optionsWidgetWidth * 1 / 6).padLeft(Gdx.graphics.width * .1f).row()
+        optionsTable.add(optionsVibrationCheckBox).width(optionsWidgetWidth).height(optionsWidgetHeight).colspan(2).row()
+        optionsTable.add(optionsBackButton).width(optionsWidgetWidth).colspan(2)
+        // optionsTable.debug = true
 
         // background
         background = Background(mainStage)
@@ -115,9 +259,15 @@ class MenuScreen : BaseScreen() {
 
         val stack = Stack()
         stack.setFillParent(true)
-        stack.add(uiTable)
+        stack.add(titleTable)
+        stack.add(menuTable)
         stack.add(blackOverlay)
+        stack.add(optionsTable)
         uiStage.addActor(stack)
+
+        // titleTable.debug = true
+        // menuTable.debug = true
+        // optionsTable.debug = true
     }
 
     override fun update(dt: Float) {
@@ -130,9 +280,11 @@ class MenuScreen : BaseScreen() {
         playPlayer()
     }
 
-
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-        if (time >= disableTime) fadeToLevelScreen()
+        if (time >= disableTime && pressOverlay) {
+            changeToMenuOverlay()
+            pressOverlay = false
+        }
         return false
     }
 
@@ -147,7 +299,7 @@ class MenuScreen : BaseScreen() {
             ))
         }
 
-        if (time >= disableTime) fadeToLevelScreen()
+        if (time >= disableTime) changeToMenuOverlay()
         return false
     }
 
@@ -204,8 +356,8 @@ class MenuScreen : BaseScreen() {
                 player.hit(distance)
                 background.act(player)
                 playerHitTime = 0f
-                if (distance < 0) pressButton(leftButtonImage)
-                else pressButton(rightButtonImage)
+                if (distance < 0) pressButton(titleLeftButtonImage)
+                else pressButton(titleRightButtonImage)
                 break
             }
         }
@@ -221,11 +373,29 @@ class MenuScreen : BaseScreen() {
         ))
     }
 
-    private fun fadeToLevelScreen() {
-        BaseGame.levelMusic1!!.stop()
-        blackOverlay.addAction(Actions.sequence(
-                Actions.fadeIn(1f),
-                Actions.run { BaseGame.setActiveScreen(LevelScreen()) }
-        ))
+    private fun changeToMenuOverlay() {
+        titleTable.color.a = 0f
+        menuTable.color.a = 1f
+        optionsTable.color.a = 0f
+        GameUtils.enableActorsWithDelay(startButton)
+        GameUtils.enableActorsWithDelay(optionsButton)
+        GameUtils.enableActorsWithDelay(exitButton)
+        optionsMusicSlider.touchable = Touchable.disabled
+        optionsSoundSlider.touchable = Touchable.disabled
+        optionsBackButton.touchable = Touchable.disabled
+        optionsVibrationCheckBox.touchable = Touchable.disabled
+    }
+
+    private fun changeToOptionsOverlay() {
+        titleTable.color.a = 0f
+        menuTable.color.a = 0f
+        optionsTable.color.a = 1f
+        GameUtils.enableActorsWithDelay(optionsMusicSlider)
+        GameUtils.enableActorsWithDelay(optionsSoundSlider)
+        GameUtils.enableActorsWithDelay(optionsBackButton)
+        GameUtils.enableActorsWithDelay(optionsVibrationCheckBox)
+        startButton.touchable = Touchable.disabled
+        optionsButton.touchable = Touchable.disabled
+        exitButton.touchable = Touchable.disabled
     }
 }

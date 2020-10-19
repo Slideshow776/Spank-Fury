@@ -7,20 +7,26 @@ import com.badlogic.gdx.Preferences
 import com.badlogic.gdx.assets.AssetDescriptor
 import com.badlogic.gdx.assets.AssetErrorListener
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.assets.loaders.SkinLoader.SkinParameter
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture.TextureFilter
-import com.badlogic.gdx.graphics.g2d.*
+import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.NinePatch
+import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader
-import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader.FreeTypeFontLoaderParameter
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
+import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
+import com.badlogic.gdx.utils.ObjectMap
+
 
 abstract class BaseGame : Game(), AssetErrorListener {
     init {
@@ -39,10 +45,12 @@ abstract class BaseGame : Game(), AssetErrorListener {
         var labelStyle: LabelStyle? = null
         var textButtonStyle: TextButtonStyle? = null
         var textureAtlas: TextureAtlas? = null
+        var skin: Skin? = null
         var defaultShader: String? = null
         var shockwaveShader: String? = null
         var levelMusic1: Music? = null
         var hitSound1: Sound? = null
+        var vibrations: Boolean = false
 
         // game state
         var prefs: Preferences? = null
@@ -59,8 +67,7 @@ abstract class BaseGame : Game(), AssetErrorListener {
         Gdx.input.inputProcessor = InputMultiplexer() // discrete input
 
         // global variables
-        prefs = Gdx.app.getPreferences("spankFuryGameState")
-        highScore = prefs!!.getFloat("highScore")
+        GameUtils.loadGameState()
 
         // asset manager
         assetManager = AssetManager()
@@ -68,6 +75,10 @@ abstract class BaseGame : Game(), AssetErrorListener {
         assetManager.load("images/included/packed/spankFury.pack.atlas", TextureAtlas::class.java)
         assetManager.load("audio/music/Guile Theme.ogg", Music::class.java)
         assetManager.load("audio/sound/hit.wav", Sound::class.java)
+
+        // assetManager.load("skins/default/uiskin.json", Skin::class.java)
+
+
         val resolver = InternalFileHandleResolver()
         assetManager.setLoader(FreeTypeFontGenerator::class.java, FreeTypeFontGeneratorLoader(resolver))
         assetManager.setLoader(BitmapFont::class.java, ".ttf", FreetypeFontLoader(resolver))
@@ -86,6 +97,9 @@ abstract class BaseGame : Game(), AssetErrorListener {
         // text files
         defaultShader = assetManager.get("shaders/default.vs", Text::class.java).getString()
         shockwaveShader = assetManager.get("shaders/shockwave.fs", Text::class.java).getString()
+
+        // skins
+        skin = Skin(Gdx.files.internal("skins/default/uiskin.json"))
 
         // fonts
         FreeTypeFontGenerator.setMaxTextureSize(2048) // solves font bug that won't show some characters like "." and "," in android
