@@ -7,9 +7,10 @@ import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.badlogic.gdx.scenes.scene2d.ui.Button
-import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.Widget
+import com.badlogic.gdx.scenes.scene2d.ui.*
+import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener
+import no.sandramoen.spankfury.screens.gameplay.LevelScreen
+import no.sandramoen.spankfury.screens.shell.MenuScreen
 
 class GameUtils {
     private val token = "GameUtils.kt"
@@ -21,9 +22,9 @@ class GameUtils {
 
         fun saveGameState() {
             try {
-                BaseGame.prefs!!.putFloat("highScore", BaseGame.highScore)
+                BaseGame.prefs!!.putInteger("highScore", BaseGame.highScore)
             } catch (error: Error) {
-                BaseGame.prefs!!.putFloat("highScore", Float.MAX_VALUE)
+                BaseGame.prefs!!.putInteger("highScore", Int.MAX_VALUE)
             }
             BaseGame.prefs!!.putBoolean("vibrations", BaseGame.vibrations)
             BaseGame.prefs!!.putFloat("musicVolume", BaseGame.musicVolume)
@@ -33,7 +34,7 @@ class GameUtils {
 
         fun loadGameState() {
             BaseGame.prefs = Gdx.app.getPreferences("spankFuryGameState")
-            BaseGame.highScore = BaseGame.prefs!!.getFloat("highScore")
+            BaseGame.highScore = BaseGame.prefs!!.getInteger("highScore")
             BaseGame.vibrations = BaseGame.prefs!!.getBoolean("vibrations")
             BaseGame.musicVolume = BaseGame.prefs!!.getFloat("musicVolume")
             BaseGame.soundVolume = BaseGame.prefs!!.getFloat("soundVolume")

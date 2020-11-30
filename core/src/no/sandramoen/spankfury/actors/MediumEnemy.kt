@@ -9,7 +9,10 @@ class MediumEnemy(x: Float, y: Float, s: Stage, player: Player) : Enemy(x, y, s,
     override var health = 2
 
     init {
-        setSize(BaseGame.WORLD_WIDTH / 11, BaseGame.WORLD_HEIGHT / 2.75f)
+        setSize(
+                (BaseGame.WORLD_WIDTH / 11) * BaseGame.scale,
+                (BaseGame.WORLD_HEIGHT / 2.75f) * BaseGame.scale
+        )
         color = Color.BLUE
         originalColor = Color.BLUE
         originalWidth = width

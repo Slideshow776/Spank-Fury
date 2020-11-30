@@ -60,7 +60,7 @@ class MenuScreen : BaseScreen() {
     private lateinit var player: Player
     private var playerHitFrequency = .25f
     private var playerHitTime = 1f
-    private var spawnDifficulty = 2f
+    private var spawnDifficulty = .8f
     private var easySpawnTimer = 0f
     private val easySpawnFrequency = MathUtils.random(2f, 5f)
     private var mediumSpawnTimer = 0f

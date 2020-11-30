@@ -10,7 +10,10 @@ class SwapEnemy(x: Float, y: Float, s: Stage, player: Player) : Enemy(x, y, s, p
     override var health = 3
 
     init {
-        setSize(BaseGame.WORLD_WIDTH / 14, BaseGame.WORLD_HEIGHT / 3)
+        setSize(
+                (BaseGame.WORLD_WIDTH / 14) * BaseGame.scale,
+                (BaseGame.WORLD_HEIGHT / 3) * BaseGame.scale
+        )
         color = Color.YELLOW
         originalColor = Color.YELLOW
         originalWidth = width

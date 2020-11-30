@@ -12,85 +12,101 @@ import no.sandramoen.spankfury.utils.BaseGame
 
 class Player(x: Float, y: Float, s: Stage) : BaseActor(x, y, s) {
     private val token = "Player.kt"
-
-    var playerSpeed = 40f
-    var playerAcceleration = 70f
-    var playerDeceleration = 70f
-
-    var health = 3
+    private var slowMotionModifier = .25f
+    private var tempo = BaseGame.tempo
+    private var originalWidth = (BaseGame.WORLD_WIDTH / 12f) * BaseGame.scale
+    private var originalHeight = (BaseGame.WORLD_HEIGHT / 2.8f) * BaseGame.scale
 
     // animations
     private var idleAnimation: Animation<TextureAtlas.AtlasRegion>
     private var highKickAnimation: Animation<TextureAtlas.AtlasRegion>
-    private var uppercutAnimation: Animation<TextureAtlas.AtlasRegion>
-
     private var hitAnimations: Array<Animation<TextureAtlas.AtlasRegion>> = Array()
+
+    // properties
+    var playerSpeed = 40f
+    var playerAcceleration = 70f
+    var playerDeceleration = 70f
+    var health = 3
+    var slowMotion = false
 
     init {
         // animations
-
         var animationImages: Array<TextureAtlas.AtlasRegion> = Array()
-        for (i in 1..4)
-            animationImages.add(BaseGame.textureAtlas!!.findRegion("player-idle-0$i"))
+        animationImages.add(BaseGame.textureAtlas!!.findRegion("player-idle-01"))
+        animationImages.add(BaseGame.textureAtlas!!.findRegion("player-idle-01"))
+        animationImages.add(BaseGame.textureAtlas!!.findRegion("player-idle-02"))
+        animationImages.add(BaseGame.textureAtlas!!.findRegion("player-idle-03"))
         idleAnimation = Animation(.25f, animationImages, Animation.PlayMode.LOOP)
         animationImages.clear()
 
-        for (i in 1..6)
-            animationImages.add(BaseGame.textureAtlas!!.findRegion("player-highKick-0$i"))
-        highKickAnimation = Animation(.08f, animationImages, Animation.PlayMode.NORMAL)
+        for (i in 1..9)
+            animationImages.add(BaseGame.textureAtlas!!.findRegion("player-hitting-0$i"))
+        highKickAnimation = Animation(.01f, animationImages, Animation.PlayMode.NORMAL)
         hitAnimations.add(highKickAnimation)
-        animationImages.clear()
-
-        for (i in 1..6)
-            animationImages.add(BaseGame.textureAtlas!!.findRegion("player-uppercut-0$i"))
-        uppercutAnimation = Animation(.08f, animationImages, Animation.PlayMode.NORMAL)
-        hitAnimations.add(uppercutAnimation)
         animationImages.clear()
 
         setAnimation(idleAnimation)
 
         // other
-        setSize(BaseGame.WORLD_WIDTH / 12, BaseGame.WORLD_HEIGHT / 3)
-        centerAtPosition(BaseGame.WORLD_WIDTH / 2, BaseGame.WORLD_HEIGHT / 2)
+        setSize(originalWidth, originalHeight)
+        setAnimationSize(originalWidth, originalHeight)
+        centerAtPosition(BaseGame.WORLD_WIDTH / 2, BaseGame.WORLD_HEIGHT / 3)
 
         // physics
-        setAcceleration(playerAcceleration)
-        setMaxSpeed(playerSpeed) // (world units)/seconds
-        setDeceleration(playerDeceleration)
+        setAcceleration(playerAcceleration * BaseGame.tempo)
+        setMaxSpeed(playerSpeed * BaseGame.tempo) // (world units)/seconds
+        setDeceleration(playerDeceleration * BaseGame.tempo)
     }
 
     override fun act(dt: Float) {
-        super.act(dt)
+        super.act(dt * BaseGame.tempo)
         if (pause) return
+        if (BaseGame.tempo != tempo) setNewTempo()
         applyPhysics(dt)
         alignCamera(lerp = .1f)
     }
 
     fun hit(distance: Float) {
         shouldFlip(distance)
+        BaseGame.tempo = 1f // break slow motion
         var index: Int = MathUtils.random(0, hitAnimations.size - 1)
-        changeAnimation(hitAnimations[index])
+        changeAnimation(hitAnimations[index], originalWidth * 4)
         addAction(Actions.sequence(
                 Actions.moveBy(distance * .6f, 0f, .25f),
                 Actions.delay(hitAnimations[index].frameDuration * hitAnimations[index].keyFrames.size),
+                Actions.run { changeAnimation(idleAnimation) }
+        ))
+    }
+
+    fun struck(moveToRight: Boolean) {
+        var direction = -1f
+        if (moveToRight) direction = 1f
+
+        health--
+        if (health >= 1) BaseGame.tempo = slowMotionModifier // start slow motion
+
+        addAction(Actions.moveBy(direction * 10f, 0f, .25f))
+        // face striking enemy
+        addAction(Actions.sequence(
+                Actions.delay(.0625f), // HACK: give enemies a chance to react first
                 Actions.run {
-                    changeAnimation(idleAnimation)
+                    if ((moveToRight && isFacingRight || !moveToRight && !isFacingRight) && health >= 1)
+                        flip()
                 }
         ))
     }
 
-    fun struck() {
-        health--
-        if (actions.size == 0)
-            addAction(Actions.sequence(
-                    Actions.sizeBy(-4f, 4f, .1f, Interpolation.circleIn),
-                    Actions.sizeTo(width, height, 1f, Interpolation.bounceOut)
-            ))
+    private fun setNewTempo() {
+        tempo = BaseGame.tempo
+        setAcceleration(playerAcceleration * BaseGame.tempo)
+        setMaxSpeed(playerSpeed * BaseGame.tempo) // (world units)/seconds
+        setDeceleration(playerDeceleration * BaseGame.tempo)
     }
 
-    private fun changeAnimation(animation: Animation<TextureAtlas.AtlasRegion>) {
+    private fun changeAnimation(animation: Animation<TextureAtlas.AtlasRegion>, width: Float = this.width, height: Float = this.height) {
         setAnimation(animation)
-        setSize(BaseGame.WORLD_WIDTH / 12, BaseGame.WORLD_HEIGHT / 3)
+        setSize(originalWidth, originalHeight)
+        setAnimationSize(width, height)
     }
 
     private fun shouldFlip(direction: Float) {

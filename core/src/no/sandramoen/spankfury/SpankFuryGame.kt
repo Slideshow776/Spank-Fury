@@ -8,8 +8,8 @@ import no.sandramoen.spankfury.utils.BaseGame
 class SpankFuryGame : BaseGame() {
     override fun create() {
         super.create()
-        // setActiveScreen(SplashScreen()) // TODO: @release: uncomment this
-        // setActiveScreen(LevelScreen()) // TODO: @release: comment this
-        setActiveScreen(MenuScreen()) // TODO: @release: comment this
+        // setActiveScreen(SplashScreen()) // TODO: @release: change to this
+        setActiveScreen(LevelScreen())
+        // setActiveScreen(MenuScreen())
     }
 }

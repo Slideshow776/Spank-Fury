@@ -14,14 +14,14 @@ class Background(s: Stage) {
 
     init {
         background1.loadImage("background1")
-        background1.setSize(BaseGame.WORLD_WIDTH, BaseGame.WORLD_HEIGHT + 5)
+        background1.setSize(BaseGame.WORLD_WIDTH * 2.5f, BaseGame.WORLD_HEIGHT + 5)
 
         background2.loadImage("background1")
-        background2.setSize(BaseGame.WORLD_WIDTH, BaseGame.WORLD_HEIGHT + 5)
+        background2.setSize(BaseGame.WORLD_WIDTH * 2.5f, BaseGame.WORLD_HEIGHT + 5)
         background2.setPosition(background1.width, 0f)
 
         background3.loadImage("background1")
-        background3.setSize(BaseGame.WORLD_WIDTH, BaseGame.WORLD_HEIGHT + 5)
+        background3.setSize(BaseGame.WORLD_WIDTH * 2.5f, BaseGame.WORLD_HEIGHT + 5)
         background2.setPosition(-background1.width, 0f)
     }
 

@@ -7,7 +7,6 @@ import com.badlogic.gdx.Preferences
 import com.badlogic.gdx.assets.AssetDescriptor
 import com.badlogic.gdx.assets.AssetErrorListener
 import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.assets.loaders.SkinLoader.SkinParameter
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
@@ -20,12 +19,10 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader
-import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader.FreeTypeFontLoaderParameter
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
-import com.badlogic.gdx.utils.ObjectMap
 
 
 abstract class BaseGame : Game(), AssetErrorListener {
@@ -40,6 +37,7 @@ abstract class BaseGame : Game(), AssetErrorListener {
         lateinit var fontGenerator: FreeTypeFontGenerator
         const val WORLD_WIDTH = 100f
         const val WORLD_HEIGHT = 100f
+        const val scale = 1.4f
 
         // game assets
         var labelStyle: LabelStyle? = null
@@ -54,9 +52,11 @@ abstract class BaseGame : Game(), AssetErrorListener {
 
         // game state
         var prefs: Preferences? = null
-        var highScore: Float = 0f
+        var highScore: Int = 0
         var soundVolume = .75f
         var musicVolume = .125f
+        var tempo = 1f
+        var backOffFrequency = 2f
 
         fun setActiveScreen(s: BaseScreen) {
             game?.setScreen(s)

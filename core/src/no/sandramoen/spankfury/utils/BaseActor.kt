@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.*
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.scenes.scene2d.Group
+import kotlin.math.abs
 
 open class BaseActor(x: Float, y: Float, s: Stage) : Group() {
     private val token = "BaseActor.kt"
@@ -25,6 +26,8 @@ open class BaseActor(x: Float, y: Float, s: Stage) : Group() {
     private var maxSpeed: Float = 1000f
     private var deceleration: Float = 0f
     private var boundaryPolygon: Polygon? = null
+    var animationWidth = width
+    private var animationHeight = height
 
     var isFacingRight = true
     var pause = false
@@ -35,6 +38,11 @@ open class BaseActor(x: Float, y: Float, s: Stage) : Group() {
         s.addActor(this)
         animation = null
         debug = true
+    }
+
+    override fun setSize(width: Float, height: Float) {
+        super.setSize(width, height)
+        setAnimationSize(width, height)
     }
 
     override fun act(dt: Float) {
@@ -54,12 +62,12 @@ open class BaseActor(x: Float, y: Float, s: Stage) : Group() {
             if (isFacingRight)
                 batch.draw(
                         animation!!.getKeyFrame(animationTime),
-                        x,
+                        x - abs(width - animationWidth) / 2,
                         y,
                         originX,
                         originY,
-                        width,
-                        height,
+                        animationWidth,
+                        animationHeight,
                         scaleX,
                         scaleY,
                         rotation
@@ -67,12 +75,12 @@ open class BaseActor(x: Float, y: Float, s: Stage) : Group() {
             else
                 batch.draw(
                         animation!!.getKeyFrame(animationTime),
-                        x + width,
+                        x + width + abs(width - animationWidth) / 2,
                         y,
                         originX,
                         originY,
-                        -width,
-                        height,
+                        -animationWidth,
+                        animationHeight,
                         scaleX,
                         scaleY,
                         rotation
@@ -89,10 +97,16 @@ open class BaseActor(x: Float, y: Float, s: Stage) : Group() {
         val w: Float = tr.regionWidth.toFloat()
         val h: Float = tr.regionHeight.toFloat()
         setSize(w, h)
+        setAnimationSize(w, h)
         setOrigin(w / 2, h / 2)
 
         if (boundaryPolygon == null)
             setBoundaryRectangle()
+    }
+
+    fun setAnimationSize(width: Float, height: Float) {
+        animationWidth = width
+        animationHeight = height
     }
 
     fun flip() {
@@ -206,7 +220,7 @@ open class BaseActor(x: Float, y: Float, s: Stage) : Group() {
             // center camera on actor
             val position = camera.position
             position.x = camera.position.x + (target.x + width / 2 - camera.position.x) * lerp
-            position.y = camera.position.y + (target.y + height / 2 - camera.position.y) * lerp
+            // position.y = camera.position.y + (target.y + height / 2 - camera.position.y) * lerp
             camera.position.set(position)
 
             camera.update()
