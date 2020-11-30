@@ -74,7 +74,7 @@ class LevelScreen : BaseScreen() {
     private var swapSpawnTimer = 0f
     private val swapSpawnFrequency = MathUtils.random(10f, 13f)
     private var hardSpawnTimer = 0f
-    private val hardSpawnFrequency = MathUtils.random(1f, 2f)// (13f, 18f) // TODO: change this
+    private val hardSpawnFrequency = MathUtils.random(2f, 5f)// (13f, 18f) // TODO: change this
 
     private var controlFrequency = 1f
     private var controlTimer = controlFrequency
