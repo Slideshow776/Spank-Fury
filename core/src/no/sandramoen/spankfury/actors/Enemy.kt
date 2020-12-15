@@ -102,11 +102,10 @@ open class Enemy(x: Float, y: Float, s: Stage, open val player: Player) : BaseAc
             actions.clear()
             hitting = false
             addAction(Actions.sequence(
-                    Actions.delay(BaseGame.backOffFrequency),
-                    Actions.run { changeAnimation(walkingAnimation) }
+                Actions.delay(BaseGame.backOffFrequency),
+                Actions.run { changeAnimation(walkingAnimation) }
             ))
-        }
-        else backOffDistanceModifier = 1f
+        } else backOffDistanceModifier = 1f
     }
 
     open fun setAnimation() {
@@ -142,10 +141,9 @@ open class Enemy(x: Float, y: Float, s: Stage, open val player: Player) : BaseAc
         dead = true
         changeAnimation(deadAnimation)
         actions.clear()
-        // TODO: mark enemy as non-interactable/dead?
         addAction(Actions.sequence(
-                Actions.fadeOut(1f),
-                Actions.run { remove() }
+            Actions.fadeOut(1f),
+            Actions.run { remove() }
         ))
         return true
     }
@@ -173,21 +171,22 @@ open class Enemy(x: Float, y: Float, s: Stage, open val player: Player) : BaseAc
             hitting = true
             changeAnimation(idleAnimation)
             addAction(Actions.sequence(
-                    Actions.delay(hittingDelay),
-                    Actions.run {
-                        if ((width + player.width) * .85 > distance) {
-                            if (player.health > 0) // if player is still alive
-                                player.struck(spawnFromLeft)
-                            changeAnimation(hittingAnimation)
-                        }
-                    },
-                    Actions.delay(hittingAnimation.keyFrames.size * .1f), // WEAK: dependant on num frames in animation...
-                    Actions.run {
-                        if (player.health > 0) {
-                            hitting = false
-                            changeAnimation(walkingAnimation)
-                        }
+                Actions.delay(hittingDelay),
+                Actions.run {
+                    if ((width + player.width) * .85 > distance) {
+                        if (player.health > 0) // if player is still alive
+                            player.struck(spawnFromLeft)
+                        changeAnimation(hittingAnimation)
+                        BrokenHeart(x + width / 2, y + height, this.stage)
                     }
+                },
+                Actions.delay(hittingAnimation.keyFrames.size * .1f), // WEAK: dependant on num frames in animation...
+                Actions.run {
+                    if (player.health > 0) {
+                        hitting = false
+                        changeAnimation(walkingAnimation)
+                    }
+                }
             ))
         }
     }

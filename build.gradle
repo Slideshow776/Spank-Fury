@@ -30,6 +30,9 @@ allprojects {
         box2DLightsVersion = '1.4'
         ashleyVersion = '1.7.0'
         aiVersion = '1.8.0'
+
+        // Google Play Services minimum requirements is 14
+        android_min_sdk_version = 15
     }
 
     repositories {

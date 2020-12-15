@@ -37,7 +37,7 @@ abstract class BaseGame : Game(), AssetErrorListener {
         lateinit var fontGenerator: FreeTypeFontGenerator
         const val WORLD_WIDTH = 100f
         const val WORLD_HEIGHT = 100f
-        const val scale = 1.4f
+        const val scale = 1.5f
 
         // game assets
         var labelStyle: LabelStyle? = null

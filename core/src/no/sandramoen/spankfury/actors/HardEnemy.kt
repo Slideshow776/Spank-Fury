@@ -9,7 +9,7 @@ import no.sandramoen.spankfury.utils.BaseGame
 
 class HardEnemy(x: Float, y: Float, s: Stage, player: Player) : Enemy(x, y, s, player) {
     private val token = "HardEnemy.kt"
-    override var health = 1
+    override var health = 4
 
     init {
         setSize(
@@ -47,7 +47,7 @@ class HardEnemy(x: Float, y: Float, s: Stage, player: Player) : Enemy(x, y, s, p
         stunnedAnimation = Animation(1f, animationImages, Animation.PlayMode.NORMAL)
         animationImages.clear()
 
-        animationImages.add(BaseGame.textureAtlas!!.findRegion("hardEnemy-dead-01"))
+        animationImages.add(BaseGame.textureAtlas!!.findRegion("hardEnemy-dying-01"))
         deadAnimation = Animation(1f, animationImages, Animation.PlayMode.NORMAL)
         animationImages.clear()
 
