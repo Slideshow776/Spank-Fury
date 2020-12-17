@@ -1,25 +1,19 @@
 package no.sandramoen.spankfury.screens.gameplay
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.InputEvent
-import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener
-import com.badlogic.gdx.utils.Align
-import com.badlogic.gdx.utils.Array
 import no.sandramoen.spankfury.actors.*
 import no.sandramoen.spankfury.screens.shell.MenuScreen
 import no.sandramoen.spankfury.tables.LevelGameOverTable
-import no.sandramoen.spankfury.utils.BaseActor
-import no.sandramoen.spankfury.utils.BaseGame
-import no.sandramoen.spankfury.utils.BaseScreen
-import no.sandramoen.spankfury.utils.GameUtils
+import no.sandramoen.spankfury.tables.LevelGuiTable
+import no.sandramoen.spankfury.tables.LevelPauseTable
+import no.sandramoen.spankfury.utils.*
 import kotlin.math.abs
 
 class LevelScreen : BaseScreen() {
@@ -27,30 +21,12 @@ class LevelScreen : BaseScreen() {
     private lateinit var player: Player
     private var playerHealth = player.health
 
-    private lateinit var statsScoreLabel: Label
-    private lateinit var personalBestLabel: Label
-    private lateinit var personalBestTitleLabel: Label
-    private lateinit var missLabel: Label
-    private lateinit var bonusTitleLabel: Label
-    private lateinit var bonusLabel: Label
-    private lateinit var motivationTitleLabel: Label
-    private lateinit var motivationLabel: Label
-
-    private lateinit var menuTextButton: TextButton
-    private lateinit var continueTextButton: TextButton
-    private lateinit var exitTextButton: TextButton
-
-    private lateinit var bonusTable: Table
-    private lateinit var motivationTable: Table
-    private lateinit var scoreTable: Table
-    private lateinit var personalBestTable: Table
-    private lateinit var healthTable: Table
-    private lateinit var statsTable: Table
-    private lateinit var pauseTable: Table
+    private lateinit var guiTable: LevelGuiTable
+    private lateinit var pauseTable: LevelPauseTable
     private lateinit var gameOverTable: LevelGameOverTable
     private lateinit var gameOverLabelTable: Table
 
-    private lateinit var blackOverlay: Image
+    private lateinit var screenTransition: ScreenTransition
 
     private var score = 0
     private var scoreAwarded = 0
@@ -80,11 +56,6 @@ class LevelScreen : BaseScreen() {
 
     private lateinit var background: Background
 
-    private lateinit var health1: Image
-    private lateinit var health2: Image
-    private lateinit var health3: Image
-    private lateinit var healths: Array<Image>
-
     override fun initialize() {
         // game state
         BaseGame.tempo = 1f // reset
@@ -100,135 +71,36 @@ class LevelScreen : BaseScreen() {
         BaseGame.levelMusic1!!.isLooping = true
 
         // ui
-        val scoreTitleLabel = Label("Score", BaseGame.labelStyle)
-        scoreTitleLabel.color = Color.RED
-        statsScoreLabel = Label("$score", BaseGame.labelStyle)
-        scoreTable = Table()
-        scoreTable.add(scoreTitleLabel).row()
-        scoreTable.add(statsScoreLabel)
-
-        healthTable = Table()
-        health1 = Image(BaseGame.textureAtlas!!.findRegion("heart"))
-        health1.color.a = 0f
-        health2 = Image(BaseGame.textureAtlas!!.findRegion("heart"))
-        health2.color.a = 0f
-        health3 = Image(BaseGame.textureAtlas!!.findRegion("heart"))
-        health3.color.a = 0f
-        healths = Array()
-        healths.add(health1)
-        healths.add(health2)
-        healths.add(health3)
-        for (i in 0 until healths.size)
-            healths[i].addAction(Actions.sequence(
-                    Actions.delay(i / 2.5f),
-                    Actions.fadeIn(.5f)
-            ))
-        val healthWidth = Gdx.graphics.width * .035f
-        healthTable.add(health1).width(healthWidth).height(healthWidth).padRight(Gdx.graphics.width * .02f)
-        healthTable.add(health2).width(healthWidth).height(healthWidth).padRight(Gdx.graphics.width * .02f)
-        healthTable.add(health3).width(healthWidth).height(healthWidth)
-
-        personalBestTitleLabel = Label("Personal Best", BaseGame.labelStyle)
-        personalBestTitleLabel.color = Color.RED
-        personalBestLabel = Label("${BaseGame.highScore.toInt()}", BaseGame.labelStyle)
-        personalBestTable = Table()
-        personalBestTable.add(personalBestTitleLabel).row()
-        personalBestTable.add(personalBestLabel)
-
-        bonusLabel = Label("$bonus", BaseGame.labelStyle)
-        bonusLabel.setFontScale(2f)
-        bonusLabel.color = Color.YELLOW
-        bonusLabel.color.a = 0f
-        bonusTitleLabel = Label("x BONUS", BaseGame.labelStyle)
-        bonusTitleLabel.setFontScale(1f)
-        bonusTitleLabel.color.a = 0f
-        bonusTable = Table()
-        bonusTable.isTransform = true
-        bonusTable.originX = Gdx.graphics.width / 15f
-        bonusTable.originY = Gdx.graphics.height / 15f
-        bonusTable.add(bonusLabel).row()
-        bonusTable.add(bonusTitleLabel)
-        val bonusTableTable = Table()
-        bonusTableTable.add(bonusTable)
-
-        missLabel = Label("miss!", BaseGame.labelStyle)
-        missLabel.setAlignment(Align.center)
-        missLabel.color = Color.RED
-        missLabel.color.a = 0f
-        missLabel.setFontScale(1.25f)
-
-        motivationLabel = Label("$motivationNumber", BaseGame.labelStyle)
-        motivationLabel.setFontScale(2f)
-        motivationLabel.color.a = 0f
-        motivationTitleLabel = Label("xRAD", BaseGame.labelStyle)
-        motivationTitleLabel.setFontScale(1f)
-        motivationTitleLabel.color = Color.CYAN
-        motivationTitleLabel.color.a = 0f
-        motivationTable = Table()
-        motivationTable.isTransform = true
-        motivationTable.originX = Gdx.graphics.width * 1 / 24f
-        motivationTable.originY = Gdx.graphics.height * 1 / 24f
-        motivationTable.add(motivationLabel).row()
-        motivationTable.add(motivationTitleLabel)
-        val motivationTableTable = Table()
-        motivationTableTable.add(motivationTable)
-
-        statsTable = Table()
-        statsTable.setFillParent(true)
-        statsTable.add(scoreTable).top().width(Gdx.graphics.width / 3f)
-        statsTable.add(healthTable).top().width(Gdx.graphics.width / 3f)
-        statsTable.add(personalBestTable).top().width(Gdx.graphics.width / 3f).row()
-        statsTable.add(bonusTableTable).expand().width(Gdx.graphics.width / 3f).padBottom(Gdx.graphics.height * .5f)
-        statsTable.add(missLabel).expand().width(Gdx.graphics.width / 3f).padBottom(Gdx.graphics.height * .5f)
-        statsTable.add(motivationTableTable).expand().width(Gdx.graphics.width / 3f).padBottom(Gdx.graphics.height * .5f).row()
-        // statsTable.debug = true
+        guiTable = LevelGuiTable()
 
         // pause menu overlay
-        menuTextButton = TextButton("Menu", BaseGame.textButtonStyle)
-        menuTextButton.color = Color.YELLOW
-        menuTextButton.touchable = Touchable.disabled
-        menuTextButton.addListener(object : ActorGestureListener() {
+
+        pauseTable = LevelPauseTable()
+        pauseTable.menuTextButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
-                blackOverlay.addAction(Actions.sequence(
-                        Actions.fadeIn(1f),
-                        Actions.run { BaseGame.setActiveScreen(MenuScreen()) }
+                screenTransition.blackOverLay.addAction(Actions.sequence(
+                    Actions.fadeIn(1f),
+                    Actions.run { BaseGame.setActiveScreen(MenuScreen()) }
                 ))
             }
         })
-        continueTextButton = TextButton("Continue", BaseGame.textButtonStyle)
-        continueTextButton.color = Color.GREEN
-        continueTextButton.touchable = Touchable.disabled
-        continueTextButton.addListener(object : ActorGestureListener() {
+        pauseTable.continueTextButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
                 changeToPlayOverlay()
             }
         })
-        exitTextButton = TextButton("Quit", BaseGame.textButtonStyle)
-        exitTextButton.color = Color.RED
-        exitTextButton.touchable = Touchable.disabled
-        exitTextButton.addListener(object : ActorGestureListener() {
+        pauseTable.exitTextButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
-                blackOverlay.addAction(Actions.sequence(
-                        Actions.fadeIn(1f),
-                        Actions.run { Gdx.app.exit() }
-                ))
+                screenTransition.fadeInAndExit()
             }
         })
-        pauseTable = Table()
-        pauseTable.color.a = 0f
-        pauseTable.add(menuTextButton).expand().padBottom(Gdx.graphics.height * 1 / 4f).right()
-        pauseTable.add(continueTextButton).expand().padBottom(Gdx.graphics.height * 1 / 4f)
-        pauseTable.add(exitTextButton).expand().padBottom(Gdx.graphics.height * 1 / 4f).left()
 
         // game over overlay
         gameOverTable = LevelGameOverTable()
 
         // black transition overlay
-        blackOverlay = Image(BaseGame.textureAtlas!!.findRegion("whitePixel"))
-        blackOverlay.color = Color.BLACK
-        blackOverlay.touchable = Touchable.childrenOnly
-        blackOverlay.setSize(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
-        blackOverlay.addAction(Actions.fadeOut(1f))
+        screenTransition = ScreenTransition()
+        screenTransition.fadeOut()
 
         // game over label
         val gameOverLabel = Label("GAME OVER!", BaseGame.labelStyle)
@@ -240,11 +112,11 @@ class LevelScreen : BaseScreen() {
 
         val stack = Stack()
         stack.setFillParent(true)
-        stack.add(statsTable)
+        stack.add(guiTable)
         stack.add(gameOverLabelTable)
         stack.add(pauseTable)
         stack.add(gameOverTable)
-        stack.add(blackOverlay)
+        stack.add(screenTransition.blackOverLay)
         uiStage.addActor(stack)
     }
 
@@ -273,7 +145,6 @@ class LevelScreen : BaseScreen() {
     }
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-
         if (pause) return false
 
         // check which way player is hitting
@@ -298,6 +169,15 @@ class LevelScreen : BaseScreen() {
             else
                 changeToPauseOverlay()
         }
+
+        if (keycode == Keys.ENTER && gameOverTable.color.a == 1f) {
+            screenTransition.blackOverLay.addAction(
+                Actions.sequence(
+                    Actions.fadeIn(1f),
+                    Actions.run { BaseGame.setActiveScreen(LevelScreen()) }
+                ))
+        } else if (keycode == Keys.ENTER && pauseTable.color.a == 1f)
+            changeToPlayOverlay()
 
         if (pause) return false
 
@@ -379,19 +259,13 @@ class LevelScreen : BaseScreen() {
 
     private fun handleMiss(left: Boolean) {
         if (controlTimer >= controlFrequency) {
-            if (left)
-                player.hit(-20f)
-            else
-                player.hit(20f)
+            if (left) player.hit(-20f)
+            else player.hit(20f)
+
             touchIsDisabled()
             if (bonus >= bonusMissModifier) bonus -= bonusMissModifier
             else bonus = 0
-            bonusLabel.setText("$bonus")
-            animateBonuses(bonusTable, bonusLabel, bonusTitleLabel)
-            missLabel.addAction(Actions.sequence(
-                    Actions.fadeIn(.2f),
-                    Actions.fadeOut(.2f)
-            ))
+            guiTable.handleMiss(bonus)
         }
     }
 
@@ -399,14 +273,14 @@ class LevelScreen : BaseScreen() {
         if (enemy.struck()) { // if this kills the enemy
             scoreAwarded = enemy.points * (bonus + 1)
             bonus++
-            bonusLabel.setText("$bonus")
-            animateBonuses(bonusTable, bonusLabel, bonusTitleLabel)
+            guiTable.updateBonus(bonus)
             score += scoreAwarded
-            statsScoreLabel.setText("$score")
-            if (bonus % motivationNumber == 0) setMotivation()
+            guiTable.setScoreLabel(score)
+            if (bonus % motivationNumber == 0)
+                guiTable.setMotivation(bonus)
             if (BaseGame.highScore < score) {
                 BaseGame.highScore = score
-                personalBestLabel.setText("${BaseGame.highScore}")
+                guiTable.setPersonalBestLabel()
                 GameUtils.saveGameState()
             }
             val tempLabel = ScoreLabel(mainStage, "+$scoreAwarded")
@@ -419,60 +293,6 @@ class LevelScreen : BaseScreen() {
         return (BaseActor.count(mainStage, Enemy::class.java.canonicalName) == 0)
     }
 
-    private fun setMotivation() {
-        animateBonuses(motivationTable, motivationLabel, motivationTitleLabel)
-        motivationLabel.setText("$bonus")
-        var motivation = "Great!"
-        when (bonus) {
-            20 -> motivation = "Nice!"
-            40 -> motivation = "Cool!"
-            60 -> motivation = "Wow!"
-            80 -> motivation = "No way!"
-            100 -> motivation = "Fierce!"
-            200 -> motivation = "Awesome!"
-            220 -> motivation = "Sayonara!"
-            240 -> motivation = "Piece of cake!"
-            260 -> motivation = "Yippee Ki Yay!"
-            280 -> motivation = "Dodge this!"
-            300 -> motivation = "Astounding!"
-            320 -> motivation = "Staggering!"
-            340 -> motivation = "Extraordinary!"
-            360 -> motivation = "Assimilate this!"
-            380 -> motivation = "Unbelievable!"
-            400 -> motivation = "Breathtaking!"
-            420 -> motivation = "Epic!"
-            440 -> motivation = "Legendary!"
-        }
-        motivationTitleLabel.setText("$motivation")
-    }
-
-    private fun animateBonuses(table: Table, label: Label, titleLabel: Label) {
-        animateLabel(label)
-        animateLabel(titleLabel)
-        table.addAction(Actions.sequence(
-                Actions.scaleTo(.5f, .5f, 0f),
-                Actions.scaleTo(1f, 1f, .7f, Interpolation.bounceOut)
-        ))
-    }
-
-    private fun animateLabel(label: Label) {
-        label.clearActions()
-        label.color.a = 0f
-        label.addAction(Actions.parallel(
-                Actions.forever(Actions.sequence(
-                        Actions.alpha(.5f, .2f),
-                        Actions.alpha(1f, .2f)
-                )),
-                Actions.sequence(
-                        Actions.delay(2f),
-                        Actions.run {
-                            label.clearActions()
-                            label.color.a = 0f
-                        }
-                )
-        ))
-    }
-
     private fun touchIsDisabled(): Boolean { // disallowing player spamming
         if (controlTimer < controlFrequency)
             return true
@@ -481,18 +301,15 @@ class LevelScreen : BaseScreen() {
     }
 
     private fun changeToGameOverOverlay() {
-        gameOverTable.updateHighScoreTable()
         gameOverLabelTable.color.a = 0f
+        gameOverTable.updateHighScoreTable()
         gameOverTable.setScoreLabel(score)
-
         gameOverTable.enableButtons()
-
-        // fade in game over menu
         gameOverTable.fadeIn(overlayDuration)
 
         // fade background elements
         background.setOpacity(.1f, overlayDuration)
-        statsTable.addAction(Actions.alpha(.1f, overlayDuration))
+        guiTable.addAction(Actions.alpha(.1f, overlayDuration))
 
         // disable entities
         disableEntities()
@@ -500,21 +317,12 @@ class LevelScreen : BaseScreen() {
 
     private fun changeToPauseOverlay() {
         pause = true
-        pauseTable.addAction(Actions.fadeIn(overlayDuration))
-
-        // fade in pause menu
-        menuTextButton.addAction(Actions.fadeIn(overlayDuration))
-        continueTextButton.addAction(Actions.fadeIn(overlayDuration))
-        exitTextButton.addAction(Actions.fadeIn(overlayDuration))
+        pauseTable.fadeInAndEnable(overlayDuration)
 
         // fade background elements
         background.setOpacity(.1f, overlayDuration)
-        statsTable.addAction(Actions.alpha(.1f, overlayDuration))
+        guiTable.addAction(Actions.alpha(.1f, overlayDuration))
 
-        // enable menu buttons
-        GameUtils.enableActorsWithDelay(menuTextButton)
-        GameUtils.enableActorsWithDelay(continueTextButton)
-        GameUtils.enableActorsWithDelay(exitTextButton)
 
         // disable entities
         disableEntities()
@@ -524,16 +332,11 @@ class LevelScreen : BaseScreen() {
         pause = false
 
         // fade out pause menu
-        pauseTable.addAction(Actions.fadeOut(overlayDuration))
+        pauseTable.fadeOutAndDisable(overlayDuration)
 
         // fade in background elements
         background.setOpacity(1f, overlayDuration)
-        statsTable.addAction(Actions.alpha(1f, overlayDuration))
-
-        // disable menu buttons
-        menuTextButton.touchable = Touchable.disabled
-        continueTextButton.touchable = Touchable.disabled
-        exitTextButton.touchable = Touchable.disabled
+        guiTable.addAction(Actions.alpha(1f, overlayDuration))
 
         // enable entities
         player.pause = false
@@ -548,41 +351,41 @@ class LevelScreen : BaseScreen() {
     private fun subtractHealth() {
         playerHealth = player.health
         if (playerHealth >= 0)
-            healths[playerHealth].addAction(Actions.fadeOut(1f))
+            guiTable.subtractHealth(playerHealth)
     }
 
     private fun spawn(dt: Float) {
         easySpawnTimer += dt
         if (easySpawnTimer >= easySpawnFrequency / spawnDifficulty
-                && BaseActor.count(mainStage, EasyEnemy::class.java.canonicalName) <= 8
-                && BaseActor.count(mainStage, EasyEnemy::class.java.canonicalName) < 5
+            && BaseActor.count(mainStage, EasyEnemy::class.java.canonicalName) <= 8
+            && BaseActor.count(mainStage, EasyEnemy::class.java.canonicalName) < 5
         ) {
             EasyEnemy(0f, 0f, mainStage, player)
             easySpawnTimer = 0f
         }
         mediumSpawnTimer += dt
         if (mediumSpawnTimer >= mediumSpawnFrequency / spawnDifficulty
-                && BaseActor.count(mainStage, MediumEnemy::class.java.canonicalName) <= 8
-                && gameTime > 30f
-                && BaseActor.count(mainStage, MediumEnemy::class.java.canonicalName) < 4
+            && BaseActor.count(mainStage, MediumEnemy::class.java.canonicalName) <= 8
+            && gameTime > 30f
+            && BaseActor.count(mainStage, MediumEnemy::class.java.canonicalName) < 4
         ) {
             MediumEnemy(0f, 0f, mainStage, player)
             mediumSpawnTimer = 0f
         }
         swapSpawnTimer += dt
         if (swapSpawnTimer >= swapSpawnFrequency / spawnDifficulty
-                && BaseActor.count(mainStage, SwapEnemy::class.java.canonicalName) <= 8
-                && gameTime > 40f
-                && BaseActor.count(mainStage, SwapEnemy::class.java.canonicalName) < 4
+            && BaseActor.count(mainStage, SwapEnemy::class.java.canonicalName) <= 8
+            && gameTime > 40f
+            && BaseActor.count(mainStage, SwapEnemy::class.java.canonicalName) < 4
         ) {
             SwapEnemy(0f, 0f, mainStage, player)
             swapSpawnTimer = 0f
         }
         hardSpawnTimer += dt
         if (hardSpawnTimer >= hardSpawnFrequency / spawnDifficulty
-                && BaseActor.count(mainStage, HardEnemy::class.java.canonicalName) <= 8
-                && gameTime > 60f
-                && BaseActor.count(mainStage, HardEnemy::class.java.canonicalName) < 4
+            && BaseActor.count(mainStage, HardEnemy::class.java.canonicalName) <= 8
+            && gameTime > 60f
+            && BaseActor.count(mainStage, HardEnemy::class.java.canonicalName) < 4
         ) {
             HardEnemy(0f, 0f, mainStage, player)
             hardSpawnTimer = 0f
@@ -594,20 +397,20 @@ class LevelScreen : BaseScreen() {
         pause = true
         gameOverLabelTable.color.a = 1f
         gameOverLabelTable.addAction(Actions.sequence(
-                Actions.delay(2f),
-                Actions.run { changeToGameOverOverlay() }
+            Actions.delay(2f),
+            Actions.run { changeToGameOverOverlay() }
         ))
     }
 
     private fun disableEntities() {
         player.addAction(Actions.sequence(
-                Actions.color(Color.BLACK, overlayDuration),
-                Actions.run { player.pause = true }
+            Actions.color(Color.BLACK, overlayDuration),
+            Actions.run { player.pause = true }
         ))
         for (baseActor: BaseActor in BaseActor.getList(mainStage, Enemy::class.java.canonicalName)) {
             baseActor.addAction(Actions.sequence(
-                    Actions.color(Color.BLACK, overlayDuration),
-                    Actions.run { baseActor.pause = true }
+                Actions.color(Color.BLACK, overlayDuration),
+                Actions.run { baseActor.pause = true }
             ))
         }
     }

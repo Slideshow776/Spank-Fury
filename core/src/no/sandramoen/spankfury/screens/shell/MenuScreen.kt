@@ -1,5 +1,6 @@
 package no.sandramoen.spankfury.screens.shell
 
+import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.Color
@@ -17,10 +18,7 @@ import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
 import no.sandramoen.spankfury.actors.*
 import no.sandramoen.spankfury.screens.gameplay.LevelScreen
-import no.sandramoen.spankfury.utils.BaseActor
-import no.sandramoen.spankfury.utils.BaseGame
-import no.sandramoen.spankfury.utils.BaseScreen
-import no.sandramoen.spankfury.utils.GameUtils
+import no.sandramoen.spankfury.utils.*
 import kotlin.math.abs
 
 class MenuScreen : BaseScreen() {
@@ -38,7 +36,7 @@ class MenuScreen : BaseScreen() {
     private lateinit var titleLeftButtonLabel: Label
     private lateinit var titleRightButtonImage: Image
     private lateinit var titleRightButtonLabel: Label
-    private lateinit var blackOverlay: Image
+    private lateinit var screenTransition: ScreenTransition
 
     // foreground - menu
     private lateinit var menuTable: Table
@@ -131,10 +129,7 @@ class MenuScreen : BaseScreen() {
         startButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
                 BaseGame.levelMusic1!!.stop()
-                blackOverlay.addAction(Actions.sequence(
-                        Actions.fadeIn(1f),
-                        Actions.run { BaseGame.setActiveScreen(LevelScreen()) }
-                ))
+                screenTransition.fadeIn()
             }
         })
 
@@ -150,10 +145,7 @@ class MenuScreen : BaseScreen() {
         exitButton.touchable = Touchable.disabled
         exitButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
-                blackOverlay.addAction(Actions.sequence(
-                        Actions.fadeIn(1f),
-                        Actions.run { Gdx.app.exit() }
-                ))
+                screenTransition.fadeInAndExit()
             }
         })
 
@@ -224,6 +216,7 @@ class MenuScreen : BaseScreen() {
         optionsVibrationCheckBox.imageCell.size(optionsWidgetWidth * .125f)
         optionsVibrationCheckBox.label.setFontScale(3f)
         optionsVibrationCheckBox.setOrigin(optionsWidgetWidth / 2, optionsWidgetHeight / 2)
+        if (Gdx.app.type == Application.ApplicationType.Desktop) optionsVibrationCheckBox.color.a = 0f
 
         // back button
         optionsBackButton = TextButton("Back", BaseGame.textButtonStyle)
@@ -251,17 +244,14 @@ class MenuScreen : BaseScreen() {
         player = Player(0f, 0f, mainStage)
 
         // black transition overlay
-        blackOverlay = Image(BaseGame.textureAtlas!!.findRegion("whitePixel"))
-        blackOverlay.color = Color.BLACK
-        blackOverlay.touchable = Touchable.childrenOnly
-        blackOverlay.setSize(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
-        blackOverlay.addAction(Actions.fadeOut(1f))
+        screenTransition = ScreenTransition()
+        screenTransition.fadeOut()
 
         val stack = Stack()
         stack.setFillParent(true)
         stack.add(titleTable)
         stack.add(menuTable)
-        stack.add(blackOverlay)
+        stack.add(screenTransition.blackOverLay)
         stack.add(optionsTable)
         uiStage.addActor(stack)
 
@@ -290,7 +280,7 @@ class MenuScreen : BaseScreen() {
 
     override fun keyDown(keycode: Int): Boolean {
         if (keycode == Keys.BACK || keycode == Keys.ESCAPE) {
-            blackOverlay.addAction(Actions.sequence(
+            screenTransition.blackOverLay.addAction(Actions.sequence(
                     Actions.fadeIn(1f),
                     Actions.run {
                         super.dispose()

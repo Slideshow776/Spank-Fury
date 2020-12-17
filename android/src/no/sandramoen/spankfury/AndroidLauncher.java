@@ -9,9 +9,8 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.*;
 
 public class AndroidLauncher extends AndroidApplication {
-    // ------------------------------------------------------------------------
 	private static final int RC_SIGN_IN = 9001;
-    // ------------------------------------------------------------------------
+	private static boolean enableGooglePlayServices = false;
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
@@ -19,11 +18,10 @@ public class AndroidLauncher extends AndroidApplication {
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		initialize(new SpankFuryGame(), config);
 
-		// ------------------------------------------------------------------------
-		startSignInIntent();
+		if (enableGooglePlayServices)
+			startSignInIntent();
 	}
 
-    // ------------------------------------------------------------------------
 	private void startSignInIntent() {
 		GoogleSignInClient signInClient = GoogleSignIn.getClient(this,
 				GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
@@ -33,22 +31,25 @@ public class AndroidLauncher extends AndroidApplication {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == RC_SIGN_IN) {
-			GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-			if (result.isSuccess()) {
-				// The signed in account is stored in the result.
-				GoogleSignInAccount signedInAccount = result.getSignInAccount();
-			} else {
-				String message = result.getStatus().getStatusMessage();
-				// Status{statusCode=SIGN_IN_REQUIRED, resolution=null}
-				if (message == null || message.isEmpty()) {
-					message = getString(R.string.signin_other_error);
+		if (enableGooglePlayServices) {
+			super.onActivityResult(requestCode, resultCode, data);
+			if (requestCode == RC_SIGN_IN) {
+				GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+				if (result.isSuccess()) {
+					// The signed in account is stored in the result.
+					// System.out.println("MYMESSAGE: " + "Success! : D");
+					GoogleSignInAccount signedInAccount = result.getSignInAccount();
+				} else {
+					// System.out.println("MYMESSAGE: " + "unsuccesful : (");
+					String message = result.getStatus().getStatusMessage();
+					// Status{statusCode=SIGN_IN_REQUIRED, resolution=null}
+					if (message == null || message.isEmpty()) {
+						message = "There was an issue with sign in.  Please try again later.";
+					}
+					new AlertDialog.Builder(this).setMessage(message)
+							.setNeutralButton(android.R.string.ok, null).show();
 				}
-				new AlertDialog.Builder(this).setMessage(message)
-						.setNeutralButton(android.R.string.ok, null).show();
 			}
 		}
 	}
-    // ------------------------------------------------------------------------
 }

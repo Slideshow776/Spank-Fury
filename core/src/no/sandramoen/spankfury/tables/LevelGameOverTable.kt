@@ -1,6 +1,7 @@
 package no.sandramoen.spankfury.tables
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Touchable
@@ -18,17 +19,16 @@ import com.badlogic.gdx.utils.Array
 
 class LevelGameOverTable : Table() {
 
-    private lateinit var gameOverScoreLabel: Label
+    private var gameOverScoreLabel: Label
 
-    private lateinit var highscores: ArrayList<Pair<String, Int>>
+    private var highscores: ArrayList<Pair<String, Int>>
 
+    private var gameOverMenuButton: TextButton
+    private var gameOverPlayButton: TextButton
 
-    private lateinit var gameOverMenuButton: TextButton
-    private lateinit var gameOverPlayButton: TextButton
+    private var highScoreTable: Table
 
-    private lateinit var highScoreTable: Table
-
-    private lateinit var blackOverlay: Image
+    private var blackOverlay: Image
 
     init {
         val gameOverScoreTable = Table()
@@ -82,7 +82,7 @@ class LevelGameOverTable : Table() {
         gameOverMenuButton.touchable = Touchable.disabled
         gameOverMenuButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
-                blackOverlay.addAction(
+                addAction(
                     Actions.sequence(
                     Actions.fadeIn(1f),
                     Actions.run { BaseGame.setActiveScreen(MenuScreen()) }
@@ -93,11 +93,11 @@ class LevelGameOverTable : Table() {
         gameOverPlayButton.touchable = Touchable.disabled
         gameOverPlayButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
-                blackOverlay.addAction(
+                addAction(
                     Actions.sequence(
-                    Actions.fadeIn(1f),
-                    Actions.run { BaseGame.setActiveScreen(LevelScreen()) }
-                ))
+                        Actions.fadeIn(1f),
+                        Actions.run { BaseGame.setActiveScreen(LevelScreen()) }
+                    ))
             }
         })
 
@@ -108,6 +108,13 @@ class LevelGameOverTable : Table() {
         add(gameOverMenuButton).left()
         add(gameOverPlayButton).right()
         // gameOverTable.debug = true
+
+        // black transition overlay
+        blackOverlay = Image(BaseGame.textureAtlas!!.findRegion("whitePixel"))
+        blackOverlay.color = Color.BLACK
+        blackOverlay.touchable = Touchable.childrenOnly
+        blackOverlay.setSize(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
+        blackOverlay.addAction(Actions.fadeOut(1f))
     }
 
     fun enableButtons() {
@@ -115,13 +122,8 @@ class LevelGameOverTable : Table() {
         gameOverPlayButton.touchable = Touchable.enabled
     }
 
-    fun fadeIn(overlayDuration: Float) {
-        addAction(Actions.fadeIn(overlayDuration))
-    }
-
-    fun setScoreLabel(score: Int) {
-        gameOverScoreLabel.setText("$score")
-    }
+    fun fadeIn(overlayDuration: Float) { addAction(Actions.fadeIn(overlayDuration)) }
+    fun setScoreLabel(score: Int) { gameOverScoreLabel.setText("$score") }
 
     fun updateHighScoreTable() {
 
