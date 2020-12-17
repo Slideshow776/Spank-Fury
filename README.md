@@ -2,7 +2,7 @@
 
 A kinky themed rhythm game inspired by [Kung Fury: Street Rage](https://store.steampowered.com/app/373180/Kung_Fury_Street_Rage/).
 
-![screenShot of gameplay](https://user-images.githubusercontent.com/4059636/99833341-1f7ce400-2b62-11eb-8a71-008406a583a4.PNG)
+![screenShot of gameplay](https://user-images.githubusercontent.com/4059636/102523112-6bef0d00-4097-11eb-8eb0-c645b8f39faf.PNG)
 
 
 # Game Design Document
