@@ -30,7 +30,7 @@ class HardEnemy(x: Float, y: Float, s: Stage, player: Player) : Enemy(x, y, s, p
         for (i in 1..2) animationImages.add(BaseGame.textureAtlas!!.findRegion("hardEnemy-idle-03"))
         for (i in 1..2) animationImages.add(BaseGame.textureAtlas!!.findRegion("hardEnemy-idle-04"))
         animationImages.add(BaseGame.textureAtlas!!.findRegion("hardEnemy-idle-05"))
-        idleAnimation = Animation(.03f, animationImages, Animation.PlayMode.LOOP)
+        idleAnimation = Animation(.25f, animationImages, Animation.PlayMode.LOOP)
         animationImages.clear()
 
         for (i in 1..8)

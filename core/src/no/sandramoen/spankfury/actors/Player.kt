@@ -2,7 +2,6 @@ package no.sandramoen.spankfury.actors
 
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
-import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
@@ -27,7 +26,8 @@ class Player(x: Float, y: Float, s: Stage) : BaseActor(x, y, s) {
     var playerAcceleration = 70f
     var playerDeceleration = 70f
     var health = 3
-    var slowMotion = false
+    var disabledFrequency = 2f
+    var disabledTimer = disabledFrequency
 
     init {
         // animations
@@ -56,6 +56,21 @@ class Player(x: Float, y: Float, s: Stage) : BaseActor(x, y, s) {
         setAcceleration(playerAcceleration * BaseGame.tempo)
         setMaxSpeed(playerSpeed * BaseGame.tempo) // (world units)/seconds
         setDeceleration(playerDeceleration * BaseGame.tempo)
+
+        // blinking animation
+        val blinkingDuration = .2f
+        addAction(
+            Actions.sequence(
+                Actions.alpha(.5f, blinkingDuration),
+                Actions.alpha(1f, blinkingDuration),
+                Actions.alpha(.5f, blinkingDuration),
+                Actions.alpha(1f, blinkingDuration),
+                Actions.alpha(.5f, blinkingDuration),
+                Actions.alpha(1f, blinkingDuration),
+                Actions.alpha(.5f, blinkingDuration),
+                Actions.alpha(1f, blinkingDuration)
+            )
+        )
     }
 
     override fun act(dt: Float) {
@@ -64,35 +79,37 @@ class Player(x: Float, y: Float, s: Stage) : BaseActor(x, y, s) {
         if (BaseGame.tempo != tempo) setNewTempo()
         applyPhysics(dt)
         alignCamera(lerp = .1f)
+        if (disabledTimer < disabledFrequency) disabledTimer += dt
     }
 
     fun hit(distance: Float) {
+        if (disabledTimer < disabledFrequency) return
         shouldFlip(distance)
         BaseGame.tempo = 1f // break slow motion
         var index: Int = MathUtils.random(0, hitAnimations.size - 1)
         changeAnimation(hitAnimations[index], originalWidth * 4)
         addAction(Actions.sequence(
-                Actions.moveBy(distance * .6f, 0f, .25f),
-                Actions.delay(hitAnimations[index].frameDuration * hitAnimations[index].keyFrames.size),
-                Actions.run { changeAnimation(idleAnimation) }
+            Actions.moveBy(distance * .6f, 0f, .25f),
+            Actions.delay(hitAnimations[index].frameDuration * hitAnimations[index].keyFrames.size),
+            Actions.run { changeAnimation(idleAnimation) }
         ))
     }
 
     fun struck(moveToRight: Boolean) {
-        var direction = -1f
-        if (moveToRight) direction = 1f
-
+        disabledTimer = 0f
         health--
         if (health >= 1) BaseGame.tempo = slowMotionModifier // start slow motion
 
-        addAction(Actions.moveBy(direction * 10f, 0f, .25f))
+        if (moveToRight) addAction(Actions.moveBy(10f, 0f, .05f))
+        else addAction(Actions.moveBy(-10f, 0f, .05f))
+
         // face striking enemy
         addAction(Actions.sequence(
-                Actions.delay(.0625f), // HACK: give enemies a chance to react first
-                Actions.run {
-                    if ((moveToRight && isFacingRight || !moveToRight && !isFacingRight) && health >= 1)
-                        flip()
-                }
+            Actions.delay(.0625f), // HACK: give enemies a chance to react first
+            Actions.run {
+                if ((moveToRight && isFacingRight || !moveToRight && !isFacingRight) && health >= 1)
+                    flip()
+            }
         ))
     }
 
@@ -103,7 +120,11 @@ class Player(x: Float, y: Float, s: Stage) : BaseActor(x, y, s) {
         setDeceleration(playerDeceleration * BaseGame.tempo)
     }
 
-    private fun changeAnimation(animation: Animation<TextureAtlas.AtlasRegion>, width: Float = this.width, height: Float = this.height) {
+    private fun changeAnimation(
+        animation: Animation<TextureAtlas.AtlasRegion>,
+        width: Float = this.width,
+        height: Float = this.height
+    ) {
         setAnimation(animation)
         setSize(originalWidth, originalHeight)
         setAnimationSize(width, height)

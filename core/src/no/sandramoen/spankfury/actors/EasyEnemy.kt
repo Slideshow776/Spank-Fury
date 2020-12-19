@@ -27,11 +27,11 @@ class EasyEnemy(x: Float, y: Float, s: Stage, player: Player) : Enemy(x, y, s, p
         var animationImages: Array<TextureAtlas.AtlasRegion> = Array()
         for (i in 1..4) animationImages.add(BaseGame.textureAtlas!!.findRegion("easyEnemy-idle-01"))
         animationImages.add(BaseGame.textureAtlas!!.findRegion("easyEnemy-idle-02"))
-        idleAnimation = Animation(.25f, animationImages, Animation.PlayMode.LOOP)
+        idleAnimation = Animation(.2f, animationImages, Animation.PlayMode.LOOP)
         animationImages.clear()
 
         for (i in 1..8) animationImages.add(BaseGame.textureAtlas!!.findRegion("easyEnemy-walking-0$i"))
-        walkingAnimation = Animation(.25f, animationImages, Animation.PlayMode.LOOP)
+        walkingAnimation = Animation(.2f, animationImages, Animation.PlayMode.LOOP)
         animationImages.clear()
 
         for (i in 1..2) animationImages.add(BaseGame.textureAtlas!!.findRegion("easyEnemy-hitting-01"))

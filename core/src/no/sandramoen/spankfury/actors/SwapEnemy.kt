@@ -11,11 +11,12 @@ import no.sandramoen.spankfury.utils.BaseGame
 class SwapEnemy(x: Float, y: Float, s: Stage, player: Player) : Enemy(x, y, s, player) {
     private val token = "SwapEnemy.kt"
     override var health = 3
+    lateinit var swapAnimation: Animation<TextureAtlas.AtlasRegion>
 
     init {
         setSize(
-                (BaseGame.WORLD_WIDTH / 14) * BaseGame.scale,
-                (BaseGame.WORLD_HEIGHT / 3) * BaseGame.scale
+            (BaseGame.WORLD_WIDTH / 14) * BaseGame.scale,
+            (BaseGame.WORLD_HEIGHT / 3) * BaseGame.scale
         )
         color = Color.WHITE
         originalColor = Color.WHITE
@@ -27,21 +28,26 @@ class SwapEnemy(x: Float, y: Float, s: Stage, player: Player) : Enemy(x, y, s, p
     override fun struck(enableSound: Boolean): Boolean { // returns true if enemy died
         if (enableSound) BaseGame.hitSound1!!.play(BaseGame.soundVolume)
         health--
-        if (health <= 0)
-            return handleDeath()
+        if (health <= 0) return handleDeath()
+        actions.clear()
+        resetActions()
         swapSide()
         return false
     }
 
     private fun swapSide() {
-        if (x <= player.x) { // if on left
-            addAction(Actions.moveBy(2 * width, 0f, .1f)) // move to right side
-        } else {
-            addAction(Actions.moveBy(-2 * width, 0f, .1f)) // move to left side
+        changeAnimation(swapAnimation)
+        enabled = false
+        val duration = .1f
+        if (x <= player.x) { // if on left side
+            addAction(Actions.moveTo(player.x + player.width / 2, 0f, duration))
+        } else { // if on right side
+            addAction(Actions.moveTo(player.x, 0f, duration))
         }
         flip()
+        spawnFromLeft = !spawnFromLeft
+        addAction(Actions.after(Actions.run { enabled = true }))
     }
-
 
     override fun setAnimation() {
         var animationImages: Array<TextureAtlas.AtlasRegion> = Array()
@@ -54,7 +60,7 @@ class SwapEnemy(x: Float, y: Float, s: Stage, player: Player) : Enemy(x, y, s, p
 
         for (i in 1..9)
             animationImages.add(BaseGame.textureAtlas!!.findRegion("swapEnemy-walking-0$i"))
-        walkingAnimation = Animation(.25f, animationImages, Animation.PlayMode.LOOP)
+        walkingAnimation = Animation(.1f, animationImages, Animation.PlayMode.LOOP)
         animationImages.clear()
 
         for (i in 1..2) animationImages.add(BaseGame.textureAtlas!!.findRegion("swapEnemy-hitting-01"))
@@ -71,6 +77,10 @@ class SwapEnemy(x: Float, y: Float, s: Stage, player: Player) : Enemy(x, y, s, p
 
         animationImages.add(BaseGame.textureAtlas!!.findRegion("swapEnemy-dying-01"))
         deadAnimation = Animation(1f, animationImages, Animation.PlayMode.NORMAL)
+        animationImages.clear()
+
+        animationImages.add(BaseGame.textureAtlas!!.findRegion("swapEnemy-swapping-01"))
+        swapAnimation = Animation(1f, animationImages, Animation.PlayMode.NORMAL)
         animationImages.clear()
 
         setAnimation(walkingAnimation)

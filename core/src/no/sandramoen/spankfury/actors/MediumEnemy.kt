@@ -28,7 +28,7 @@ class MediumEnemy(x: Float, y: Float, s: Stage, player: Player) : Enemy(x, y, s,
         for (i in 1..16) animationImages.add(BaseGame.textureAtlas!!.findRegion("mediumEnemy-idle-01"))
         for (i in 1..2) animationImages.add(BaseGame.textureAtlas!!.findRegion("mediumEnemy-idle-02"))
         animationImages.add(BaseGame.textureAtlas!!.findRegion("mediumEnemy-idle-03"))
-        idleAnimation = Animation(.03f, animationImages, Animation.PlayMode.LOOP)
+        idleAnimation = Animation(.25f, animationImages, Animation.PlayMode.LOOP)
         animationImages.clear()
 
         for (i in 1..8)

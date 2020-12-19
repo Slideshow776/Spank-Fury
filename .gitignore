@@ -1,3 +1,8 @@
+## Project
+*.jks
+*.pepk
+gps-notes.txt
+
 ## LibGDX
 android/assets/images/included/packed/*
 

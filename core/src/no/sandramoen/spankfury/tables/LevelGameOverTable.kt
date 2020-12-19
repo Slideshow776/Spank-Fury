@@ -126,7 +126,6 @@ class LevelGameOverTable : Table() {
     fun setScoreLabel(score: Int) { gameOverScoreLabel.setText("$score") }
 
     fun updateHighScoreTable() {
-
         // reinitialize list with proper names
         for (i in 0 until highscores.size) {
             highScoreTable.findActor<Label>("name$i").setText(highscores[i].first)

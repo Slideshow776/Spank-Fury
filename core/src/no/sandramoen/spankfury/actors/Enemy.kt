@@ -31,9 +31,10 @@ open class Enemy(x: Float, y: Float, s: Stage, open val player: Player) : BaseAc
     var spawnFromLeft = MathUtils.randomBoolean()
     var stunTimer = stunFrequency
     var hitting = false
-    var hittingDelay = .75f
+    var hittingDelay = 1f
     var stunned = false
     var backOffDistanceModifier = 1f
+    var enabled = true
 
     // animations
     lateinit var idleAnimation: Animation<TextureAtlas.AtlasRegion>
@@ -68,18 +69,20 @@ open class Enemy(x: Float, y: Float, s: Stage, open val player: Player) : BaseAc
 
         // x movement + behaviour
         distance = abs(x - player.x)
-        if (!stunned && !hitting && ((width + player.width) * (.85 * backOffDistanceModifier) <= distance)) { // if too far away, move closer
-            if (x <= player.x)
-                accelerateAtAngle(0f)
-            else
-                accelerateAtAngle(180f)
-        } else if ((width + player.width) * (.7 * backOffDistanceModifier) > distance) { // if too close, move back
-            if (spawnFromLeft)
-                accelerateAtAngle(180f)
-            else
-                accelerateAtAngle(0f)
-        } else if (!hitting && !stunned && ((width + player.width) * .85 >= distance)) {
-            hit()
+        if (enabled) {
+            if (!stunned && !hitting && ((width + player.width) * (.55 * backOffDistanceModifier) <= distance)) { // if too far away, move closer
+                if (x <= player.x)
+                    accelerateAtAngle(0f)
+                else
+                    accelerateAtAngle(180f)
+            } else if ((width + player.width) * (.4 * backOffDistanceModifier) > distance) { // if too close, move back
+                if (spawnFromLeft)
+                    accelerateAtAngle(180f)
+                else
+                    accelerateAtAngle(0f)
+            } else if (!hitting && !stunned && ((width + player.width) * .55 >= distance)) {
+                hit()
+            }
         }
 
         // y movement
@@ -98,14 +101,20 @@ open class Enemy(x: Float, y: Float, s: Stage, open val player: Player) : BaseAc
     fun handleBackOff(backOff: Boolean) {
         var playerHasBackToEnemy = (spawnFromLeft && player.isFacingRight) || (!spawnFromLeft && !player.isFacingRight)
         if (playerHasBackToEnemy && backOff) {
-            backOffDistanceModifier = 2f
+            backOffDistanceModifier = 4f
             actions.clear()
             hitting = false
-            addAction(Actions.sequence(
+            changeAnimation(walkingAnimation)
+            /*addAction(Actions.sequence(
                 Actions.delay(BaseGame.backOffFrequency),
                 Actions.run { changeAnimation(walkingAnimation) }
-            ))
+            ))*/
         } else backOffDistanceModifier = 1f
+    }
+
+    fun changeAnimation(animation: Animation<TextureAtlas.AtlasRegion>) {
+        setAnimation(animation)
+        setSize(originalWidth, originalHeight)
     }
 
     open fun setAnimation() {
@@ -148,6 +157,12 @@ open class Enemy(x: Float, y: Float, s: Stage, open val player: Player) : BaseAc
         return true
     }
 
+    fun resetActions() {
+        hitting = false
+        actions.clear()
+        changeAnimation(walkingAnimation)
+    }
+
     private fun checkStunned(dt: Float) {
         if (stunTimer < stunFrequency) stunTimer += dt
         else if (stunTimer > stunFrequency) {
@@ -158,14 +173,6 @@ open class Enemy(x: Float, y: Float, s: Stage, open val player: Player) : BaseAc
         }
     }
 
-    private fun handleStun() {
-        stunTimer = 0f
-        stunned = true
-        hitting = false
-        actions.clear()
-        changeAnimation(stunnedAnimation)
-    }
-
     private fun hit() {
         if (player.health > 0) {
             hitting = true
@@ -174,17 +181,27 @@ open class Enemy(x: Float, y: Float, s: Stage, open val player: Player) : BaseAc
                 Actions.delay(hittingDelay),
                 Actions.run {
                     if ((width + player.width) * .85 > distance) {
-                        if (player.health > 0) // if player is still alive
-                            player.struck(spawnFromLeft)
-                        changeAnimation(hittingAnimation)
-                        BrokenHeart(x + width / 2, y + height, this.stage)
-                    }
-                },
-                Actions.delay(hittingAnimation.keyFrames.size * .1f), // WEAK: dependant on num frames in animation...
-                Actions.run {
-                    if (player.health > 0) {
-                        hitting = false
-                        changeAnimation(walkingAnimation)
+                        addAction(Actions.sequence(
+                            Actions.run {
+                                changeAnimation(hittingAnimation)
+                                BrokenHeart(x + width / 2, y + height, stage)
+                            },
+                            Actions.delay(.5f),
+                            Actions.run {
+                                if (player.health > 0) {
+                                    player.struck(spawnFromLeft)
+                                    hitting = false
+                                    enabled = true
+                                    changeAnimation(walkingAnimation)
+                                }
+                            }
+                        ))
+                    } else {
+                        if (player.health > 0) {
+                            hitting = false
+                            enabled = true
+                            changeAnimation(walkingAnimation)
+                        }
                     }
                 }
             ))
@@ -198,8 +215,11 @@ open class Enemy(x: Float, y: Float, s: Stage, open val player: Player) : BaseAc
         setDeceleration(originalDeceleration * BaseGame.tempo)
     }
 
-    private fun changeAnimation(animation: Animation<TextureAtlas.AtlasRegion>) {
-        setAnimation(animation)
-        setSize(originalWidth, originalHeight)
+    private fun handleStun() {
+        stunTimer = 0f
+        stunned = true
+        hitting = false
+        actions.clear()
+        changeAnimation(stunnedAnimation)
     }
 }
