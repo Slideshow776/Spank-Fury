@@ -31,13 +31,14 @@ class LevelScreen : BaseScreen() {
     private var score = 0
     private var scoreAwarded = 0
     private var bonus = 0
-    private var bonusMissModifier = 3
+    private var bonusMissModifier = .8f
     private var motivationNumber = 20
     private var gameTime = 0f
     private var pause = false
     private var overlayDuration = .125f
     private var playing = true
-    private lateinit var highscores: ArrayList<Pair<String, Int>>
+    private var enemySpeed = 20f
+    private var enemyHittingDelay = 1f
 
     private var spawnDifficulty = 1f
     private var easySpawnTimer = 0f
@@ -134,8 +135,26 @@ class LevelScreen : BaseScreen() {
 
         // increasing difficulty
         when {
-            gameTime < 60f -> spawnDifficulty = 1.25f
-            gameTime < 120f -> spawnDifficulty = 1.5f
+            gameTime < 60f -> {
+                enemySpeed = 25f
+                enemyHittingDelay = .8f
+                spawnDifficulty = 1.25f
+            }
+            gameTime < 120f -> {
+                enemySpeed = 30f
+                enemyHittingDelay = .75f
+                spawnDifficulty = 1.5f
+            }
+            gameTime < 180f -> {
+                enemySpeed = 35f
+                enemyHittingDelay = .5f
+                spawnDifficulty = 1.75f
+            }
+            gameTime < 240f -> {
+                enemySpeed = 40f
+                enemyHittingDelay = .25f
+                spawnDifficulty = 2f
+            }
         }
 
         // ui update
@@ -261,7 +280,7 @@ class LevelScreen : BaseScreen() {
             else player.hit(20f)
 
             touchIsDisabled()
-            if (bonus >= bonusMissModifier) bonus -= bonusMissModifier
+            if (bonus >= bonusMissModifier) bonus = (bonus * bonusMissModifier).toInt()
             else bonus = 0
             guiTable.handleMiss(bonus)
         }
@@ -288,7 +307,7 @@ class LevelScreen : BaseScreen() {
     }
 
     private fun noEnemiesExist(): Boolean {
-        return (BaseActor.count(mainStage, BaseEnemy::class.java.canonicalName) == 0)
+        return BaseActor.count(mainStage, BaseEnemy::class.java.canonicalName) == 0
     }
 
     private fun touchIsDisabled(): Boolean { // disallowing player spamming
@@ -356,36 +375,32 @@ class LevelScreen : BaseScreen() {
         easySpawnTimer += dt
         if (easySpawnTimer >= easySpawnFrequency / spawnDifficulty
             && BaseActor.count(mainStage, EasyEnemy::class.java.canonicalName) <= 8
-            && BaseActor.count(mainStage, EasyEnemy::class.java.canonicalName) < 5
         ) {
-            EasyEnemy(0f, 0f, mainStage, player)
+            EasyEnemy(0f, 0f, mainStage, player, enemySpeed, enemyHittingDelay)
             easySpawnTimer = 0f
         }
         mediumSpawnTimer += dt
         if (mediumSpawnTimer >= mediumSpawnFrequency / spawnDifficulty
             && BaseActor.count(mainStage, MediumEnemy::class.java.canonicalName) <= 8
             && gameTime > 30f
-            && BaseActor.count(mainStage, MediumEnemy::class.java.canonicalName) < 4
         ) {
-            MediumEnemy(0f, 0f, mainStage, player)
+            MediumEnemy(0f, 0f, mainStage, player, enemySpeed, enemyHittingDelay)
             mediumSpawnTimer = 0f
         }
         swapSpawnTimer += dt
         if (swapSpawnTimer >= swapSpawnFrequency / spawnDifficulty
             && BaseActor.count(mainStage, SwapEnemy::class.java.canonicalName) <= 8
             && gameTime > 40f
-            && BaseActor.count(mainStage, SwapEnemy::class.java.canonicalName) < 1
         ) {
-            SwapEnemy(0f, 0f, mainStage, player)
+            SwapEnemy(0f, 0f, mainStage, player, enemySpeed, enemyHittingDelay)
             swapSpawnTimer = 0f
         }
         hardSpawnTimer += dt
             if (hardSpawnTimer >= hardSpawnFrequency / spawnDifficulty
                 && BaseActor.count(mainStage, HardEnemy::class.java.canonicalName) <= 8
             && gameTime > 60f
-            && BaseActor.count(mainStage, HardEnemy::class.java.canonicalName) < 4
         ) {
-            HardEnemy(0f, 0f, mainStage, player)
+            HardEnemy(0f, 0f, mainStage, player, enemySpeed, enemyHittingDelay)
             hardSpawnTimer = 0f
         }
     }

@@ -59,13 +59,13 @@ class MenuScreen : BaseScreen() {
     private var playerHitTime = 1f
     private var spawnDifficulty = .8f
     private var easySpawnTimer = 0f
-    private val easySpawnFrequency = MathUtils.random(2f, 5f)
+    private val easySpawnFrequency = 3f
     private var mediumSpawnTimer = 0f
-    private val mediumSpawnFrequency = MathUtils.random(3f, 6f)
+    private val mediumSpawnFrequency = 5f
     private var swapSpawnTimer = 0f
-    private val swapSpawnFrequency = MathUtils.random(10f, 13f)
+    private val swapSpawnFrequency = 12f
     private var hardSpawnTimer = 0f
-    private val hardSpawnFrequency = MathUtils.random(13f, 18f)
+    private val hardSpawnFrequency = 15f
 
     override fun initialize() {
         // audio
@@ -298,7 +298,7 @@ class MenuScreen : BaseScreen() {
                 && BaseActor.count(mainStage, EasyEnemy::class.java.canonicalName) <= 8
                 && BaseActor.count(mainStage, EasyEnemy::class.java.canonicalName) < 5
         ) {
-            EasyEnemy(0f, 0f, mainStage, player)
+            EasyEnemy(0f, 0f, mainStage, player, 25f, 1f)
             easySpawnTimer = 0f
         }
         mediumSpawnTimer += dt
@@ -306,7 +306,7 @@ class MenuScreen : BaseScreen() {
                 && BaseActor.count(mainStage, MediumEnemy::class.java.canonicalName) <= 8
                 && BaseActor.count(mainStage, MediumEnemy::class.java.canonicalName) < 4
         ) {
-            MediumEnemy(0f, 0f, mainStage, player)
+            MediumEnemy(0f, 0f, mainStage, player, 25f, 1f)
             mediumSpawnTimer = 0f
         }
         swapSpawnTimer += dt
@@ -314,7 +314,7 @@ class MenuScreen : BaseScreen() {
                 && BaseActor.count(mainStage, SwapEnemy::class.java.canonicalName) <= 8
                 && BaseActor.count(mainStage, SwapEnemy::class.java.canonicalName) < 4
         ) {
-            SwapEnemy(0f, 0f, mainStage, player)
+            SwapEnemy(0f, 0f, mainStage, player, 25f, 1f)
             swapSpawnTimer = 0f
         }
         hardSpawnTimer += dt
@@ -322,7 +322,7 @@ class MenuScreen : BaseScreen() {
                 && BaseActor.count(mainStage, HardEnemy::class.java.canonicalName) <= 8
                 && BaseActor.count(mainStage, HardEnemy::class.java.canonicalName) < 4
         ) {
-            HardEnemy(0f, 0f, mainStage, player)
+            HardEnemy(0f, 0f, mainStage, player, 25f, 1f)
             hardSpawnTimer = 0f
         }
     }

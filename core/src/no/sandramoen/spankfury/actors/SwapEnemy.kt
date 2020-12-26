@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.Array
 import no.sandramoen.spankfury.utils.BaseGame
 
-class SwapEnemy(x: Float, y: Float, s: Stage, player: Player) : BaseEnemy(x, y, s, player) {
+class SwapEnemy(x: Float, y: Float, s: Stage, player: Player, originalSpeed: Float, hittingDelay: Float) : BaseEnemy(x, y, s, player, originalSpeed, hittingDelay) {
     private val token = "SwapEnemy.kt"
     override var health = 3
     lateinit var swapAnimation: Animation<TextureAtlas.AtlasRegion>

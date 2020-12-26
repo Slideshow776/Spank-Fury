@@ -11,13 +11,13 @@ import no.sandramoen.spankfury.utils.BaseActor
 import no.sandramoen.spankfury.utils.BaseGame
 import kotlin.math.abs
 
-open class BaseEnemy(x: Float, y: Float, s: Stage, open val player: Player) : BaseActor(x, y, s) {
+open class BaseEnemy(x: Float, y: Float, s: Stage, open val player: Player, originalSpeed: Float = 20f, hittingDelay: Float = 1f) : BaseActor(x, y, s) {
     private val token = "Enemy.kt"
     private val stunFrequency = 1f
     private var distance = 0f
-    private var originalSpeed = MathUtils.random(20f, 25f)
-    private var originalAcceleration = 100f // MathUtils.random(23f, 29f)
-    private var originalDeceleration = 100f // MathUtils.random(48f, 52f)
+    private var originalSpeed = originalSpeed
+    private var originalAcceleration = 100f
+    private var originalDeceleration = 100f
     private var tempo = BaseGame.tempo
     private var dead = false
 
@@ -31,7 +31,7 @@ open class BaseEnemy(x: Float, y: Float, s: Stage, open val player: Player) : Ba
     var spawnFromLeft = MathUtils.randomBoolean()
     var stunTimer = stunFrequency
     var hitting = false
-    var hittingDelay = 1f
+    var hittingDelay = hittingDelay
     var stunned = false
     var backOffDistanceModifier = 1f
     var enabled = true
@@ -184,11 +184,11 @@ open class BaseEnemy(x: Float, y: Float, s: Stage, open val player: Player) : Ba
                         addAction(Actions.sequence(
                             Actions.run {
                                 changeAnimation(hittingAnimation)
-                                BrokenHeart(x + width / 2, y + height, stage)
                             },
                             Actions.delay(.5f),
                             Actions.run {
                                 if (player.health > 0) {
+                                    BrokenHeart(x + width / 2, y + height, stage)
                                     player.struck(spawnFromLeft)
                                     hitting = false
                                     enabled = true
