@@ -11,7 +11,7 @@ import no.sandramoen.spankfury.utils.BaseActor
 import no.sandramoen.spankfury.utils.BaseGame
 import kotlin.math.abs
 
-open class Enemy(x: Float, y: Float, s: Stage, open val player: Player) : BaseActor(x, y, s) {
+open class BaseEnemy(x: Float, y: Float, s: Stage, open val player: Player) : BaseActor(x, y, s) {
     private val token = "Enemy.kt"
     private val stunFrequency = 1f
     private var distance = 0f

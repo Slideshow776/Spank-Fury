@@ -216,20 +216,20 @@ class LevelScreen : BaseScreen() {
     }
 
     private fun setEnemyBackOff(backOff: Boolean) {
-        for (baseActor: BaseActor in BaseActor.getList(mainStage, Enemy::class.java.canonicalName)) {
-            val enemy = baseActor as Enemy
+        for (baseActor: BaseActor in BaseActor.getList(mainStage, BaseEnemy::class.java.canonicalName)) {
+            val enemy = baseActor as BaseEnemy
             enemy.handleBackOff(backOff)
         }
     }
 
     // Checks if enemy may be hit or not, and triggers appropriate player, enemy and UI behaviour
     private fun checkEnemyHit(hitLeft: Boolean) {
-        var hitEnemy: Enemy? = null
+        var hitBaseEnemy: BaseEnemy? = null
         var distance = 0f
 
         // detect if we hit someone
-        for (baseActor: BaseActor in BaseActor.getList(mainStage, Enemy::class.java.canonicalName)) {
-            val enemy = baseActor as Enemy
+        for (baseActor: BaseActor in BaseActor.getList(mainStage, BaseEnemy::class.java.canonicalName)) {
+            val enemy = baseActor as BaseEnemy
 
             if (enemy.health <= 0) // dead enemies should not be counted
                 continue
@@ -241,17 +241,17 @@ class LevelScreen : BaseScreen() {
 
             // detect enemies in range
             if ((hitLeft && inRange && onLeftSide) || (!hitLeft && inRange && !onLeftSide)) {
-                hitEnemy = enemy
+                hitBaseEnemy = enemy
                 break
             }
         }
 
         // implement consequences of a hit or miss
-        if (hitEnemy == null) {
+        if (hitBaseEnemy == null) {
             handleMiss(hitLeft)
-        } else if (hitEnemy.health > 0) {
+        } else if (hitBaseEnemy.health > 0) {
             player.hit(distance)
-            hitEnemy(hitEnemy)
+            hitEnemy(hitBaseEnemy)
         }
     }
 
@@ -267,9 +267,9 @@ class LevelScreen : BaseScreen() {
         }
     }
 
-    private fun hitEnemy(enemy: Enemy) {
-        if (enemy.struck()) { // if this kills the enemy
-            scoreAwarded = enemy.points * (bonus + 1)
+    private fun hitEnemy(baseEnemy: BaseEnemy) {
+        if (baseEnemy.struck()) { // if this kills the enemy
+            scoreAwarded = baseEnemy.points * (bonus + 1)
             bonus++
             guiTable.updateBonus(bonus)
             score += scoreAwarded
@@ -283,12 +283,12 @@ class LevelScreen : BaseScreen() {
             }
             val tempLabel = ScoreLabel(mainStage, "+$scoreAwarded")
             tempLabel.scaleBy(-.6f)
-            tempLabel.centerAtActor(enemy)
+            tempLabel.centerAtActor(baseEnemy)
         }
     }
 
     private fun noEnemiesExist(): Boolean {
-        return (BaseActor.count(mainStage, Enemy::class.java.canonicalName) == 0)
+        return (BaseActor.count(mainStage, BaseEnemy::class.java.canonicalName) == 0)
     }
 
     private fun touchIsDisabled(): Boolean { // disallowing player spamming
@@ -339,8 +339,8 @@ class LevelScreen : BaseScreen() {
         // enable entities
         player.pause = false
         player.addAction(Actions.color(Color.WHITE, overlayDuration))
-        for (baseActor: BaseActor in BaseActor.getList(mainStage, Enemy::class.java.canonicalName)) {
-            val enemy = baseActor as Enemy
+        for (baseActor: BaseActor in BaseActor.getList(mainStage, BaseEnemy::class.java.canonicalName)) {
+            val enemy = baseActor as BaseEnemy
             enemy.pause = false
             enemy.addAction(Actions.color(enemy.originalColor, overlayDuration))
         }
@@ -405,7 +405,7 @@ class LevelScreen : BaseScreen() {
             Actions.color(Color.BLACK, overlayDuration),
             Actions.run { player.pause = true }
         ))
-        for (baseActor: BaseActor in BaseActor.getList(mainStage, Enemy::class.java.canonicalName)) {
+        for (baseActor: BaseActor in BaseActor.getList(mainStage, BaseEnemy::class.java.canonicalName)) {
             baseActor.addAction(Actions.sequence(
                 Actions.color(Color.BLACK, overlayDuration),
                 Actions.run { baseActor.pause = true }

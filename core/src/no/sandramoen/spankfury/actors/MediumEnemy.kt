@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.Array
 import no.sandramoen.spankfury.utils.BaseGame
 
-class MediumEnemy(x: Float, y: Float, s: Stage, player: Player) : Enemy(x, y, s, player) {
+class MediumEnemy(x: Float, y: Float, s: Stage, player: Player) : BaseEnemy(x, y, s, player) {
     private val token = "MediumEnemy.kt"
     override var health = 2
 

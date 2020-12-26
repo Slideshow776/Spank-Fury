@@ -17,7 +17,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
 import no.sandramoen.spankfury.actors.*
-import no.sandramoen.spankfury.screens.gameplay.LevelScreen
 import no.sandramoen.spankfury.utils.*
 import kotlin.math.abs
 
@@ -330,8 +329,8 @@ class MenuScreen : BaseScreen() {
 
     private fun playPlayer() {
         // detect if player may hit someone
-        for (baseActor: BaseActor in BaseActor.getList(mainStage, Enemy::class.java.canonicalName)) {
-            val enemy = baseActor as Enemy
+        for (baseActor: BaseActor in BaseActor.getList(mainStage, BaseEnemy::class.java.canonicalName)) {
+            val enemy = baseActor as BaseEnemy
 
             if (enemy.health <= 0) // dead enemies should not be counted
                 continue
