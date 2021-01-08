@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
@@ -17,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
 import no.sandramoen.spankfury.actors.*
+import no.sandramoen.spankfury.screens.gameplay.LevelScreen
 import no.sandramoen.spankfury.utils.*
 import kotlin.math.abs
 
@@ -28,7 +30,9 @@ class MenuScreen : BaseScreen() {
 
     // foreground - title
     private lateinit var titleTable: Table
-    private lateinit var titleTitleLabel: Label
+    private lateinit var titleTitle1: BaseActor
+    private lateinit var titleTitle2: BaseActor
+    private lateinit var titleTitle3: BaseActor
     private lateinit var titleTouchToStartLabel: Label
     private lateinit var titleMadeByLabel: Label
     private lateinit var titleLeftButtonImage: Image
@@ -74,10 +78,26 @@ class MenuScreen : BaseScreen() {
         BaseGame.levelMusic1!!.isLooping = true
 
         // foreground - Title ---------------------------------------------------------------
-        titleTitleLabel = Label("Spank Fury!", BaseGame.labelStyle)
-        titleTitleLabel.setFontScale(4f)
-        titleTitleLabel.color = Color.RED
-        titleTitleLabel.setAlignment(Align.center)
+        val titleScale = .45f
+        titleTitle1 = BaseActor(0f, 0f, mainStage)
+        titleTitle1.loadImage("title1")
+        titleTitle1.setSize(Gdx.graphics.width.toFloat() * .48f, Gdx.graphics.height.toFloat() * .35f)
+
+        titleTitle2 = BaseActor(0f, 0f, mainStage)
+        titleTitle2.loadImage("title2")
+        titleTitle2.setSize(Gdx.graphics.width.toFloat() * .48f, Gdx.graphics.height.toFloat() * .35f)
+
+        titleTitle3 = BaseActor(0f, 0f, mainStage)
+        titleTitle3.loadImage("title3")
+        titleTitle3.setSize(Gdx.graphics.width.toFloat() * .3f, Gdx.graphics.height.toFloat() * .15f)
+        titleTitle3.color.a = 0f
+        animateTitle()
+
+        val titleTitleTable = Table()
+        titleTitleTable.add(titleTitle1)
+        titleTitleTable.add(titleTitle2).row()
+        titleTitleTable.add(titleTitle3).colspan(2).top()
+        // titleTitleTable.debug = true
 
         titleTouchToStartLabel = Label("Touch to Play!", BaseGame.labelStyle)
         titleTouchToStartLabel.setAlignment(Align.center)
@@ -90,8 +110,8 @@ class MenuScreen : BaseScreen() {
         titleMadeByLabel.color = Color.DARK_GRAY
 
         // arcade buttons
-        var arcadeButtonWidth = Gdx.graphics.width * .125f
-        var arcadeButtonHeight = Gdx.graphics.height * .1f
+        var arcadeButtonWidth = Gdx.graphics.width * .14f
+        var arcadeButtonHeight = Gdx.graphics.height * .12f
 
         titleLeftButtonImage = Image(BaseGame.textureAtlas!!.findRegion("arcade-button-unpressed"))
         titleLeftButtonLabel = Label("Left attack", BaseGame.labelStyle)
@@ -111,28 +131,30 @@ class MenuScreen : BaseScreen() {
 
         titleTable = Table()
         titleTable.setFillParent(true)
-        titleTable.add(titleTitleLabel).expand().colspan(3).row()
+        titleTable.add(titleTitleTable).expand().fill().colspan(3).padBottom(Gdx.graphics.height * .1f).row()
         titleTable.add(leftButtonTable).width(arcadeButtonWidth).height(arcadeButtonHeight).bottom()
         titleTable.add(titleTouchToStartLabel).width(Gdx.graphics.width * .33f)
         titleTable.add(rightButtonTable).width(arcadeButtonWidth).height(arcadeButtonHeight).bottom().row()
-        titleTable.add(titleMadeByLabel).bottom().colspan(3).padTop(Gdx.graphics.height * .2f).padBottom(Gdx.graphics.height * .01f)
+        titleTable.add(titleMadeByLabel).bottom().colspan(3).padTop(Gdx.graphics.height * .2f)
+            .padBottom(Gdx.graphics.height * .01f)
+        // titleTable.debug = true
 
         // foreground - Menu ---------------------------------------------------------------
-        menuTitleLabel = Label("Spank Fury!", BaseGame.labelStyle)
-        menuTitleLabel.setFontScale(3f)
-        menuTitleLabel.color = Color.RED
-        menuTitleLabel.setAlignment(Align.center)
-
         startButton = TextButton("Start", BaseGame.textButtonStyle)
+        startButton.color = Color(0.113f, 0.968f, 0.282f, 1f)
         startButton.touchable = Touchable.disabled
         startButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
                 BaseGame.levelMusic1!!.stop()
                 screenTransition.fadeIn()
+                screenTransition.blackOverLay.addAction(Actions.after(Actions.run {
+                    BaseGame.setActiveScreen(LevelScreen())
+                }))
             }
         })
 
         optionsButton = TextButton("Options", BaseGame.textButtonStyle)
+        optionsButton.color = Color(0.968f, 0.815f, 0.113f, 1f)
         optionsButton.touchable = Touchable.disabled
         optionsButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
@@ -141,6 +163,7 @@ class MenuScreen : BaseScreen() {
         })
 
         exitButton = TextButton("Quit", BaseGame.textButtonStyle)
+        exitButton.color = Color(0.968f, 0.113f, 0.113f, 1f)
         exitButton.touchable = Touchable.disabled
         exitButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
@@ -151,10 +174,10 @@ class MenuScreen : BaseScreen() {
         menuTable = Table()
         menuTable.setFillParent(true)
         menuTable.color.a = 0f
-        menuTable.add(menuTitleLabel).padBottom(Gdx.graphics.height * .125f).row()
-        menuTable.add(startButton).padBottom(Gdx.graphics.height * .02f).row()
+        menuTable.add(startButton).padBottom(Gdx.graphics.height * .02f).padTop(Gdx.graphics.height * .25f).row()
         menuTable.add(optionsButton).padBottom(Gdx.graphics.height * .02f).row()
         menuTable.add(exitButton)
+        // menuTable.debug = true
 
         // foreground - Options ---------------------------------------------------------------
         optionsLabel = Label("Options", BaseGame.labelStyle)
@@ -231,10 +254,13 @@ class MenuScreen : BaseScreen() {
         optionsTable.color.a = 0f
         optionsTable.add(optionsLabel).colspan(2).padBottom(Gdx.graphics.height * .05f).row()
         optionsTable.add(optionsMusicSliderContainer).width(optionsWidgetWidth * 5 / 6).height(optionsWidgetHeight)
-        optionsTable.add(Label("Music", BaseGame.labelStyle)).width(optionsWidgetWidth * 1 / 6).padLeft(Gdx.graphics.width * .1f).row()
+        optionsTable.add(Label("Music", BaseGame.labelStyle)).width(optionsWidgetWidth * 1 / 6)
+            .padLeft(Gdx.graphics.width * .1f).row()
         optionsTable.add(optionsSoundSliderContainer).width(optionsWidgetWidth * 5 / 6).height(optionsWidgetHeight)
-        optionsTable.add(Label("Sounds", BaseGame.labelStyle)).width(optionsWidgetWidth * 1 / 6).padLeft(Gdx.graphics.width * .1f).row()
-        optionsTable.add(optionsVibrationCheckBox).width(optionsWidgetWidth).height(optionsWidgetHeight).colspan(2).row()
+        optionsTable.add(Label("Sounds", BaseGame.labelStyle)).width(optionsWidgetWidth * 1 / 6)
+            .padLeft(Gdx.graphics.width * .1f).row()
+        optionsTable.add(optionsVibrationCheckBox).width(optionsWidgetWidth).height(optionsWidgetHeight).colspan(2)
+            .row()
         optionsTable.add(optionsBackButton).width(optionsWidgetWidth).colspan(2)
         // optionsTable.debug = true
 
@@ -280,11 +306,11 @@ class MenuScreen : BaseScreen() {
     override fun keyDown(keycode: Int): Boolean {
         if (keycode == Keys.BACK || keycode == Keys.ESCAPE) {
             screenTransition.blackOverLay.addAction(Actions.sequence(
-                    Actions.fadeIn(1f),
-                    Actions.run {
-                        super.dispose()
-                        Gdx.app.exit()
-                    }
+                Actions.fadeIn(1f),
+                Actions.run {
+                    super.dispose()
+                    Gdx.app.exit()
+                }
             ))
         }
 
@@ -295,32 +321,32 @@ class MenuScreen : BaseScreen() {
     private fun spawnEnemies(dt: Float) {
         easySpawnTimer += dt
         if (easySpawnTimer >= easySpawnFrequency / spawnDifficulty
-                && BaseActor.count(mainStage, EasyEnemy::class.java.canonicalName) <= 8
-                && BaseActor.count(mainStage, EasyEnemy::class.java.canonicalName) < 5
+            && BaseActor.count(mainStage, EasyEnemy::class.java.canonicalName) <= 8
+            && BaseActor.count(mainStage, EasyEnemy::class.java.canonicalName) < 5
         ) {
             EasyEnemy(0f, 0f, mainStage, player, 25f, 1f)
             easySpawnTimer = 0f
         }
         mediumSpawnTimer += dt
         if (mediumSpawnTimer >= mediumSpawnFrequency / spawnDifficulty
-                && BaseActor.count(mainStage, MediumEnemy::class.java.canonicalName) <= 8
-                && BaseActor.count(mainStage, MediumEnemy::class.java.canonicalName) < 4
+            && BaseActor.count(mainStage, MediumEnemy::class.java.canonicalName) <= 8
+            && BaseActor.count(mainStage, MediumEnemy::class.java.canonicalName) < 4
         ) {
             MediumEnemy(0f, 0f, mainStage, player, 25f, 1f)
             mediumSpawnTimer = 0f
         }
         swapSpawnTimer += dt
         if (swapSpawnTimer >= swapSpawnFrequency / spawnDifficulty
-                && BaseActor.count(mainStage, SwapEnemy::class.java.canonicalName) <= 8
-                && BaseActor.count(mainStage, SwapEnemy::class.java.canonicalName) < 4
+            && BaseActor.count(mainStage, SwapEnemy::class.java.canonicalName) <= 8
+            && BaseActor.count(mainStage, SwapEnemy::class.java.canonicalName) < 4
         ) {
             SwapEnemy(0f, 0f, mainStage, player, 25f, 1f)
             swapSpawnTimer = 0f
         }
         hardSpawnTimer += dt
         if (hardSpawnTimer >= hardSpawnFrequency / spawnDifficulty
-                && BaseActor.count(mainStage, HardEnemy::class.java.canonicalName) <= 8
-                && BaseActor.count(mainStage, HardEnemy::class.java.canonicalName) < 4
+            && BaseActor.count(mainStage, HardEnemy::class.java.canonicalName) <= 8
+            && BaseActor.count(mainStage, HardEnemy::class.java.canonicalName) < 4
         ) {
             HardEnemy(0f, 0f, mainStage, player, 25f, 1f)
             hardSpawnTimer = 0f
@@ -345,26 +371,33 @@ class MenuScreen : BaseScreen() {
                 player.hit(distance)
                 background.act(player)
                 playerHitTime = 0f
-                if (distance < 0) pressButton(titleLeftButtonImage)
-                else pressButton(titleRightButtonImage)
+                if (distance < 0) pressButton(titleLeftButtonImage, true)
+                else pressButton(titleRightButtonImage, false)
                 break
             }
         }
     }
 
-    private fun pressButton(button: Image) {
+    private fun pressButton(button: Image, left: Boolean) {
         button.drawable = SpriteDrawable(Sprite(BaseGame.textureAtlas!!.findRegion("arcade-button-pressed")))
+        if (left) titleLeftButtonLabel.color = Color.WHITE
+        else titleRightButtonLabel.color = Color.WHITE
         button.addAction(Actions.sequence(
-                Actions.delay(playerHitFrequency),
-                Actions.run {
-                    button.drawable = SpriteDrawable(Sprite(BaseGame.textureAtlas!!.findRegion("arcade-button-unpressed")))
-                }
+            Actions.delay(playerHitFrequency),
+            Actions.run {
+                titleLeftButtonLabel.color = Color.GRAY
+                titleRightButtonLabel.color = Color.GRAY
+                button.drawable = SpriteDrawable(Sprite(BaseGame.textureAtlas!!.findRegion("arcade-button-unpressed")))
+            }
         ))
     }
 
     private fun changeToMenuOverlay() {
         titleTable.color.a = 0f
         menuTable.color.a = 1f
+        titleTitle1.isVisible = true
+        titleTitle2.isVisible = true
+        titleTitle3.isVisible = false
         optionsTable.color.a = 0f
         GameUtils.enableActorsWithDelay(startButton)
         GameUtils.enableActorsWithDelay(optionsButton)
@@ -378,6 +411,9 @@ class MenuScreen : BaseScreen() {
     private fun changeToOptionsOverlay() {
         titleTable.color.a = 0f
         menuTable.color.a = 0f
+        titleTitle1.isVisible = false
+        titleTitle2.isVisible = false
+        titleTitle3.isVisible = false
         optionsTable.color.a = 1f
         GameUtils.enableActorsWithDelay(optionsMusicSlider)
         GameUtils.enableActorsWithDelay(optionsSoundSlider)
@@ -386,5 +422,61 @@ class MenuScreen : BaseScreen() {
         startButton.touchable = Touchable.disabled
         optionsButton.touchable = Touchable.disabled
         exitButton.touchable = Touchable.disabled
+    }
+
+    private fun animateTitle() {
+        // first sequence
+        titleTitle1.setOrigin(Align.left)
+        titleTitle1.addAction(
+            Actions.sequence(
+                Actions.delay(1f),
+                Actions.scaleTo(.25f, 1f, .5f),
+                Actions.run { BaseGame.whipCrackSound!!.play(BaseGame.soundVolume) },
+                Actions.scaleTo(1.3f, 1f, .125f, Interpolation.pow5In),
+                Actions.scaleTo(1f, 1f, .125f)
+            )
+        )
+
+        // second sequence
+        titleTitle2.setOrigin(Align.right)
+        titleTitle2.addAction(
+            Actions.sequence(
+                Actions.delay(1.625f),
+                Actions.scaleTo(.75f, 1f, .125f, Interpolation.circleOut),
+                Actions.scaleTo(1f, 1f, 1f, Interpolation.bounceOut),
+                Actions.run { titleTitle2.setOrigin(Align.center) },
+                Actions.parallel(
+                    Actions.color(Color.RED, 2f, Interpolation.pow3OutInverse),
+                    Actions.sequence(
+                        Actions.scaleTo(.98f, .98f, .4f),
+                        Actions.scaleTo(1f, 1f, .4f),
+                        Actions.scaleTo(.98f, .98f, .4f),
+                        Actions.scaleTo(1f, 1f, .4f),
+                        Actions.scaleTo(.98f, .98f, .4f),
+                        Actions.scaleTo(1f, 1f, .4f),
+                        Actions.scaleTo(.98f, .98f, .4f),
+                        Actions.scaleTo(1f, 1f, .4f),
+                        Actions.scaleTo(.98f, .98f, .4f),
+                        Actions.scaleTo(1f, 1f, .4f),
+                        Actions.scaleTo(.98f, .98f, .4f),
+                        Actions.scaleTo(1f, 1f, .4f),
+                        Actions.scaleTo(.98f, .98f, .4f),
+                        Actions.scaleTo(1f, 1f, .4f)
+                    )
+                ),
+                Actions.color(Color.WHITE, 1f)
+            )
+        )
+
+        // third sequence
+        titleTitle3.addAction(
+            Actions.sequence(
+                Actions.delay(4f),
+                Actions.run { if (titleTitle3.isVisible) BaseGame.titlePowerUpSound!!.play(BaseGame.soundVolume) },
+                Actions.alpha(1f, 1.5f, Interpolation.bounceIn),
+                Actions.delay(5f),
+                Actions.fadeOut(1.5f)
+            )
+        )
     }
 }

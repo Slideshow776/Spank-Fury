@@ -2,7 +2,6 @@ package no.sandramoen.spankfury.screens.gameplay
 
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.actions.Actions

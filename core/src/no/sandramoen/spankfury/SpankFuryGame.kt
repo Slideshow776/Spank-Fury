@@ -1,4 +1,4 @@
-package no.sandramoen.spankfury;
+package no.sandramoen.spankfury
 
 import no.sandramoen.spankfury.screens.gameplay.LevelScreen
 import no.sandramoen.spankfury.screens.shell.MenuScreen

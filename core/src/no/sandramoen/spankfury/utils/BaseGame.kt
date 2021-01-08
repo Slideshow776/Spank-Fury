@@ -48,6 +48,8 @@ abstract class BaseGame : Game(), AssetErrorListener {
         var shockwaveShader: String? = null
         var levelMusic1: Music? = null
         var hitSound1: Sound? = null
+        var whipCrackSound: Sound? = null
+        var titlePowerUpSound: Sound? = null
         var vibrations: Boolean = false
 
         // game state
@@ -75,9 +77,10 @@ abstract class BaseGame : Game(), AssetErrorListener {
         assetManager.load("images/included/packed/spankFury.pack.atlas", TextureAtlas::class.java)
         assetManager.load("audio/music/Guile Theme.ogg", Music::class.java)
         assetManager.load("audio/sound/hit.wav", Sound::class.java)
+        assetManager.load("audio/sound/93100__cgeffex__whip-crack-01.wav", Sound::class.java)
+        assetManager.load("audio/sound/Powerup5.bfxrsound.wav", Sound::class.java)
 
         // assetManager.load("skins/default/uiskin.json", Skin::class.java)
-
 
         val resolver = InternalFileHandleResolver()
         assetManager.setLoader(FreeTypeFontGenerator::class.java, FreeTypeFontGeneratorLoader(resolver))
@@ -93,6 +96,8 @@ abstract class BaseGame : Game(), AssetErrorListener {
         // audio
         levelMusic1 = assetManager.get("audio/music/Guile Theme.ogg", Music::class.java)
         hitSound1 = assetManager.get("audio/sound/hit.wav", Sound::class.java)
+        whipCrackSound = assetManager.get("audio/sound/93100__cgeffex__whip-crack-01.wav", Sound::class.java)
+        titlePowerUpSound = assetManager.get("audio/sound/Powerup5.bfxrsound.wav", Sound::class.java)
 
         // text files
         defaultShader = assetManager.get("shaders/default.vs", Text::class.java).getString()
