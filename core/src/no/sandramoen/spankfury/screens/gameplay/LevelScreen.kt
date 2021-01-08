@@ -40,15 +40,15 @@ class LevelScreen : BaseScreen() {
     private var enemySpeed = 20f
     private var enemyHittingDelay = 1f
 
-    private var spawnDifficulty = 1f
+    private var spawnDifficulty = 0f
     private var easySpawnTimer = 0f
-    private val easySpawnFrequency = MathUtils.random(2f, 5f)
+    private val easySpawnFrequency = 3f
     private var mediumSpawnTimer = 0f
-    private val mediumSpawnFrequency = MathUtils.random(3f, 6f)
+    private val mediumSpawnFrequency = 4f
     private var swapSpawnTimer = 0f
-    private val swapSpawnFrequency = MathUtils.random(10f, 13f)
+    private val swapSpawnFrequency = 12f
     private var hardSpawnTimer = 0f
-    private val hardSpawnFrequency = MathUtils.random(13f, 18f)
+    private val hardSpawnFrequency = 15f
 
     private var controlFrequency = 1f
     private var controlTimer = controlFrequency
@@ -135,25 +135,30 @@ class LevelScreen : BaseScreen() {
 
         // increasing difficulty
         when {
-            gameTime < 60f -> {
+            gameTime < 30f -> {
                 enemySpeed = 25f
+                enemyHittingDelay = 1f
+                spawnDifficulty = 1.5f
+            }
+            gameTime < 60f -> {
+                enemySpeed = 27f
                 enemyHittingDelay = .8f
-                spawnDifficulty = 1.25f
+                spawnDifficulty = 1.75f
             }
             gameTime < 120f -> {
                 enemySpeed = 30f
                 enemyHittingDelay = .75f
-                spawnDifficulty = 1.5f
+                spawnDifficulty = 2.0f
             }
             gameTime < 180f -> {
                 enemySpeed = 35f
                 enemyHittingDelay = .5f
-                spawnDifficulty = 1.75f
+                spawnDifficulty = 2.5f
             }
             gameTime < 240f -> {
                 enemySpeed = 40f
                 enemyHittingDelay = .25f
-                spawnDifficulty = 2f
+                spawnDifficulty = 3.0f
             }
         }
 

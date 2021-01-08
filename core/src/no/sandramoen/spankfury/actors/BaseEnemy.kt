@@ -92,7 +92,7 @@ open class BaseEnemy(x: Float, y: Float, s: Stage, open val player: Player, orig
         applyPhysics(dt)
 
         if (player.health <= 0) { // sets animation to idle after game ends
-            actions.clear()
+            if(!dead) actions.clear()
             changeAnimation(idleAnimation)
             dead = true
         }
@@ -102,13 +102,9 @@ open class BaseEnemy(x: Float, y: Float, s: Stage, open val player: Player, orig
         var playerHasBackToEnemy = (spawnFromLeft && player.isFacingRight) || (!spawnFromLeft && !player.isFacingRight)
         if (playerHasBackToEnemy && backOff) {
             backOffDistanceModifier = 4f
-            actions.clear()
+            if(!dead) actions.clear()
             hitting = false
             changeAnimation(walkingAnimation)
-            /*addAction(Actions.sequence(
-                Actions.delay(BaseGame.backOffFrequency),
-                Actions.run { changeAnimation(walkingAnimation) }
-            ))*/
         } else backOffDistanceModifier = 1f
     }
 
@@ -159,7 +155,7 @@ open class BaseEnemy(x: Float, y: Float, s: Stage, open val player: Player, orig
 
     fun resetActions() {
         hitting = false
-        actions.clear()
+        if(!dead) actions.clear()
         changeAnimation(walkingAnimation)
     }
 
@@ -219,7 +215,7 @@ open class BaseEnemy(x: Float, y: Float, s: Stage, open val player: Player, orig
         stunTimer = 0f
         stunned = true
         hitting = false
-        actions.clear()
+        if(!dead) actions.clear()
         changeAnimation(stunnedAnimation)
     }
 }
