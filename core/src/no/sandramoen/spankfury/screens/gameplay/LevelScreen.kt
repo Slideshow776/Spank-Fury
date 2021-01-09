@@ -301,6 +301,7 @@ class LevelScreen : BaseScreen() {
                 guiTable.setMotivation(bonus)
             if (BaseGame.highScore < score) {
                 BaseGame.highScore = score
+                gameOverTable.newHighScore = true
                 guiTable.setPersonalBestLabel()
                 GameUtils.saveGameState()
             }
@@ -324,6 +325,7 @@ class LevelScreen : BaseScreen() {
     private fun changeToGameOverOverlay() {
         gameOverLabelTable.color.a = 0f
         gameOverTable.updateHighScoreTable()
+        gameOverTable.setMotivationalText()
         gameOverTable.setScoreLabel(score)
         gameOverTable.enableButtons()
         gameOverTable.fadeIn(overlayDuration)

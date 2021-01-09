@@ -51,6 +51,9 @@ abstract class BaseGame : Game(), AssetErrorListener {
         var whipCrackSound: Sound? = null
         var titlePowerUpSound: Sound? = null
         var vibrations: Boolean = false
+        var green = Color(0.113f, 0.968f, 0.282f, 1f)
+        var yellow = Color(0.968f, 0.815f, 0.113f, 1f)
+        var red = Color(0.968f, 0.113f, 0.113f, 1f)
 
         // game state
         var prefs: Preferences? = null

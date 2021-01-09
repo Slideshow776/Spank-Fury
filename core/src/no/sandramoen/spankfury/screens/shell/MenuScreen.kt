@@ -141,7 +141,7 @@ class MenuScreen : BaseScreen() {
 
         // foreground - Menu ---------------------------------------------------------------
         startButton = TextButton("Start", BaseGame.textButtonStyle)
-        startButton.color = Color(0.113f, 0.968f, 0.282f, 1f)
+        startButton.color = BaseGame.green
         startButton.touchable = Touchable.disabled
         startButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
@@ -154,7 +154,7 @@ class MenuScreen : BaseScreen() {
         })
 
         optionsButton = TextButton("Options", BaseGame.textButtonStyle)
-        optionsButton.color = Color(0.968f, 0.815f, 0.113f, 1f)
+        optionsButton.color = BaseGame.yellow
         optionsButton.touchable = Touchable.disabled
         optionsButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
@@ -163,7 +163,7 @@ class MenuScreen : BaseScreen() {
         })
 
         exitButton = TextButton("Quit", BaseGame.textButtonStyle)
-        exitButton.color = Color(0.968f, 0.113f, 0.113f, 1f)
+        exitButton.color = BaseGame.red
         exitButton.touchable = Touchable.disabled
         exitButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
