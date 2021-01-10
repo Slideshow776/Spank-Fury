@@ -28,24 +28,24 @@ class LevelPauseTable : Table() {
         // buttons
         menuTextButton = initializeTextButton("Menu", Color.YELLOW)
         continueTextButton = initializeTextButton("Continue", Color.GREEN)
-        continueTextButton.width = Gdx.graphics.width * .25f
-        continueTextButton.height = Gdx.graphics.height * .125f
-
         exitTextButton = initializeTextButton("Quit", Color.RED)
+
         add(continueTextButton).width(Gdx.graphics.width * .25f).height(Gdx.graphics.height * .125f).padBottom(Gdx.graphics.height * .05f).padTop(Gdx.graphics.height * .25f).row()
         add(menuTextButton).width(Gdx.graphics.width * .25f).height(Gdx.graphics.height * .125f).padBottom(Gdx.graphics.height * .05f).row()
         add(exitTextButton).width(Gdx.graphics.width * .25f).height(Gdx.graphics.height * .125f).row()
-        continueTextButton.debug = true
-        debug = true
+        /*continueTextButton.debug = true
+        menuTextButton.debug = true
+        exitTextButton.debug = true
+        debug = true*/
     }
 
     fun fadeInAndEnable(overlayDuration: Float) {
         addAction(Actions.fadeIn(overlayDuration))
 
         // enable menu buttons
-        GameUtils.enableActorsWithDelay(menuTextButton)
-        GameUtils.enableActorsWithDelay(continueTextButton)
-        GameUtils.enableActorsWithDelay(exitTextButton)
+        menuTextButton.touchable = Touchable.enabled
+        continueTextButton.touchable = Touchable.enabled
+        exitTextButton.touchable = Touchable.enabled
     }
 
     fun fadeOutAndDisable(overlayDuration: Float) {

@@ -116,8 +116,8 @@ class LevelScreen : BaseScreen() {
         stack.setFillParent(true)
         stack.add(guiTable)
         stack.add(gameOverLabelTable)
-        stack.add(pauseTable)
         stack.add(gameOverTable)
+        stack.add(pauseTable) // interactable tables need to be on top, or handled to be allowed to be interactable.
         stack.add(screenTransition.blackOverLay)
         uiStage.addActor(stack)
     }
