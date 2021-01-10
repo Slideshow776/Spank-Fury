@@ -74,11 +74,11 @@ class LevelScreen : BaseScreen() {
         guiTable = LevelGuiTable()
 
         // pause menu overlay
-
         pauseTable = LevelPauseTable()
         pauseTable.menuTextButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
                 screenTransition.blackOverLay.addAction(Actions.sequence(
+                    Actions.run { BaseGame.clickSound!!.play(BaseGame.soundVolume) },
                     Actions.fadeIn(1f),
                     Actions.run { BaseGame.setActiveScreen(MenuScreen()) }
                 ))
@@ -86,11 +86,13 @@ class LevelScreen : BaseScreen() {
         })
         pauseTable.continueTextButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
+                BaseGame.clickSound!!.play(BaseGame.soundVolume)
                 changeToPlayOverlay()
             }
         })
         pauseTable.exitTextButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
+                BaseGame.clickSound!!.play(BaseGame.soundVolume)
                 screenTransition.fadeInAndExit()
             }
         })

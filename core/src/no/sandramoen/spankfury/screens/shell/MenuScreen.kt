@@ -79,8 +79,7 @@ class MenuScreen : BaseScreen() {
 
         mainStage.addListener(object : ActorGestureListener() {
             override fun tap (event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
-                if (!pressOverlay) {
-                    println("$token: mainStage tapped!")
+                if (!pressOverlay && optionsTable.color.a != 1f) {
                     changeToTitleOverlay()
                     pressOverlay = true
                 }
@@ -160,6 +159,7 @@ class MenuScreen : BaseScreen() {
         startButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
                 BaseGame.levelMusic1!!.stop()
+                BaseGame.clickSound!!.play(BaseGame.soundVolume)
                 screenTransition.fadeIn()
                 screenTransition.blackOverLay.addAction(Actions.after(Actions.run {
                     BaseGame.setActiveScreen(LevelScreen())
@@ -172,6 +172,7 @@ class MenuScreen : BaseScreen() {
         optionsButton.touchable = Touchable.disabled
         optionsButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
+                BaseGame.clickSound!!.play(BaseGame.soundVolume)
                 changeToOptionsOverlay()
             }
         })
@@ -181,6 +182,7 @@ class MenuScreen : BaseScreen() {
         exitButton.touchable = Touchable.disabled
         exitButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
+                BaseGame.clickSound!!.play(BaseGame.soundVolume)
                 screenTransition.fadeInAndExit()
             }
         })
@@ -245,7 +247,6 @@ class MenuScreen : BaseScreen() {
             override fun changed(event: ChangeEvent?, actor: Actor?) {
                 BaseGame.vibrations = !BaseGame.vibrations
                 if (BaseGame.vibrations) Gdx.input.vibrate(100)
-                BaseGame.hitSound1!!.play(BaseGame.soundVolume)
                 GameUtils.saveGameState()
             }
         })
@@ -262,6 +263,7 @@ class MenuScreen : BaseScreen() {
         optionsBackButton.touchable = Touchable.disabled
         optionsBackButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
+                BaseGame.clickSound!!.play(BaseGame.soundVolume)
                 changeToMenuOverlay()
             }
         })
@@ -294,8 +296,8 @@ class MenuScreen : BaseScreen() {
         stack.setFillParent(true)
         stack.add(titleTable)
         stack.add(menuTable)
-        stack.add(screenTransition.blackOverLay)
         stack.add(optionsTable)
+        stack.add(screenTransition.blackOverLay)
         uiStage.addActor(stack)
 
         // titleTable.debug = true

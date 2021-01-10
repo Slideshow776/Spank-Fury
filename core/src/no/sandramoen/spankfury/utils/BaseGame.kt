@@ -50,6 +50,7 @@ abstract class BaseGame : Game(), AssetErrorListener {
         var hitSound1: Sound? = null
         var whipCrackSound: Sound? = null
         var titlePowerUpSound: Sound? = null
+        var clickSound: Sound? = null
         var vibrations: Boolean = false
         var green = Color(0.113f, 0.968f, 0.282f, 1f)
         var yellow = Color(0.968f, 0.815f, 0.113f, 1f)
@@ -82,6 +83,7 @@ abstract class BaseGame : Game(), AssetErrorListener {
         assetManager.load("audio/sound/hit.wav", Sound::class.java)
         assetManager.load("audio/sound/93100__cgeffex__whip-crack-01.wav", Sound::class.java)
         assetManager.load("audio/sound/Powerup5.bfxrsound.wav", Sound::class.java)
+        assetManager.load("audio/sound/click1.wav", Sound::class.java)
 
         // assetManager.load("skins/default/uiskin.json", Skin::class.java)
 
@@ -101,6 +103,7 @@ abstract class BaseGame : Game(), AssetErrorListener {
         hitSound1 = assetManager.get("audio/sound/hit.wav", Sound::class.java)
         whipCrackSound = assetManager.get("audio/sound/93100__cgeffex__whip-crack-01.wav", Sound::class.java)
         titlePowerUpSound = assetManager.get("audio/sound/Powerup5.bfxrsound.wav", Sound::class.java)
+        clickSound = assetManager.get("audio/sound/click1.wav", Sound::class.java)
 
         // text files
         defaultShader = assetManager.get("shaders/default.vs", Text::class.java).getString()

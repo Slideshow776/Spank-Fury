@@ -13,11 +13,11 @@ import no.sandramoen.spankfury.utils.GameUtils
 import no.sandramoen.spankfury.utils.ScreenTransition
 
 class LevelPauseTable : Table() {
-    lateinit var menuTextButton: TextButton
-    lateinit var continueTextButton: TextButton
-    lateinit var exitTextButton: TextButton
+    var menuTextButton: TextButton
+    var continueTextButton: TextButton
+    var exitTextButton: TextButton
 
-    private lateinit var screenTransition: ScreenTransition
+    private var screenTransition: ScreenTransition
 
     init {
         color.a = 0f
@@ -28,10 +28,15 @@ class LevelPauseTable : Table() {
         // buttons
         menuTextButton = initializeTextButton("Menu", Color.YELLOW)
         continueTextButton = initializeTextButton("Continue", Color.GREEN)
+        continueTextButton.width = Gdx.graphics.width * .25f
+        continueTextButton.height = Gdx.graphics.height * .125f
+
         exitTextButton = initializeTextButton("Quit", Color.RED)
-        add(continueTextButton).width(Gdx.graphics.width * .25f).height(Gdx.graphics.height * .125f).padBottom(Gdx.graphics.height * .05f).row()
+        add(continueTextButton).width(Gdx.graphics.width * .25f).height(Gdx.graphics.height * .125f).padBottom(Gdx.graphics.height * .05f).padTop(Gdx.graphics.height * .25f).row()
         add(menuTextButton).width(Gdx.graphics.width * .25f).height(Gdx.graphics.height * .125f).padBottom(Gdx.graphics.height * .05f).row()
         add(exitTextButton).width(Gdx.graphics.width * .25f).height(Gdx.graphics.height * .125f).row()
+        continueTextButton.debug = true
+        debug = true
     }
 
     fun fadeInAndEnable(overlayDuration: Float) {

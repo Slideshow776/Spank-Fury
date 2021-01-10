@@ -87,6 +87,7 @@ class LevelGameOverTable : Table() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
                 addAction(
                     Actions.sequence(
+                        Actions.run { BaseGame.clickSound!!.play(BaseGame.soundVolume) },
                         Actions.fadeIn(1f),
                         Actions.run {
                             BaseGame.tempo = 1f // reset
@@ -102,6 +103,7 @@ class LevelGameOverTable : Table() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
                 addAction(
                     Actions.sequence(
+                        Actions.run { BaseGame.clickSound!!.play(BaseGame.soundVolume) },
                         Actions.fadeIn(1f),
                         Actions.run {
                             BaseGame.tempo = 1f // reset
