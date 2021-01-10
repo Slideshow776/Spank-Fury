@@ -242,6 +242,7 @@ class MenuScreen : BaseScreen() {
 
         // back button
         optionsBackButton = TextButton("Back", BaseGame.textButtonStyle)
+        optionsBackButton.color = BaseGame.yellow
         optionsBackButton.touchable = Touchable.disabled
         optionsBackButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
@@ -314,7 +315,7 @@ class MenuScreen : BaseScreen() {
             ))
         }
 
-        if (time >= disableTime) changeToMenuOverlay()
+        /*if (time >= disableTime) changeToMenuOverlay()*/
         return false
     }
 
