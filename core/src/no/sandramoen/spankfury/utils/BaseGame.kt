@@ -23,6 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 
 
 abstract class BaseGame : Game(), AssetErrorListener {
@@ -139,9 +140,12 @@ abstract class BaseGame : Game(), AssetErrorListener {
         labelStyle!!.font = customFont
 
         textButtonStyle = TextButtonStyle()
-        val buttonTex = textureAtlas!!.findRegion("button")
-        val buttonPatch = NinePatch(buttonTex, 24, 24, 24, 24)
-        textButtonStyle!!.up = NinePatchDrawable(buttonPatch)
+        val buttonTexUp = textureAtlas!!.findRegion("button")
+        val buttonTexDown = textureAtlas!!.findRegion("button-pressed")
+        val buttonPatchUp = NinePatch(buttonTexUp, 24, 24, 24, 24)
+        val buttonPatchDown = NinePatch(buttonTexDown, 24, 24, 24, 24)
+        textButtonStyle!!.up = NinePatchDrawable(buttonPatchUp)
+        textButtonStyle!!.down = NinePatchDrawable(buttonPatchDown)
         textButtonStyle!!.font = buttonCustomFont
         textButtonStyle!!.fontColor = Color.WHITE
     }
