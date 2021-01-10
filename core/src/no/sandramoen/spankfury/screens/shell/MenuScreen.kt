@@ -77,6 +77,20 @@ class MenuScreen : BaseScreen() {
         BaseGame.levelMusic1!!.volume = BaseGame.musicVolume
         BaseGame.levelMusic1!!.isLooping = true
 
+        mainStage.addListener(object : ActorGestureListener() {
+            override fun tap (event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
+                if (!pressOverlay) {
+                    println("$token: mainStage tapped!")
+                    changeToTitleOverlay()
+                    pressOverlay = true
+                }
+                else if (time >= disableTime && pressOverlay) {
+                    changeToMenuOverlay()
+                    pressOverlay = false
+                }
+            }
+        })
+
         // foreground - Title ---------------------------------------------------------------
         val titleScale = .45f
         titleTitle1 = BaseActor(0f, 0f, mainStage)
@@ -174,9 +188,11 @@ class MenuScreen : BaseScreen() {
         menuTable = Table()
         menuTable.setFillParent(true)
         menuTable.color.a = 0f
-        menuTable.add(startButton).padBottom(Gdx.graphics.height * .02f).padTop(Gdx.graphics.height * .25f).row()
-        menuTable.add(optionsButton).padBottom(Gdx.graphics.height * .02f).row()
-        menuTable.add(exitButton)
+        menuTable.add(startButton).width(Gdx.graphics.width * .25f).height(Gdx.graphics.height * .125f)
+            .padBottom(Gdx.graphics.height * .04f).padTop(Gdx.graphics.height * .25f).row()
+        menuTable.add(optionsButton).width(Gdx.graphics.width * .25f).height(Gdx.graphics.height * .125f)
+            .padBottom(Gdx.graphics.height * .04f).row()
+        menuTable.add(exitButton).width(Gdx.graphics.width * .25f).height(Gdx.graphics.height * .125f)
         // menuTable.debug = true
 
         // foreground - Options ---------------------------------------------------------------
@@ -262,7 +278,8 @@ class MenuScreen : BaseScreen() {
             .padLeft(Gdx.graphics.width * .1f).row()
         optionsTable.add(optionsVibrationCheckBox).width(optionsWidgetWidth).height(optionsWidgetHeight).colspan(2)
             .row()
-        optionsTable.add(optionsBackButton).width(optionsWidgetWidth).colspan(2)
+        optionsTable.add(optionsBackButton).width(Gdx.graphics.width * .25f).height(Gdx.graphics.height * .125f)
+            .colspan(2)
         // optionsTable.debug = true
 
         // background
@@ -294,14 +311,6 @@ class MenuScreen : BaseScreen() {
             playerHitTime += dt
         spawnEnemies(dt)
         playPlayer()
-    }
-
-    override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-        if (time >= disableTime && pressOverlay) {
-            changeToMenuOverlay()
-            pressOverlay = false
-        }
-        return false
     }
 
     override fun keyDown(keycode: Int): Boolean {
@@ -403,6 +412,22 @@ class MenuScreen : BaseScreen() {
         GameUtils.enableActorsWithDelay(startButton)
         GameUtils.enableActorsWithDelay(optionsButton)
         GameUtils.enableActorsWithDelay(exitButton)
+        optionsMusicSlider.touchable = Touchable.disabled
+        optionsSoundSlider.touchable = Touchable.disabled
+        optionsBackButton.touchable = Touchable.disabled
+        optionsVibrationCheckBox.touchable = Touchable.disabled
+    }
+
+    private fun changeToTitleOverlay() {
+        titleTable.color.a = 1f
+        menuTable.color.a = 0f
+        titleTitle1.isVisible = true
+        titleTitle2.isVisible = true
+        titleTitle3.isVisible = false
+        optionsTable.color.a = 0f
+        startButton.touchable = Touchable.disabled
+        optionsButton.touchable = Touchable.disabled
+        exitButton.touchable = Touchable.disabled
         optionsMusicSlider.touchable = Touchable.disabled
         optionsSoundSlider.touchable = Touchable.disabled
         optionsBackButton.touchable = Touchable.disabled

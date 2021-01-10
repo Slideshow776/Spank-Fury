@@ -29,9 +29,9 @@ class LevelPauseTable : Table() {
         menuTextButton = initializeTextButton("Menu", Color.YELLOW)
         continueTextButton = initializeTextButton("Continue", Color.GREEN)
         exitTextButton = initializeTextButton("Quit", Color.RED)
-        add(menuTextButton).expand().padBottom(Gdx.graphics.height * 1 / 4f).right()
-        add(continueTextButton).expand().padBottom(Gdx.graphics.height * 1 / 4f)
-        add(exitTextButton).expand().padBottom(Gdx.graphics.height * 1 / 4f).left()
+        add(continueTextButton).width(Gdx.graphics.width * .25f).height(Gdx.graphics.height * .125f).padBottom(Gdx.graphics.height * .05f).row()
+        add(menuTextButton).width(Gdx.graphics.width * .25f).height(Gdx.graphics.height * .125f).padBottom(Gdx.graphics.height * .05f).row()
+        add(exitTextButton).width(Gdx.graphics.width * .25f).height(Gdx.graphics.height * .125f).row()
     }
 
     fun fadeInAndEnable(overlayDuration: Float) {

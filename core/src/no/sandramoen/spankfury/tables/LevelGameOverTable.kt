@@ -120,8 +120,8 @@ class LevelGameOverTable : Table() {
         add(gameOverScoreTable).colspan(2).padBottom(Gdx.graphics.height * .05f).row()
         add(motivationalText).colspan(2).padBottom(Gdx.graphics.height * .05f).row()
         add(highScoreTable).colspan(2).padBottom(Gdx.graphics.height * .05f).row()
-        add(gameOverMenuButton).left()
-        add(gameOverPlayButton).right()
+        add(gameOverMenuButton).width(Gdx.graphics.width * .25f).height(Gdx.graphics.height * .125f).left()
+        add(gameOverPlayButton).width(Gdx.graphics.width * .25f).height(Gdx.graphics.height * .125f).right()
         // debug = true
 
         // black transition overlay
