@@ -42,8 +42,8 @@ class GameUtils {
 
         fun pulseLabel(label: Label, lowestAlpha: Float = .5f, duration: Float = .5f) {
             label.addAction(Actions.forever(Actions.sequence(
-                    Actions.alpha(1f, .5f),
-                    Actions.alpha(.5f, .5f)
+                    Actions.alpha(1f, duration),
+                    Actions.alpha(lowestAlpha, duration)
             )))
         }
 
@@ -56,9 +56,9 @@ class GameUtils {
             BaseGame.levelMusic1!!.volume = BaseGame.musicVolume
         }
 
-        fun enableActorsWithDelay(actor: Actor) {
+        fun enableActorsWithDelay(actor: Actor, delay: Float = .5f) {
             actor.addAction(Actions.sequence(
-                    Actions.delay(.5f),
+                    Actions.delay(delay),
                     Actions.run { actor.touchable = Touchable.enabled }
             ))
         }

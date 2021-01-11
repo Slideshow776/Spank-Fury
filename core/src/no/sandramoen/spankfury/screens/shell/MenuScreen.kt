@@ -80,13 +80,13 @@ class MenuScreen : BaseScreen() {
         mainStage.addListener(object : ActorGestureListener() {
             override fun tap (event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
                 if (!pressOverlay && optionsTable.color.a != 1f && mainStageDelay.actions.size == 0) {
-                    changeToTitleOverlay()
                     pressOverlay = true
+                    changeToTitleOverlay()
                 }
                 else if (time >= disableTime && pressOverlay) {
+                    pressOverlay = false
                     changeToMenuOverlay()
                     mainStageDelay.addAction(Actions.delay(1f))
-                    pressOverlay = false
                 }
             }
         })
@@ -248,6 +248,7 @@ class MenuScreen : BaseScreen() {
         optionsVibrationCheckBox.addListener(object : ChangeListener() {
             override fun changed(event: ChangeEvent?, actor: Actor?) {
                 BaseGame.vibrations = !BaseGame.vibrations
+                BaseGame.clickSound!!.play(BaseGame.soundVolume)
                 if (BaseGame.vibrations) Gdx.input.vibrate(100)
                 GameUtils.saveGameState()
             }
@@ -255,7 +256,7 @@ class MenuScreen : BaseScreen() {
         optionsVibrationCheckBox.isTransform = true
         optionsVibrationCheckBox.image.setScaling(Scaling.fill)
         optionsVibrationCheckBox.imageCell.size(optionsWidgetWidth * .125f)
-        optionsVibrationCheckBox.label.setFontScale(3f)
+        optionsVibrationCheckBox.label.setFontScale(3.5f)
         optionsVibrationCheckBox.setOrigin(optionsWidgetWidth / 2, optionsWidgetHeight / 2)
         if (Gdx.app.type == Application.ApplicationType.Desktop) optionsVibrationCheckBox.color.a = 0f
 
@@ -276,10 +277,10 @@ class MenuScreen : BaseScreen() {
         optionsTable.add(optionsLabel).colspan(2).padBottom(Gdx.graphics.height * .05f).row()
         optionsTable.add(optionsMusicSliderContainer).width(optionsWidgetWidth * 5 / 6).height(optionsWidgetHeight)
         optionsTable.add(Label("Music", BaseGame.labelStyle)).width(optionsWidgetWidth * 1 / 6)
-            .padLeft(Gdx.graphics.width * .1f).row()
+            .padLeft(Gdx.graphics.width * .11f).row()
         optionsTable.add(optionsSoundSliderContainer).width(optionsWidgetWidth * 5 / 6).height(optionsWidgetHeight)
         optionsTable.add(Label("Sounds", BaseGame.labelStyle)).width(optionsWidgetWidth * 1 / 6)
-            .padLeft(Gdx.graphics.width * .1f).row()
+            .padLeft(Gdx.graphics.width * .11f).row()
         optionsTable.add(optionsVibrationCheckBox).width(optionsWidgetWidth).height(optionsWidgetHeight).colspan(2)
             .row()
         optionsTable.add(optionsBackButton).width(Gdx.graphics.width * .25f).height(Gdx.graphics.height * .125f)
@@ -427,8 +428,11 @@ class MenuScreen : BaseScreen() {
         titleTitle2.isVisible = true
         titleTitle3.isVisible = false
         optionsTable.color.a = 0f
+        startButton.clearActions() // buttons are enabled with delay, need to cancel delay
         startButton.touchable = Touchable.disabled
+        optionsButton.clearActions() // buttons are enabled with delay, need to cancel delay
         optionsButton.touchable = Touchable.disabled
+        exitButton.clearActions() // buttons are enabled with delay, need to cancel delay
         exitButton.touchable = Touchable.disabled
         optionsMusicSlider.touchable = Touchable.disabled
         optionsSoundSlider.touchable = Touchable.disabled
