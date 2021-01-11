@@ -22,9 +22,10 @@ class BrokenHeart(x: Float, y: Float, s: Stage) : BaseActor(x, y, s) {
 
         // properties
         setSize(
-            (BaseGame.WORLD_WIDTH / 25) * BaseGame.scale,
-            (BaseGame.WORLD_HEIGHT / 25) * (Gdx.graphics.width / Gdx.graphics.height) * BaseGame.scale
+            (BaseGame.WORLD_WIDTH / 20) * BaseGame.scale,
+            (BaseGame.WORLD_HEIGHT / 20) * (Gdx.graphics.width.toFloat() / Gdx.graphics.height) * BaseGame.scale
         )
+        println("$token: ${(Gdx.graphics.width.toFloat() / Gdx.graphics.height)}, ${Gdx.graphics.width}, ${Gdx.graphics.height}")
         setPosition(x - width / 2, y)
         setOrigin(Align.center)
 
@@ -45,7 +46,7 @@ class BrokenHeart(x: Float, y: Float, s: Stage) : BaseActor(x, y, s) {
         var totalDuration = 2f
         return Actions.sequence(
             Actions.parallel(
-                Actions.moveBy(0f, 2f, totalDuration),
+                Actions.moveBy(0f, 10f, totalDuration),
                 Actions.fadeOut(totalDuration)
             ),
             Actions.run { remove() }

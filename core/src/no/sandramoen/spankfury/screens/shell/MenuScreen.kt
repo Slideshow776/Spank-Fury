@@ -160,12 +160,7 @@ class MenuScreen : BaseScreen() {
         startButton.touchable = Touchable.disabled
         startButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
-                BaseGame.levelMusic1!!.stop()
-                BaseGame.clickSound!!.play(BaseGame.soundVolume)
-                screenTransition.fadeIn()
-                screenTransition.blackOverLay.addAction(Actions.after(Actions.run {
-                    BaseGame.setActiveScreen(LevelScreen())
-                }))
+                startTheGame()
             }
         })
 
@@ -327,7 +322,8 @@ class MenuScreen : BaseScreen() {
                     Gdx.app.exit()
                 }
             ))
-        }
+        } else if (keycode == Keys.ENTER) startTheGame()
+
         return false
     }
 
@@ -510,5 +506,14 @@ class MenuScreen : BaseScreen() {
                 Actions.fadeOut(1.5f)
             )
         )
+    }
+
+    private fun startTheGame() {
+        BaseGame.levelMusic1!!.stop()
+        BaseGame.clickSound!!.play(BaseGame.soundVolume)
+        screenTransition.fadeIn()
+        screenTransition.blackOverLay.addAction(Actions.after(Actions.run {
+            BaseGame.setActiveScreen(LevelScreen())
+        }))
     }
 }

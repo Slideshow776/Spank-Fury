@@ -187,6 +187,7 @@ class LevelScreen : BaseScreen() {
 
     override fun keyDown(keycode: Int): Boolean { // desktop controls
         if (keycode == Keys.BACK || keycode == Keys.ESCAPE) {
+            BaseGame.clickSound!!.play(BaseGame.soundVolume)
             if (pause)
                 BaseGame.setActiveScreen(MenuScreen())
             else
@@ -194,13 +195,16 @@ class LevelScreen : BaseScreen() {
         }
 
         if (keycode == Keys.ENTER && gameOverTable.color.a == 1f) {
+            BaseGame.clickSound!!.play(BaseGame.soundVolume)
             screenTransition.blackOverLay.addAction(
                 Actions.sequence(
                     Actions.fadeIn(1f),
                     Actions.run { BaseGame.setActiveScreen(LevelScreen()) }
                 ))
-        } else if (keycode == Keys.ENTER && pauseTable.color.a == 1f)
+        } else if (keycode == Keys.ENTER && pauseTable.color.a == 1f) {
+            BaseGame.clickSound!!.play(BaseGame.soundVolume)
             changeToPlayOverlay()
+        }
 
         if (pause) return false
 

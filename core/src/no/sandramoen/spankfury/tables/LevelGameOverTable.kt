@@ -88,7 +88,7 @@ class LevelGameOverTable : Table() {
                 addAction(
                     Actions.sequence(
                         Actions.run { BaseGame.clickSound!!.play(BaseGame.soundVolume) },
-                        Actions.fadeIn(1f),
+                        Actions.fadeOut(1f),
                         Actions.run {
                             BaseGame.tempo = 1f // reset
                             BaseGame.setActiveScreen(MenuScreen())
@@ -104,7 +104,7 @@ class LevelGameOverTable : Table() {
                 addAction(
                     Actions.sequence(
                         Actions.run { BaseGame.clickSound!!.play(BaseGame.soundVolume) },
-                        Actions.fadeIn(1f),
+                        Actions.fadeOut(1f),
                         Actions.run {
                             BaseGame.tempo = 1f // reset
                             BaseGame.setActiveScreen(LevelScreen())
