@@ -27,6 +27,7 @@ class MenuScreen : BaseScreen() {
     private var time = 0f
     private var disableTime = 1f
     private var pressOverlay = true
+    private var mainStageDelay = BaseActor(0f, 0f, mainStage)
 
     // foreground - title
     private lateinit var titleTable: Table
@@ -43,7 +44,6 @@ class MenuScreen : BaseScreen() {
 
     // foreground - menu
     private lateinit var menuTable: Table
-    private lateinit var menuTitleLabel: Label
     private lateinit var startButton: TextButton
     private lateinit var optionsButton: TextButton
     private lateinit var exitButton: TextButton
@@ -79,12 +79,13 @@ class MenuScreen : BaseScreen() {
 
         mainStage.addListener(object : ActorGestureListener() {
             override fun tap (event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
-                if (!pressOverlay && optionsTable.color.a != 1f) {
+                if (!pressOverlay && optionsTable.color.a != 1f && mainStageDelay.actions.size == 0) {
                     changeToTitleOverlay()
                     pressOverlay = true
                 }
                 else if (time >= disableTime && pressOverlay) {
                     changeToMenuOverlay()
+                    mainStageDelay.addAction(Actions.delay(1f))
                     pressOverlay = false
                 }
             }
@@ -93,6 +94,7 @@ class MenuScreen : BaseScreen() {
         // foreground - Title ---------------------------------------------------------------
         val titleScale = .45f
         titleTitle1 = BaseActor(0f, 0f, mainStage)
+        titleTitle1.actions
         titleTitle1.loadImage("title1")
         titleTitle1.setSize(Gdx.graphics.width.toFloat() * .48f, Gdx.graphics.height.toFloat() * .35f)
 
@@ -325,8 +327,6 @@ class MenuScreen : BaseScreen() {
                 }
             ))
         }
-
-        /*if (time >= disableTime) changeToMenuOverlay()*/
         return false
     }
 
