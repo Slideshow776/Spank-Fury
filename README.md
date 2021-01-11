@@ -1,6 +1,6 @@
 # Spank Fury
 
-A kinky themed rhythm game inspired by [Kung Fury: Street Rage](https://store.steampowered.com/app/373180/Kung_Fury_Street_Rage/).
+A kinky themed beat 'em up game inspired by [Kung Fury: Street Rage](https://store.steampowered.com/app/373180/Kung_Fury_Street_Rage/).
 
 ![screenShot of gameplay](https://user-images.githubusercontent.com/4059636/102523112-6bef0d00-4097-11eb-8eb0-c645b8f39faf.PNG)
 
