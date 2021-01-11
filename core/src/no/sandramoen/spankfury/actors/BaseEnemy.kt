@@ -11,7 +11,14 @@ import no.sandramoen.spankfury.utils.BaseActor
 import no.sandramoen.spankfury.utils.BaseGame
 import kotlin.math.abs
 
-open class BaseEnemy(x: Float, y: Float, s: Stage, open val player: Player, originalSpeed: Float = 20f, hittingDelay: Float = 1f) : BaseActor(x, y, s) {
+open class BaseEnemy(
+    x: Float,
+    y: Float,
+    s: Stage,
+    open val player: Player,
+    originalSpeed: Float = 20f,
+    hittingDelay: Float = 1f
+) : BaseActor(x, y, s) {
     private val token = "Enemy.kt"
     private val stunFrequency = 1f
     private var distance = 0f
@@ -27,7 +34,7 @@ open class BaseEnemy(x: Float, y: Float, s: Stage, open val player: Player, orig
     open var points = -1
     open var originalColor: Color = Color.WHITE
 
-    var startPosition = player.x - 60 // ensures enemy spawns offscreen relative to players position
+    var xStartPosition = player.x - 60 // ensures enemy spawns offscreen relative to players position
     var spawnFromLeft = MathUtils.randomBoolean()
     var stunTimer = stunFrequency
     var hitting = false
@@ -54,11 +61,18 @@ open class BaseEnemy(x: Float, y: Float, s: Stage, open val player: Player, orig
 
         // other
         if (!spawnFromLeft) {
-            startPosition = player.x + BaseGame.WORLD_WIDTH + 10 // offset ensures spawning offscreen
+            xStartPosition = player.x + BaseGame.WORLD_WIDTH + 10 // offset ensures spawning offscreen
             flip()
         }
 
-        setPosition(startPosition, MathUtils.random(player.y - 10f, player.y + 10f))
+        val yPosition = MathUtils.random(player.y - 10f, player.y + 10f)
+        setPosition(xStartPosition, yPosition)
+
+        // z-index is divided into two: below and above player, mostly works
+        var index = yPosition.toInt()
+        if (index < 3 || yPosition < player.y) index = 4
+        else index = 3
+        zIndex = index
     }
 
     override fun act(dt: Float) {
@@ -86,13 +100,13 @@ open class BaseEnemy(x: Float, y: Float, s: Stage, open val player: Player, orig
         }
 
         // y movement
-        if (y < player.y - 1) y += .05f
-        else if (y >= player.y + 1) y -= .05f
+        if (y < player.y - 3) y += .05f
+        else if (y >= player.y + 3) y -= .05f
 
         applyPhysics(dt)
 
         if (player.health <= 0) { // sets animation to idle after game ends
-            if(!dead) actions.clear()
+            if (!dead) actions.clear()
             changeAnimation(idleAnimation)
             dead = true
         }
@@ -102,7 +116,7 @@ open class BaseEnemy(x: Float, y: Float, s: Stage, open val player: Player, orig
         var playerHasBackToEnemy = (spawnFromLeft && player.isFacingRight) || (!spawnFromLeft && !player.isFacingRight)
         if (playerHasBackToEnemy && backOff) {
             backOffDistanceModifier = 4f
-            if(!dead) actions.clear()
+            if (!dead) actions.clear()
             hitting = false
             changeAnimation(walkingAnimation)
         } else backOffDistanceModifier = 1f
@@ -155,7 +169,7 @@ open class BaseEnemy(x: Float, y: Float, s: Stage, open val player: Player, orig
 
     fun resetActions() {
         hitting = false
-        if(!dead) actions.clear()
+        if (!dead) actions.clear()
         changeAnimation(walkingAnimation)
     }
 
@@ -215,7 +229,7 @@ open class BaseEnemy(x: Float, y: Float, s: Stage, open val player: Player, orig
         stunTimer = 0f
         stunned = true
         hitting = false
-        if(!dead) actions.clear()
+        if (!dead) actions.clear()
         changeAnimation(stunnedAnimation)
     }
 }
