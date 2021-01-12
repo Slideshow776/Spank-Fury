@@ -23,10 +23,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 
+abstract class BaseGame(var googlePlayServices: GooglePlayServices?) : Game(), AssetErrorListener {
+    private val token = "BaseGame.kt"
 
-abstract class BaseGame : Game(), AssetErrorListener {
     init {
         game = this
     }
@@ -41,6 +41,7 @@ abstract class BaseGame : Game(), AssetErrorListener {
         const val scale = 1.5f
 
         // game assets
+        var gps: GooglePlayServices? = null
         var labelStyle: LabelStyle? = null
         var textButtonStyle: TextButtonStyle? = null
         var textureAtlas: TextureAtlas? = null
@@ -74,6 +75,7 @@ abstract class BaseGame : Game(), AssetErrorListener {
         Gdx.input.inputProcessor = InputMultiplexer() // discrete input
 
         // global variables
+        gps = this.googlePlayServices
         GameUtils.loadGameState()
 
         // asset manager

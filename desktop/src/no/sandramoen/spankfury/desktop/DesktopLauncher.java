@@ -20,6 +20,6 @@ public class DesktopLauncher {
 		config.width = (int) (LGg8ThinQWidth / scale);
 		config.height = (int) (LGg8ThinQHeight / scale);
 
-		new LwjglApplication(new SpankFuryGame(), config);
+		new LwjglApplication(new SpankFuryGame(null), config);
 	}
 }
