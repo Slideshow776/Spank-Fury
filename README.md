@@ -108,3 +108,10 @@ A kinky themed beat 'em up game inspired by [Kung Fury: Street Rage](https://sto
     
     * **What are the plans for publication?**
     This game will possibly be made available for free on desktop. It will be deployed on the Google Play store for 10-15 NOK and advertised to various indie game-portal websites (LibGDX, r/incremental_games). Gameplay images and a trailer video will be posted and marketed via social media.
+
+# Project comments
+## Google Play Services (GPS)
+These three resources helped me to a great extent implementing GPS.
+* Leaderboards in Android Game: https://developers.google.com/games/services/android/leaderboards
+* Google Play Services for Libgdx: https://stackoverflow.com/questions/48135531/signinsilently-failure-when-trying-to-sign-in-to-googleplay-game-services-w/48135617#48135617
+* Implementing and using an interface for cross-platofrm uasbility: https://github.com/libgdx/libgdx/wiki/Interfacing-with-platform-specific-code
