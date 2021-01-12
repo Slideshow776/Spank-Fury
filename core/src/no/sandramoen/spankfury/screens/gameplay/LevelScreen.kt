@@ -1,5 +1,6 @@
 package no.sandramoen.spankfury.screens.gameplay
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.MathUtils
@@ -42,13 +43,13 @@ class LevelScreen : BaseScreen() {
 
     private var spawnDifficulty = 0f
     private var easySpawnTimer = 0f
-    private val easySpawnFrequency = 3f
+    private var easySpawnFrequency = 3f
     private var mediumSpawnTimer = 0f
-    private val mediumSpawnFrequency = 4f
+    private var mediumSpawnFrequency = 4f
     private var swapSpawnTimer = 0f
-    private val swapSpawnFrequency = 12f
+    private var swapSpawnFrequency = 12f
     private var hardSpawnTimer = 0f
-    private val hardSpawnFrequency = 15f
+    private var hardSpawnFrequency = 15f
 
     private var controlFrequency = 1f
     private var controlTimer = controlFrequency
@@ -140,30 +141,69 @@ class LevelScreen : BaseScreen() {
 
         // increasing difficulty
         when {
+            gameTime < 15f -> {
+                println("$token: 15f")
+                enemySpeed = 22f
+                enemyHittingDelay = 1.5f
+                spawnDifficulty = 1.25f
+
+                easySpawnFrequency = 4f
+                mediumSpawnFrequency = 11f
+                swapSpawnFrequency = 19f
+            }
             gameTime < 30f -> {
+                println("$token: 30f")
                 enemySpeed = 25f
                 enemyHittingDelay = 1f
                 spawnDifficulty = 1.5f
+
+                easySpawnFrequency = 2f
+                mediumSpawnFrequency = 11f
+                swapSpawnFrequency = 19f
             }
             gameTime < 60f -> {
+                println("$token: 60f")
                 enemySpeed = 27f
                 enemyHittingDelay = .8f
                 spawnDifficulty = 1.75f
+
+                easySpawnFrequency = 4f
+                mediumSpawnFrequency = 3f
+                swapSpawnFrequency = 15f
+                hardSpawnFrequency = 20f
             }
             gameTime < 120f -> {
+                println("$token: 120f")
                 enemySpeed = 30f
                 enemyHittingDelay = .75f
                 spawnDifficulty = 2.0f
+
+                easySpawnFrequency = 4f
+                mediumSpawnFrequency = 3f
+                swapSpawnFrequency = 15f
+                hardSpawnFrequency = 20f
             }
             gameTime < 180f -> {
+                println("$token: 180f")
                 enemySpeed = 35f
                 enemyHittingDelay = .5f
                 spawnDifficulty = 2.5f
+
+                easySpawnFrequency = 4f
+                mediumSpawnFrequency = 3f
+                swapSpawnFrequency = 15f
+                hardSpawnFrequency = 20f
             }
             gameTime < 240f -> {
+                println("$token: 240f")
                 enemySpeed = 40f
                 enemyHittingDelay = .25f
                 spawnDifficulty = 3.0f
+
+                easySpawnFrequency = 4f
+                mediumSpawnFrequency = 3f
+                swapSpawnFrequency = 15f
+                hardSpawnFrequency = 20f
             }
         }
 
@@ -407,24 +447,24 @@ class LevelScreen : BaseScreen() {
         }
         mediumSpawnTimer += dt
         if (mediumSpawnTimer >= mediumSpawnFrequency / spawnDifficulty
-            && BaseActor.count(mainStage, MediumEnemy::class.java.canonicalName) <= 8
-            && gameTime > 30f
+            && BaseActor.count(mainStage, MediumEnemy::class.java.canonicalName) <= 4
+            && gameTime > MathUtils.random(15f, 19f)
         ) {
             MediumEnemy(0f, 0f, mainStage, player, enemySpeed, enemyHittingDelay)
             mediumSpawnTimer = 0f
         }
         swapSpawnTimer += dt
         if (swapSpawnTimer >= swapSpawnFrequency / spawnDifficulty
-            && BaseActor.count(mainStage, SwapEnemy::class.java.canonicalName) <= 8
-            && gameTime > 40f
+            && BaseActor.count(mainStage, SwapEnemy::class.java.canonicalName) <= 4
+            && gameTime > MathUtils.random(30f, 40f)
         ) {
             SwapEnemy(0f, 0f, mainStage, player, enemySpeed, enemyHittingDelay)
             swapSpawnTimer = 0f
         }
         hardSpawnTimer += dt
         if (hardSpawnTimer >= hardSpawnFrequency / spawnDifficulty
-            && BaseActor.count(mainStage, HardEnemy::class.java.canonicalName) <= 8
-            && gameTime > 60f
+            && BaseActor.count(mainStage, HardEnemy::class.java.canonicalName) <= 4
+            && gameTime > MathUtils.random(50f, 60f)
         ) {
             HardEnemy(0f, 0f, mainStage, player, enemySpeed, enemyHittingDelay)
             hardSpawnTimer = 0f

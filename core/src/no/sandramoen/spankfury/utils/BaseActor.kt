@@ -37,7 +37,7 @@ open class BaseActor(x: Float, y: Float, s: Stage) : Group() {
         this.y = y
         s.addActor(this)
         animation = null
-        debug = true
+        debug = false
     }
 
     override fun setSize(width: Float, height: Float) {
