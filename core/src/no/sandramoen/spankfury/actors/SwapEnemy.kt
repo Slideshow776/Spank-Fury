@@ -3,6 +3,7 @@ package no.sandramoen.spankfury.actors
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.Array
@@ -40,9 +41,9 @@ class SwapEnemy(x: Float, y: Float, s: Stage, player: Player, originalSpeed: Flo
         enabled = false
         val duration = .1f
         if (x <= player.x) { // if on left side
-            addAction(Actions.moveTo(player.x + player.width / 2, 0f, duration))
+            addAction(Actions.moveTo((player.x + player.width) + 5f, y + MathUtils.random(-2f, 2f), duration))
         } else { // if on right side
-            addAction(Actions.moveTo(player.x, 0f, duration))
+            addAction(Actions.moveTo(player.x - 5f, y + MathUtils.random(-2f, 2f), duration))
         }
         flip()
         spawnFromLeft = !spawnFromLeft

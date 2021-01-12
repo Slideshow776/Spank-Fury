@@ -9,7 +9,7 @@ class SpankFuryGame : BaseGame() {
     override fun create() {
         super.create()
         // setActiveScreen(SplashScreen()) // TODO: @release: change to this
-        setActiveScreen(LevelScreen())
-        // setActiveScreen(MenuScreen())
+        // setActiveScreen(LevelScreen())
+        setActiveScreen(MenuScreen())
     }
 }

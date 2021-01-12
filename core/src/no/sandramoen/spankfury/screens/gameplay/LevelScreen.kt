@@ -142,7 +142,6 @@ class LevelScreen : BaseScreen() {
         // increasing difficulty
         when {
             gameTime < 15f -> {
-                println("$token: 15f")
                 enemySpeed = 22f
                 enemyHittingDelay = 1.5f
                 spawnDifficulty = 1.25f
@@ -152,7 +151,6 @@ class LevelScreen : BaseScreen() {
                 swapSpawnFrequency = 19f
             }
             gameTime < 30f -> {
-                println("$token: 30f")
                 enemySpeed = 25f
                 enemyHittingDelay = 1f
                 spawnDifficulty = 1.5f
@@ -162,7 +160,6 @@ class LevelScreen : BaseScreen() {
                 swapSpawnFrequency = 19f
             }
             gameTime < 60f -> {
-                println("$token: 60f")
                 enemySpeed = 27f
                 enemyHittingDelay = .8f
                 spawnDifficulty = 1.75f
@@ -173,7 +170,6 @@ class LevelScreen : BaseScreen() {
                 hardSpawnFrequency = 20f
             }
             gameTime < 120f -> {
-                println("$token: 120f")
                 enemySpeed = 30f
                 enemyHittingDelay = .75f
                 spawnDifficulty = 2.0f
@@ -184,7 +180,6 @@ class LevelScreen : BaseScreen() {
                 hardSpawnFrequency = 20f
             }
             gameTime < 180f -> {
-                println("$token: 180f")
                 enemySpeed = 35f
                 enemyHittingDelay = .5f
                 spawnDifficulty = 2.5f
@@ -195,7 +190,6 @@ class LevelScreen : BaseScreen() {
                 hardSpawnFrequency = 20f
             }
             gameTime < 240f -> {
-                println("$token: 240f")
                 enemySpeed = 40f
                 enemyHittingDelay = .25f
                 spawnDifficulty = 3.0f
