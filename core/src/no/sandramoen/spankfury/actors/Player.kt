@@ -18,7 +18,7 @@ class Player(x: Float, y: Float, s: Stage) : BaseActor(x, y, s) {
 
     // animations
     private var idleAnimation: Animation<TextureAtlas.AtlasRegion>
-    private var highKickAnimation: Animation<TextureAtlas.AtlasRegion>
+    private var whipAnimation: Animation<TextureAtlas.AtlasRegion>
     private var hitAnimations: Array<Animation<TextureAtlas.AtlasRegion>> = Array()
 
     // properties
@@ -26,8 +26,6 @@ class Player(x: Float, y: Float, s: Stage) : BaseActor(x, y, s) {
     var playerAcceleration = 70f
     var playerDeceleration = 70f
     var health = 3
-    var disabledFrequency = 2f
-    var disabledTimer = disabledFrequency
 
     init {
         // animations
@@ -41,8 +39,8 @@ class Player(x: Float, y: Float, s: Stage) : BaseActor(x, y, s) {
 
         for (i in 1..9)
             animationImages.add(BaseGame.textureAtlas!!.findRegion("player-hitting-0$i"))
-        highKickAnimation = Animation(.01f, animationImages, Animation.PlayMode.NORMAL)
-        hitAnimations.add(highKickAnimation)
+        whipAnimation = Animation(.01f, animationImages, Animation.PlayMode.NORMAL)
+        hitAnimations.add(whipAnimation)
         animationImages.clear()
 
         setAnimation(idleAnimation)
@@ -79,24 +77,25 @@ class Player(x: Float, y: Float, s: Stage) : BaseActor(x, y, s) {
         if (BaseGame.tempo != tempo) setNewTempo()
         applyPhysics(dt)
         alignCamera(lerp = .1f)
-        if (disabledTimer < disabledFrequency) disabledTimer += dt
+
+        // keep y position within acceptable bounds
+        if (y < 0) addAction(Actions.moveTo(x, 4f, .25f))
+        else if (y > 10) addAction(Actions.moveTo(x, 6f, .25f))
     }
 
     fun hit(distance: Float) {
-        if (disabledTimer < disabledFrequency) return
         shouldFlip(distance)
         BaseGame.tempo = 1f // break slow motion
-        var index: Int = MathUtils.random(0, hitAnimations.size - 1)
-        changeAnimation(hitAnimations[index], originalWidth * 4)
+        var randomHitAnimation: Int = MathUtils.random(0, hitAnimations.size - 1)
+        changeAnimation(hitAnimations[randomHitAnimation], originalWidth * 4)
         addAction(Actions.sequence(
-            Actions.moveBy(distance * .6f, 0f, .25f),
-            Actions.delay(hitAnimations[index].frameDuration * hitAnimations[index].keyFrames.size),
+            Actions.moveBy(distance, MathUtils.random(-2f, 2f), .25f),
+            Actions.delay(hitAnimations[randomHitAnimation].frameDuration * hitAnimations[randomHitAnimation].keyFrames.size),
             Actions.run { changeAnimation(idleAnimation) }
         ))
     }
 
     fun struck(moveToRight: Boolean) {
-        disabledTimer = 0f
         health--
         if (health >= 1) BaseGame.tempo = slowMotionModifier // start slow motion
 

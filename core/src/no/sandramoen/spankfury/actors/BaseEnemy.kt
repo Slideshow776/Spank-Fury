@@ -89,13 +89,16 @@ open class BaseEnemy(
                     accelerateAtAngle(0f)
                 else
                     accelerateAtAngle(180f)
-            } else if ((width + player.width) * (.4 * backOffDistanceModifier) > distance) { // if too close, move back
-                if (spawnFromLeft)
-                    accelerateAtAngle(180f)
-                else
-                    accelerateAtAngle(0f)
             } else if (!hitting && !stunned && ((width + player.width) * .55 >= distance)) {
                 hit()
+            } else if ((width + player.width) * (.4 * backOffDistanceModifier) > distance) { // if too close, move back
+                if (spawnFromLeft) {
+                    if (!isFacingRight) flip()
+                    accelerateAtAngle(180f)
+                } else {
+                    if (isFacingRight) flip()
+                    accelerateAtAngle(0f)
+                }
             }
         }
 

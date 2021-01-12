@@ -2,6 +2,7 @@ package no.sandramoen.spankfury.screens.gameplay
 
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
@@ -53,6 +54,9 @@ class LevelScreen : BaseScreen() {
     private var controlTimer = controlFrequency
     private var backOffTimer = BaseGame.backOffFrequency
     private var backOff = false
+
+    private var playerDisabledFrequency = .5f
+    private var playerDisabledTimer = playerDisabledFrequency
 
     private lateinit var background: Background
 
@@ -165,10 +169,12 @@ class LevelScreen : BaseScreen() {
 
         // ui update
         if (playerHealth != player.health) subtractHealth()
+        if (playerDisabledTimer < playerDisabledFrequency) playerDisabledTimer += dt
     }
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         if (pause) return false
+        if (playerDisabledTimer < playerDisabledFrequency) return false
 
         // check which way player is hitting
         val worldCoordinates = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0f))
@@ -207,6 +213,7 @@ class LevelScreen : BaseScreen() {
         }
 
         if (pause) return false
+        if (playerDisabledTimer < playerDisabledFrequency) return false
 
         if (noEnemiesExist()) {
             if (keycode == Keys.LEFT || keycode == Keys.A)
@@ -279,6 +286,13 @@ class LevelScreen : BaseScreen() {
         if (hitBaseEnemy == null) {
             handleMiss(hitLeft)
         } else if (hitBaseEnemy.health > 0) {
+            if (hitBaseEnemy.spawnFromLeft) {
+                if (distance + hitBaseEnemy.width >= 0) distance = MathUtils.random(-.1f, -5f)
+                else distance += hitBaseEnemy.width
+            } else {
+                if (distance - hitBaseEnemy.width < 0) distance = MathUtils.random(.1f, 5f)
+                else distance -= hitBaseEnemy.width
+            }
             player.hit(distance)
             hitEnemy(hitBaseEnemy)
         }
@@ -379,8 +393,8 @@ class LevelScreen : BaseScreen() {
 
     private fun subtractHealth() {
         playerHealth = player.health
-        if (playerHealth >= 0)
-            guiTable.subtractHealth(playerHealth)
+        playerDisabledTimer = 0f
+        if (playerHealth >= 0) guiTable.subtractHealth()
     }
 
     private fun spawn(dt: Float) {
@@ -408,8 +422,8 @@ class LevelScreen : BaseScreen() {
             swapSpawnTimer = 0f
         }
         hardSpawnTimer += dt
-            if (hardSpawnTimer >= hardSpawnFrequency / spawnDifficulty
-                && BaseActor.count(mainStage, HardEnemy::class.java.canonicalName) <= 8
+        if (hardSpawnTimer >= hardSpawnFrequency / spawnDifficulty
+            && BaseActor.count(mainStage, HardEnemy::class.java.canonicalName) <= 8
             && gameTime > 60f
         ) {
             HardEnemy(0f, 0f, mainStage, player, enemySpeed, enemyHittingDelay)

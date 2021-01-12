@@ -25,7 +25,6 @@ class BrokenHeart(x: Float, y: Float, s: Stage) : BaseActor(x, y, s) {
             (BaseGame.WORLD_WIDTH / 20) * BaseGame.scale,
             (BaseGame.WORLD_HEIGHT / 20) * (Gdx.graphics.width.toFloat() / Gdx.graphics.height) * BaseGame.scale
         )
-        println("$token: ${(Gdx.graphics.width.toFloat() / Gdx.graphics.height)}, ${Gdx.graphics.width}, ${Gdx.graphics.height}")
         setPosition(x - width / 2, y)
         setOrigin(Align.center)
 

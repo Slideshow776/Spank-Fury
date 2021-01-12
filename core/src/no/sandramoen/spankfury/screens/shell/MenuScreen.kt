@@ -322,7 +322,13 @@ class MenuScreen : BaseScreen() {
                     Gdx.app.exit()
                 }
             ))
-        } else if (keycode == Keys.ENTER) startTheGame()
+        } else if (keycode == Keys.ENTER) {
+            if (pressOverlay) {
+                pressOverlay = false
+                changeToMenuOverlay()
+            }
+            else startTheGame()
+        }
 
         return false
     }

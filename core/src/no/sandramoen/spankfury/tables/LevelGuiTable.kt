@@ -31,6 +31,7 @@ class LevelGuiTable: Table() {
     private var health2: Image
     private var health3: Image
     private var healths: Array<Image>
+    private var healthIndex = 2
 
     init {
         val scoreTitleLabel = Label("Score", BaseGame.labelStyle)
@@ -163,7 +164,11 @@ class LevelGuiTable: Table() {
         motivationTitleLabel.setText("$motivation")
     }
 
-    fun subtractHealth(playerHealth: Int) { healths[playerHealth].addAction(Actions.fadeOut(1f)) }
+    fun subtractHealth() {
+        healths[healthIndex].addAction(Actions.fadeOut(1f))
+        healthIndex--
+    }
+
     fun setScoreLabel(score: Int) { statsScoreLabel.setText("$score") }
     fun setPersonalBestLabel() { statsScoreLabel.setText("${BaseGame.highScore}") }
 
