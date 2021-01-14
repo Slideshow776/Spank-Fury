@@ -351,10 +351,13 @@ class LevelScreen : BaseScreen() {
             guiTable.updateBonus(bonus)
             score += scoreAwarded
             guiTable.setScoreLabel(score)
+
             if (bonus % motivationNumber == 0)
                 guiTable.setMotivation(bonus)
+
             if (BaseGame.highScore < score) {
                 BaseGame.highScore = score
+                BaseGame.gps!!.submitScore(BaseGame.highScore) // TODO: Is it bad to submit GPS scores so often?
                 gameOverTable.newHighScore = true
                 guiTable.setPersonalBestLabel()
                 GameUtils.saveGameState()
@@ -468,6 +471,7 @@ class LevelScreen : BaseScreen() {
     private fun gameOver() {
         playing = false
         pause = true
+        BaseGame.gps!!.fetchHighScore()
         gameOverLabelTable.color.a = 1f
         gameOverLabelTable.addAction(Actions.sequence(
             Actions.delay(2f),

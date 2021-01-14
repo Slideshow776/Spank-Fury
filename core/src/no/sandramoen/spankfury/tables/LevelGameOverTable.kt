@@ -19,7 +19,7 @@ class LevelGameOverTable : Table() {
 
     private var gameOverScoreLabel: Label
 
-    private var highscores: ArrayList<Pair<String, Int>>
+    private var highScores: ArrayList<Pair<String, Int>>
 
     private var gameOverMenuButton: TextButton
     private var gameOverPlayButton: TextButton
@@ -42,8 +42,8 @@ class LevelGameOverTable : Table() {
         gameOverScoreTable.add(gameOverScoreLabelLabel)
 
         highScoreTable = Table()
-        highscores = arrayListOf()
-        highscores.add(Pair("Mystery Kinkster", 250_000))
+        highScores = arrayListOf()
+        /*highscores.add(Pair("Mystery Kinkster", 250_000))
         highscores.add(Pair("Top", 100_000))
         highscores.add(Pair("Slut", 80_000))
         highscores.add(Pair("Princess", 60_000))
@@ -52,32 +52,52 @@ class LevelGameOverTable : Table() {
         highscores.add(Pair("Fetishist", 35_000))
         highscores.add(Pair("Sadist", 30_000))
         highscores.add(Pair("Vanilla", 25_000))
-        highscores.add(Pair("You", 0))
+        highscores.add(Pair("You", 0))*/
+        highScores.add(Pair("Mystery Kinkster", 250_0))
+        highScores.add(Pair("Top", 100_0))
+        highScores.add(Pair("Slut", 80_0))
+        highScores.add(Pair("Princess", 60_0))
+        highScores.add(Pair("Leatherman", 50_0))
+        highScores.add(Pair("Rope Bunny", 40_0))
+        highScores.add(Pair("Fetishist", 35_0))
+        highScores.add(Pair("Sadist", 30_0))
+        highScores.add(Pair("Vanilla", 25_0))
+        highScores.add(Pair("You", 0))
 
-        for (i in 0 until highscores.size) {
-            val tempName = Label(highscores[i].first, BaseGame.labelStyle)
+        for (i in 0 until highScores.size) {
+            // labels
+            val tempName = Label(highScores[i].first, BaseGame.labelStyle)
             tempName.setAlignment(Align.left)
             tempName.name = "name$i"
-            val tempScore = Label("${highscores[i].second}", BaseGame.labelStyle)
+            val tempScore = Label("${highScores[i].second}", BaseGame.labelStyle)
             tempScore.setAlignment(Align.right)
             tempScore.name = "score$i"
             val index = Label("${i + 1}", BaseGame.labelStyle)
             index.name = "index$i"
             index.setAlignment(Align.right)
 
-            if (highscores[i].first == "You") {
+            // mystery kinkster
+            if (i == 0) {
+                tempName.color = Color.PURPLE
+                tempScore.color = Color.PURPLE
+                index.color = Color.PURPLE
+            }
+
+            // player
+            if (highScores[i].first == "You") {
                 tempName.color = BaseGame.red
                 tempScore.color = BaseGame.red
                 index.color = BaseGame.red
             }
 
+            // table
             val tempTable = Table()
             tempTable.add(index).width(Gdx.graphics.width * .04f).padRight(Gdx.graphics.width * .01f)
             tempTable.add(tempName).width(Gdx.graphics.width * .33f)
             tempTable.add(tempScore).width(Gdx.graphics.width * .33f)
             highScoreTable.add(tempTable).padBottom(Gdx.graphics.height * .01f).row()
         }
-        updateHighScoreTable()
+        // updateHighScoreTable() // TODO: Do I need to call this here?
         // highScoreTable.debug = true
 
         gameOverMenuButton = TextButton("< Menu", BaseGame.textButtonStyle)
@@ -149,13 +169,18 @@ class LevelGameOverTable : Table() {
 
     fun updateHighScoreTable() {
         // reinitialize list with proper names
-        for (i in 0 until highscores.size) {
-            highScoreTable.findActor<Label>("name$i").setText(highscores[i].first)
-            highScoreTable.findActor<Label>("score$i").setText(highscores[i].second)
+        for (i in 0 until highScores.size) {
+            highScoreTable.findActor<Label>("name$i").setText(highScores[i].first)
+            highScoreTable.findActor<Label>("score$i").setText(highScores[i].second)
         }
 
+        // check global score to mystery kinkster
+        val globalHighScore = BaseGame.gps!!.getHighScore()
+        if (globalHighScore > highScoreTable.findActor<Label>("score0").text.toString().toInt())
+            highScoreTable.findActor<Label>("score0").setText("$globalHighScore")
+
         // update player score
-        for (i in 0 until highscores.size) {
+        for (i in 0 until highScores.size) {
             // val entryName = highScoreTable.findActor<Label>("name$i").text.toString()
             val entryScore = highScoreTable.findActor<Label>("score$i").text.toString().toInt()
             if (BaseGame.highScore >= entryScore) {
@@ -177,6 +202,17 @@ class LevelGameOverTable : Table() {
                 highScoreTable.findActor<Label>("name$i").color = Color.RED
                 highScoreTable.findActor<Label>("score$i").color = Color.RED
                 highScoreTable.findActor<Label>("index$i").color = Color.RED
+
+                // check if player is the mystery kinkster
+                if (highScoreTable.findActor<Label>("name0").text.toString() == "You") {
+                    highScoreTable.findActor<Label>("name0").setText("Mystery Kinkster (you)")
+                    highScoreTable.findActor<Label>("name0").color = Color.PURPLE
+                    highScoreTable.findActor<Label>("score0").color = Color.PURPLE
+                    highScoreTable.findActor<Label>("index0").color = Color.PURPLE
+
+                    highScoreTable.findActor<Label>("name1").setText("DomlyDom69")
+                    highScoreTable.findActor<Label>("score1").setText("2500")
+                }
                 return
             }
         }
@@ -185,11 +221,11 @@ class LevelGameOverTable : Table() {
     fun setMotivationalText() {
         if (BaseGame.highScore >= highScoreTable.findActor<Label>("score0").text.toString().toInt()) {
             motivationalText.setText("You are the Mystery Kinkster!")
-            motivationalText.color = Color.PURPLE
+            motivationalText.color = Color.LIGHT_GRAY
         }
         else if (newHighScore) {
             motivationalText.setText("New High Score!")
-            motivationalText.color = Color.PURPLE
+            motivationalText.color = Color.LIGHT_GRAY
         }
         else {
             motivationalText.setText("Can you outspank the Mystery Kinkster?")

@@ -19,12 +19,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import no.sandramoen.spankfury.utils.GooglePlayServices;
 import org.jetbrains.annotations.NotNull;
+import static java.lang.Math.toIntExact;
 
 import java.util.Iterator;
 
 public class AndroidLauncher extends AndroidApplication implements GooglePlayServices {
     private static final String token = "AndroidLauncher.java";
-    private static Long highScore;
+    private static Long highScore = 0L;
     private static Long startTime;
 
     private static final int RC_SIGN_IN = 9001;
@@ -64,16 +65,13 @@ public class AndroidLauncher extends AndroidApplication implements GooglePlaySer
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
                 // The signed in account is stored in the result.
-                // System.out.println("MYMESSAGE: " + "Success! : D"); // TODO: REMOVE
                 mGoogleSignInAccount = result.getSignInAccount();
-
                 popup();
 
                 // fetch clients
                 mLeaderboardsClient = Games.getLeaderboardsClient(this, mGoogleSignInAccount);
                 mPlayersClient = Games.getPlayersClient(this, mGoogleSignInAccount);
             } else {
-                // System.out.println("MYMESSAGE: " + "unsuccesful : ("); // TODO: REMOVE
                 String message = result.getStatus().getStatusMessage();
                 // Status{statusCode=SIGN_IN_REQUIRED, resolution=null}
                 if (message == null || message.isEmpty()) {
@@ -114,8 +112,7 @@ public class AndroidLauncher extends AndroidApplication implements GooglePlaySer
     @Override
     public void submitScore(int score) {
         if (isSignedIn()) {
-            // leaderboardsClient.submitScore(getString(R.string.leaderboard_highscore), score);
-            System.out.println(token + ": submitting score => " + score);
+            // System.out.println(token + ": submitting score => " + score);
             mLeaderboardsClient.submitScore("CgkI4dKerKoaEAIQAA", score);
         }
     }
@@ -154,7 +151,8 @@ public class AndroidLauncher extends AndroidApplication implements GooglePlaySer
 
     @NotNull
     @Override
-    public String getHighScore() {
-        return highScore + ""; // hack to make it a string
+    public int getHighScore() {
+        // https://stackoverflow.com/questions/1590831/safely-casting-long-to-int-in-java
+        return toIntExact(highScore);
     }
 }

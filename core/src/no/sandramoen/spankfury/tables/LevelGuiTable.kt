@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Array
 import no.sandramoen.spankfury.utils.BaseGame
 
 class LevelGuiTable: Table() {
+    private val token = "LevelGuiTable.kt"
     private var statsScoreLabel: Label
     private var personalBestLabel: Label
     private var personalBestTitleLabel: Label
@@ -170,7 +171,7 @@ class LevelGuiTable: Table() {
     }
 
     fun setScoreLabel(score: Int) { statsScoreLabel.setText("$score") }
-    fun setPersonalBestLabel() { statsScoreLabel.setText("${BaseGame.highScore}") }
+    fun setPersonalBestLabel() { personalBestLabel.setText("${BaseGame.highScore}") }
 
     private fun animateBonuses(table: Table, label: Label, titleLabel: Label) {
         animateLabel(label)

@@ -6,6 +6,6 @@ interface GooglePlayServices {
     fun isSignedIn(): Boolean
     fun getLeaderboard()
     fun fetchHighScore()
-    fun getHighScore(): String
+    fun getHighScore(): Int
     fun submitScore(score: Int)
 }
