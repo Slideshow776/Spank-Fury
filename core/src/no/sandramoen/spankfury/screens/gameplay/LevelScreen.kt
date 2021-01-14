@@ -357,7 +357,7 @@ class LevelScreen : BaseScreen() {
 
             if (BaseGame.highScore < score) {
                 BaseGame.highScore = score
-                BaseGame.gps!!.submitScore(BaseGame.highScore) // TODO: Is it bad to submit GPS scores so often?
+                if (!BaseGame.disableGPS)  BaseGame.gps!!.submitScore(BaseGame.highScore) // TODO: Is it bad to submit GPS scores so often?
                 gameOverTable.newHighScore = true
                 guiTable.setPersonalBestLabel()
                 GameUtils.saveGameState()
@@ -471,7 +471,8 @@ class LevelScreen : BaseScreen() {
     private fun gameOver() {
         playing = false
         pause = true
-        BaseGame.gps!!.fetchHighScore()
+        if (BaseGame.vibrations) Gdx.input.vibrate(100)
+        if (!BaseGame.disableGPS) BaseGame.gps!!.fetchHighScore()
         gameOverLabelTable.color.a = 1f
         gameOverLabelTable.addAction(Actions.sequence(
             Actions.delay(2f),

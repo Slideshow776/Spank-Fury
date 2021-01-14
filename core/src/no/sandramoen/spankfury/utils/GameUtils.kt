@@ -25,6 +25,7 @@ class GameUtils {
             }
             BaseGame.prefs!!.putBoolean("vibrations", BaseGame.vibrations)
             BaseGame.prefs!!.putBoolean("googlePlayServices", BaseGame.disableGPS)
+            BaseGame.prefs!!.putBoolean("loadPersonalParameters", true)
             BaseGame.prefs!!.putFloat("musicVolume", BaseGame.musicVolume)
             BaseGame.prefs!!.putFloat("soundVolume", BaseGame.soundVolume)
             BaseGame.prefs!!.flush()
@@ -35,6 +36,7 @@ class GameUtils {
             BaseGame.highScore = BaseGame.prefs!!.getInteger("highScore")
             BaseGame.vibrations = BaseGame.prefs!!.getBoolean("vibrations")
             BaseGame.disableGPS = BaseGame.prefs!!.getBoolean("googlePlayServices")
+            BaseGame.loadPersonalParameters = BaseGame.prefs!!.getBoolean("loadPersonalParameters")
             BaseGame.musicVolume = BaseGame.prefs!!.getFloat("musicVolume")
             BaseGame.soundVolume = BaseGame.prefs!!.getFloat("soundVolume")
         }

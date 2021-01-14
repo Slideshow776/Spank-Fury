@@ -175,9 +175,11 @@ class LevelGameOverTable : Table() {
         }
 
         // check global score to mystery kinkster
-        val globalHighScore = BaseGame.gps!!.getHighScore()
-        if (globalHighScore > highScoreTable.findActor<Label>("score0").text.toString().toInt())
-            highScoreTable.findActor<Label>("score0").setText("$globalHighScore")
+        if (!BaseGame.disableGPS) {
+            val globalHighScore = BaseGame.gps!!.getHighScore()
+            if (globalHighScore > highScoreTable.findActor<Label>("score0").text.toString().toInt())
+                highScoreTable.findActor<Label>("score0").setText("$globalHighScore")
+        }
 
         // update player score
         for (i in 0 until highScores.size) {

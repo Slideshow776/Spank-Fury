@@ -57,6 +57,7 @@ abstract class BaseGame(var googlePlayServices: GooglePlayServices?) : Game(), A
 
         // game state
         var prefs: Preferences? = null
+        var loadPersonalParameters = false
         var highScore: Int = 0
         var soundVolume = .75f
         var musicVolume = .125f
@@ -75,6 +76,11 @@ abstract class BaseGame(var googlePlayServices: GooglePlayServices?) : Game(), A
         // global variables
         gps = this.googlePlayServices
         GameUtils.loadGameState()
+        if (!loadPersonalParameters) {
+            soundVolume = .75f
+            musicVolume = .25f
+            vibrations = true
+        }
 
         // google play services sign in
         if (Gdx.app.type == Application.ApplicationType.Android && !disableGPS)
