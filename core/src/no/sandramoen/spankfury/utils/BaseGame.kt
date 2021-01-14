@@ -1,9 +1,6 @@
 package no.sandramoen.spankfury.utils
 
-import com.badlogic.gdx.Game
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.InputMultiplexer
-import com.badlogic.gdx.Preferences
+import com.badlogic.gdx.*
 import com.badlogic.gdx.assets.AssetDescriptor
 import com.badlogic.gdx.assets.AssetErrorListener
 import com.badlogic.gdx.assets.AssetManager
@@ -65,6 +62,7 @@ abstract class BaseGame(var googlePlayServices: GooglePlayServices?) : Game(), A
         var musicVolume = .125f
         var tempo = 1f
         var backOffFrequency = 2f
+        var disableGPS = false
 
         fun setActiveScreen(s: BaseScreen) {
             game?.setScreen(s)
@@ -77,6 +75,10 @@ abstract class BaseGame(var googlePlayServices: GooglePlayServices?) : Game(), A
         // global variables
         gps = this.googlePlayServices
         GameUtils.loadGameState()
+
+        // google play services sign in
+        if (Gdx.app.type == Application.ApplicationType.Android && !disableGPS)
+            gps!!.signIn()
 
         // asset manager
         assetManager = AssetManager()
@@ -99,7 +101,8 @@ abstract class BaseGame(var googlePlayServices: GooglePlayServices?) : Game(), A
         assetManager.load(AssetDescriptor("shaders/shockwave.fs", Text::class.java, TextLoader.TextParameter()))
         assetManager.finishLoading()
 
-        textureAtlas = assetManager.get("images/included/packed/spankFury.pack.atlas") // all images are found in this global static variable
+        textureAtlas =
+            assetManager.get("images/included/packed/spankFury.pack.atlas") // all images are found in this global static variable
 
         // audio
         levelMusic1 = assetManager.get("audio/music/Guile Theme.ogg", Music::class.java)
@@ -129,7 +132,8 @@ abstract class BaseGame(var googlePlayServices: GooglePlayServices?) : Game(), A
         val customFont = fontGenerator.generateFont(fontParameters)
 
         val buttonFontParameters = FreeTypeFontParameter()
-        buttonFontParameters.size = (.04f * Gdx.graphics.height).toInt() // If the resolutions height is 1440 then the font size becomes 86
+        buttonFontParameters.size =
+            (.04f * Gdx.graphics.height).toInt() // If the resolutions height is 1440 then the font size becomes 86
         buttonFontParameters.color = Color.WHITE
         buttonFontParameters.borderWidth = 2f
         buttonFontParameters.borderColor = Color.BLACK

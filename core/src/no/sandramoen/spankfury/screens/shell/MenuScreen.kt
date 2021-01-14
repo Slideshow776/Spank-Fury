@@ -53,7 +53,9 @@ class MenuScreen : BaseScreen() {
     private lateinit var optionsMusicSlider: Slider
     private lateinit var optionsSoundSlider: Slider
     private lateinit var optionsVibrationCheckBox: CheckBox
+    private lateinit var optionsUseGPSCheckBox: CheckBox
     private lateinit var optionsBackButton: TextButton
+    private lateinit var optionsShowScore: TextButton
 
     // background
     private lateinit var background: Background
@@ -254,6 +256,39 @@ class MenuScreen : BaseScreen() {
         optionsVibrationCheckBox.setOrigin(optionsWidgetWidth / 2, optionsWidgetHeight / 2)
         if (Gdx.app.type == Application.ApplicationType.Desktop) optionsVibrationCheckBox.color.a = 0f
 
+        // google play services
+        optionsUseGPSCheckBox = CheckBox("Google Play Services", BaseGame.skin)
+        optionsUseGPSCheckBox.touchable = Touchable.disabled
+        optionsUseGPSCheckBox.isChecked = !BaseGame.disableGPS
+        optionsUseGPSCheckBox.addListener(object : ChangeListener() {
+            override fun changed(event: ChangeEvent?, actor: Actor?) {
+                BaseGame.disableGPS = !BaseGame.disableGPS
+                BaseGame.clickSound!!.play(BaseGame.soundVolume)
+                GameUtils.saveGameState()
+
+                if (!BaseGame.disableGPS) BaseGame.gps!!.signIn()
+                else BaseGame.gps!!.signOut()
+            }
+        })
+        optionsUseGPSCheckBox.isTransform = true
+        optionsUseGPSCheckBox.image.setScaling(Scaling.fill)
+        optionsUseGPSCheckBox.imageCell.size(optionsWidgetWidth * .125f)
+        optionsUseGPSCheckBox.label.setFontScale(3.5f)
+        optionsUseGPSCheckBox.setOrigin(optionsWidgetWidth / 2, optionsWidgetHeight / 2)
+        if (Gdx.app.type == Application.ApplicationType.Desktop) optionsUseGPSCheckBox.color.a = 0f
+
+        // show Google Play Services leaderboard
+        optionsShowScore = TextButton("Show Leaderboard", BaseGame.textButtonStyle)
+        optionsShowScore.label.setFontScale(.75f)
+        optionsShowScore.color = Color.GRAY
+        optionsShowScore.touchable = Touchable.disabled
+        optionsShowScore.addListener(object : ActorGestureListener() {
+            override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
+                BaseGame.clickSound!!.play(BaseGame.soundVolume)
+                BaseGame.gps!!.getLeaderboard()
+            }
+        })
+
         // back button
         optionsBackButton = TextButton("Back", BaseGame.textButtonStyle)
         optionsBackButton.color = BaseGame.yellow
@@ -277,8 +312,12 @@ class MenuScreen : BaseScreen() {
             .padLeft(Gdx.graphics.width * .11f).row()
         optionsTable.add(optionsVibrationCheckBox).width(optionsWidgetWidth).height(optionsWidgetHeight).colspan(2)
             .row()
+        optionsTable.add(optionsUseGPSCheckBox).width(optionsWidgetWidth).height(optionsWidgetHeight).colspan(2)
+            .row()
+        optionsTable.add(optionsShowScore).width(optionsWidgetWidth * 1.15f).height(optionsWidgetHeight).colspan(2).padTop(Gdx.graphics.height * .01f)
+            .row()
         optionsTable.add(optionsBackButton).width(Gdx.graphics.width * .25f).height(Gdx.graphics.height * .125f)
-            .colspan(2)
+            .colspan(2).padTop(Gdx.graphics.height * .05f)
         // optionsTable.debug = true
 
         // background
@@ -419,7 +458,9 @@ class MenuScreen : BaseScreen() {
         optionsMusicSlider.touchable = Touchable.disabled
         optionsSoundSlider.touchable = Touchable.disabled
         optionsBackButton.touchable = Touchable.disabled
+        optionsShowScore.touchable = Touchable.disabled
         optionsVibrationCheckBox.touchable = Touchable.disabled
+        optionsUseGPSCheckBox.touchable = Touchable.disabled
     }
 
     private fun changeToTitleOverlay() {
@@ -438,7 +479,9 @@ class MenuScreen : BaseScreen() {
         optionsMusicSlider.touchable = Touchable.disabled
         optionsSoundSlider.touchable = Touchable.disabled
         optionsBackButton.touchable = Touchable.disabled
+        optionsShowScore.touchable = Touchable.disabled
         optionsVibrationCheckBox.touchable = Touchable.disabled
+        optionsUseGPSCheckBox.touchable = Touchable.disabled
     }
 
     private fun changeToOptionsOverlay() {
@@ -451,7 +494,9 @@ class MenuScreen : BaseScreen() {
         GameUtils.enableActorsWithDelay(optionsMusicSlider)
         GameUtils.enableActorsWithDelay(optionsSoundSlider)
         GameUtils.enableActorsWithDelay(optionsBackButton)
+        GameUtils.enableActorsWithDelay(optionsShowScore)
         GameUtils.enableActorsWithDelay(optionsVibrationCheckBox)
+        GameUtils.enableActorsWithDelay(optionsUseGPSCheckBox)
         startButton.touchable = Touchable.disabled
         optionsButton.touchable = Touchable.disabled
         exitButton.touchable = Touchable.disabled
