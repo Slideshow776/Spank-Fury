@@ -1,5 +1,6 @@
 package no.sandramoen.spankfury.tables
 
+import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.InputEvent
@@ -42,7 +43,7 @@ class LevelGameOverTable : Table() {
         gameOverScoreTable.add(gameOverScoreLabelLabel)
 
         highScoreTable = Table()
-        highScores = arrayListOf()/*
+        highScores = arrayListOf()
         highScores.add(Pair("Mystery Kinkster", 250_000))
         highScores.add(Pair("Top", 100_000))
         highScores.add(Pair("Slut", 80_000))
@@ -52,16 +53,6 @@ class LevelGameOverTable : Table() {
         highScores.add(Pair("Fetishist", 35_000))
         highScores.add(Pair("Sadist", 30_000))
         highScores.add(Pair("Vanilla", 25_000))
-        highScores.add(Pair("You", 0))*/
-        highScores.add(Pair("Mystery Kinkster", 250_0))
-        highScores.add(Pair("Top", 100_0))
-        highScores.add(Pair("Slut", 80_0))
-        highScores.add(Pair("Princess", 60_0))
-        highScores.add(Pair("Leatherman", 50_0))
-        highScores.add(Pair("Rope Bunny", 40_0))
-        highScores.add(Pair("Fetishist", 35_0))
-        highScores.add(Pair("Sadist", 30_0))
-        highScores.add(Pair("Vanilla", 25_0))
         highScores.add(Pair("You", 0))
 
         for (i in 0 until highScores.size) {
@@ -176,7 +167,7 @@ class LevelGameOverTable : Table() {
 
         // check global score to mystery kinkster
         var globalHighScore = BaseGame.mysteryKinksterScore
-        if (!BaseGame.disableGPS) {
+        if (!BaseGame.disableGPS && Gdx.app.type == Application.ApplicationType.Android) {
             globalHighScore = BaseGame.gps!!.getHighScore()
             BaseGame.mysteryKinksterScore = globalHighScore
         }
