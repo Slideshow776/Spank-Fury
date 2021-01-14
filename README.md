@@ -115,3 +115,5 @@ These three resources helped me to a great extent implementing GPS.
 * Leaderboards in Android Game: https://developers.google.com/games/services/android/leaderboards
 * Google Play Services for Libgdx: https://stackoverflow.com/questions/48135531/signinsilently-failure-when-trying-to-sign-in-to-googleplay-game-services-w/48135617#48135617
 * Implementing and using an interface for cross-platofrm uasbility: https://github.com/libgdx/libgdx/wiki/Interfacing-with-platform-specific-code
+
+For project specifics check out the [commits](https://github.com/Slideshow776/Spank-Fury/commits/master).
