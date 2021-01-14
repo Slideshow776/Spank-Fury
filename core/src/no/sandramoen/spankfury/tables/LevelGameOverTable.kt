@@ -42,17 +42,17 @@ class LevelGameOverTable : Table() {
         gameOverScoreTable.add(gameOverScoreLabelLabel)
 
         highScoreTable = Table()
-        highScores = arrayListOf()
-        /*highscores.add(Pair("Mystery Kinkster", 250_000))
-        highscores.add(Pair("Top", 100_000))
-        highscores.add(Pair("Slut", 80_000))
-        highscores.add(Pair("Princess", 60_000))
-        highscores.add(Pair("Leatherman", 50_000))
-        highscores.add(Pair("Rope Bunny", 40_000))
-        highscores.add(Pair("Fetishist", 35_000))
-        highscores.add(Pair("Sadist", 30_000))
-        highscores.add(Pair("Vanilla", 25_000))
-        highscores.add(Pair("You", 0))*/
+        highScores = arrayListOf()/*
+        highScores.add(Pair("Mystery Kinkster", 250_000))
+        highScores.add(Pair("Top", 100_000))
+        highScores.add(Pair("Slut", 80_000))
+        highScores.add(Pair("Princess", 60_000))
+        highScores.add(Pair("Leatherman", 50_000))
+        highScores.add(Pair("Rope Bunny", 40_000))
+        highScores.add(Pair("Fetishist", 35_000))
+        highScores.add(Pair("Sadist", 30_000))
+        highScores.add(Pair("Vanilla", 25_000))
+        highScores.add(Pair("You", 0))*/
         highScores.add(Pair("Mystery Kinkster", 250_0))
         highScores.add(Pair("Top", 100_0))
         highScores.add(Pair("Slut", 80_0))
@@ -175,11 +175,13 @@ class LevelGameOverTable : Table() {
         }
 
         // check global score to mystery kinkster
+        var globalHighScore = BaseGame.mysteryKinksterScore
         if (!BaseGame.disableGPS) {
-            val globalHighScore = BaseGame.gps!!.getHighScore()
-            if (globalHighScore > highScoreTable.findActor<Label>("score0").text.toString().toInt())
-                highScoreTable.findActor<Label>("score0").setText("$globalHighScore")
+            globalHighScore = BaseGame.gps!!.getHighScore()
+            BaseGame.mysteryKinksterScore = globalHighScore
         }
+        if (globalHighScore > highScoreTable.findActor<Label>("score0").text.toString().toInt())
+            highScoreTable.findActor<Label>("score0").setText("$globalHighScore")
 
         // update player score
         for (i in 0 until highScores.size) {
@@ -224,12 +226,10 @@ class LevelGameOverTable : Table() {
         if (BaseGame.highScore >= highScoreTable.findActor<Label>("score0").text.toString().toInt()) {
             motivationalText.setText("You are the Mystery Kinkster!")
             motivationalText.color = Color.LIGHT_GRAY
-        }
-        else if (newHighScore) {
+        } else if (newHighScore) {
             motivationalText.setText("New High Score!")
             motivationalText.color = Color.LIGHT_GRAY
-        }
-        else {
+        } else {
             motivationalText.setText("Can you outspank the Mystery Kinkster?")
             motivationalText.color = Color.LIGHT_GRAY
         }

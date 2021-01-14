@@ -59,6 +59,7 @@ abstract class BaseGame(var googlePlayServices: GooglePlayServices?) : Game(), A
         var prefs: Preferences? = null
         var loadPersonalParameters = false
         var highScore: Int = 0
+        var mysteryKinksterScore: Int = 250_0
         var soundVolume = .75f
         var musicVolume = .125f
         var tempo = 1f

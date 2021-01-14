@@ -23,6 +23,7 @@ class GameUtils {
             } catch (error: Error) {
                 BaseGame.prefs!!.putInteger("highScore", Int.MAX_VALUE)
             }
+            BaseGame.prefs!!.putInteger("mysteryKinksterScore", BaseGame.mysteryKinksterScore)
             BaseGame.prefs!!.putBoolean("vibrations", BaseGame.vibrations)
             BaseGame.prefs!!.putBoolean("googlePlayServices", BaseGame.disableGPS)
             BaseGame.prefs!!.putBoolean("loadPersonalParameters", true)
@@ -34,6 +35,7 @@ class GameUtils {
         fun loadGameState() {
             BaseGame.prefs = Gdx.app.getPreferences("spankFuryGameState")
             BaseGame.highScore = BaseGame.prefs!!.getInteger("highScore")
+            BaseGame.mysteryKinksterScore = BaseGame.prefs!!.getInteger("mysteryKinksterScore")
             BaseGame.vibrations = BaseGame.prefs!!.getBoolean("vibrations")
             BaseGame.disableGPS = BaseGame.prefs!!.getBoolean("googlePlayServices")
             BaseGame.loadPersonalParameters = BaseGame.prefs!!.getBoolean("loadPersonalParameters")

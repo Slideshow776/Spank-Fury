@@ -94,7 +94,6 @@ class MenuScreen : BaseScreen() {
         })
 
         // foreground - Title ---------------------------------------------------------------
-        val titleScale = .45f
         titleTitle1 = BaseActor(0f, 0f, mainStage)
         titleTitle1.actions
         titleTitle1.loadImage("title1")
