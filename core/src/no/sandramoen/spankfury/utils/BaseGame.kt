@@ -46,6 +46,8 @@ abstract class BaseGame(var googlePlayServices: GooglePlayServices?) : Game(), A
         var defaultShader: String? = null
         var shockwaveShader: String? = null
         var levelMusic1: Music? = null
+        var levelMusic2: Music? = null
+        var levelMusic3: Music? = null
         var hitSound1: Sound? = null
         var whipCrackSound: Sound? = null
         var titlePowerUpSound: Sound? = null
@@ -91,7 +93,9 @@ abstract class BaseGame(var googlePlayServices: GooglePlayServices?) : Game(), A
         assetManager = AssetManager()
         assetManager.setErrorListener(this)
         assetManager.load("images/included/packed/spankFury.pack.atlas", TextureAtlas::class.java)
-        assetManager.load("audio/music/Guile Theme.ogg", Music::class.java)
+        assetManager.load("audio/music/AlexBeroza_-_Drive.mp3", Music::class.java)
+        assetManager.load("audio/music/bensound-extremeaction.mp3", Music::class.java)
+        assetManager.load("audio/music/bensound-moose.mp3", Music::class.java)
         assetManager.load("audio/sound/hit.wav", Sound::class.java)
         assetManager.load("audio/sound/93100__cgeffex__whip-crack-01.wav", Sound::class.java)
         assetManager.load("audio/sound/Powerup5.bfxrsound.wav", Sound::class.java)
@@ -112,7 +116,9 @@ abstract class BaseGame(var googlePlayServices: GooglePlayServices?) : Game(), A
             assetManager.get("images/included/packed/spankFury.pack.atlas") // all images are found in this global static variable
 
         // audio
-        levelMusic1 = assetManager.get("audio/music/Guile Theme.ogg", Music::class.java)
+        levelMusic1 = assetManager.get("audio/music/AlexBeroza_-_Drive.mp3", Music::class.java)
+        levelMusic2 = assetManager.get("audio/music/bensound-extremeaction.mp3", Music::class.java)
+        levelMusic3 = assetManager.get("audio/music/bensound-moose.mp3", Music::class.java)
         hitSound1 = assetManager.get("audio/sound/hit.wav", Sound::class.java)
         whipCrackSound = assetManager.get("audio/sound/93100__cgeffex__whip-crack-01.wav", Sound::class.java)
         titlePowerUpSound = assetManager.get("audio/sound/Powerup5.bfxrsound.wav", Sound::class.java)

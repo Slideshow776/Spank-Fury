@@ -109,6 +109,15 @@ A kinky themed beat 'em up game inspired by [Kung Fury: Street Rage](https://sto
     * **What are the plans for publication?**
     This game will possibly be made available for free on desktop. It will be deployed on the Google Play store for 10-15 NOK and advertised to various indie game-portal websites (LibGDX, r/incremental_games). Gameplay images and a trailer video will be posted and marketed via social media.
 
+# Music License
+Voxel Revolution by Kevin MacLeod
+Link: https://incompetech.filmmusic.io/song/7017-voxel-revolution
+License: https://filmmusic.io/standard-license
+
+Drive by Alex (c) copyright 2013 Licensed under a Creative Commons Attribution (3.0) license. http://dig.ccmixter.org/files/AlexBeroza/43098 Ft: cdk & Darryl J
+
+Other music by https://www.bensound.com
+
 # Project comments
 ## Google Play Services (GPS)
 These three resources helped me to a great extent implementing GPS.

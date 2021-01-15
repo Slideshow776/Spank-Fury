@@ -72,28 +72,29 @@ class LevelScreen : BaseScreen() {
         playerHealth = player.health
 
         // audio
-        BaseGame.levelMusic1!!.play()
-        BaseGame.levelMusic1!!.volume = BaseGame.musicVolume
-        BaseGame.levelMusic1!!.isLooping = true
+        GameUtils.playAndLoopRandomMusic()
 
         // ui
         guiTable = LevelGuiTable()
 
         // pause menu overlay
         pauseTable = LevelPauseTable()
-        pauseTable.menuTextButton.addListener(object : ActorGestureListener() {
-            override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
-                screenTransition.blackOverLay.addAction(Actions.sequence(
-                    Actions.run { BaseGame.clickSound!!.play(BaseGame.soundVolume) },
-                    Actions.fadeIn(1f),
-                    Actions.run { BaseGame.setActiveScreen(MenuScreen()) }
-                ))
-            }
-        })
         pauseTable.continueTextButton.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
                 BaseGame.clickSound!!.play(BaseGame.soundVolume)
                 changeToPlayOverlay()
+            }
+        })
+        pauseTable.menuTextButton.addListener(object : ActorGestureListener() {
+            override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
+                screenTransition.blackOverLay.addAction(Actions.sequence(
+                    Actions.run {
+                        BaseGame.clickSound!!.play(BaseGame.soundVolume)
+                        GameUtils.stopAllMusic()
+                    },
+                    Actions.fadeIn(1f),
+                    Actions.run { BaseGame.setActiveScreen(MenuScreen()) }
+                ))
             }
         })
         pauseTable.exitTextButton.addListener(object : ActorGestureListener() {
@@ -358,7 +359,9 @@ class LevelScreen : BaseScreen() {
 
             if (BaseGame.highScore < score) {
                 BaseGame.highScore = score
-                if (!BaseGame.disableGPS && Gdx.app.type == Application.ApplicationType.Android)  BaseGame.gps!!.submitScore(BaseGame.highScore) // TODO: Is it bad to submit GPS scores so often?
+                if (!BaseGame.disableGPS && Gdx.app.type == Application.ApplicationType.Android) BaseGame.gps!!.submitScore(
+                    BaseGame.highScore
+                ) // TODO: Is it bad to submit GPS scores so often?
                 gameOverTable.newHighScore = true
                 guiTable.setPersonalBestLabel()
                 GameUtils.saveGameState()

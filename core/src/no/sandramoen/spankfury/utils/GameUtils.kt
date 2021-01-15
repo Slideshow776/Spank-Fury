@@ -2,6 +2,7 @@ package no.sandramoen.spankfury.utils
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.audio.Music
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.InputEvent
@@ -50,13 +51,32 @@ class GameUtils {
             )))
         }
 
-        fun setMusicVolumeAndPlay(music: Music?, volume: Float) {
-            music!!.volume = volume
-            music!!.play()
+        fun playAndLoopRandomMusic() {
+            var music: Music? = null
+            when (MathUtils.random(1, 3)) {
+                1 -> music = BaseGame.levelMusic1
+                2 -> music = BaseGame.levelMusic2
+                3 -> music = BaseGame.levelMusic3
+            }
+            setMusicLoopingAndPlay(music)
+        }
+
+        fun stopAllMusic() {
+            BaseGame.levelMusic1!!.stop()
+            BaseGame.levelMusic2!!.stop()
+            BaseGame.levelMusic3!!.stop()
         }
 
         fun setMusicVolume() {
             BaseGame.levelMusic1!!.volume = BaseGame.musicVolume
+            BaseGame.levelMusic2!!.volume = BaseGame.musicVolume
+            BaseGame.levelMusic3!!.volume = BaseGame.musicVolume
+        }
+
+        private fun setMusicLoopingAndPlay(music: Music?) {
+            music!!.play()
+            music!!.volume = BaseGame.musicVolume
+            music!!.isLooping = true
         }
 
         fun enableActorsWithDelay(actor: Actor, delay: Float = .5f) {

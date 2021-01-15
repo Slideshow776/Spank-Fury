@@ -76,9 +76,7 @@ class MenuScreen : BaseScreen() {
         token = "MenuScreen.kt"
 
         // audio
-        BaseGame.levelMusic1!!.play()
-        BaseGame.levelMusic1!!.volume = BaseGame.musicVolume
-        BaseGame.levelMusic1!!.isLooping = true
+        GameUtils.playAndLoopRandomMusic()
 
         mainStage.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
@@ -572,7 +570,7 @@ class MenuScreen : BaseScreen() {
     }
 
     private fun startTheGame() {
-        BaseGame.levelMusic1!!.stop()
+        GameUtils.stopAllMusic()
         BaseGame.clickSound!!.play(BaseGame.soundVolume)
         screenTransition.fadeIn()
         screenTransition.blackOverLay.addAction(Actions.after(Actions.run {
