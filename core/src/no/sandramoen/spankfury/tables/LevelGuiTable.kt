@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Array
 import no.sandramoen.spankfury.utils.BaseGame
 
-class LevelGuiTable: Table() {
+class LevelGuiTable : Table() {
     private val token = "LevelGuiTable.kt"
     private var statsScoreLabel: Label
     private var personalBestLabel: Label
@@ -33,6 +33,8 @@ class LevelGuiTable: Table() {
     private var health3: Image
     private var healths: Array<Image>
     private var healthIndex = 2
+
+    private var newHighScore = false
 
     init {
         val scoreTitleLabel = Label("Score", BaseGame.labelStyle)
@@ -58,9 +60,11 @@ class LevelGuiTable: Table() {
         for (i in 0 until healths.size)
             healths[i].addAction(
                 Actions.sequence(
-                Actions.delay(i / 1.75f + 1f), // bigger number yields faster animations
-                Actions.fadeIn(.5f)
-            ))
+                    Actions.delay(i / 1.75f + 1f), // bigger number yields faster animations
+                    Actions.run { BaseGame.heartInitSound!!.play(BaseGame.soundVolume) },
+                    Actions.fadeIn(.5f)
+                )
+            )
         val healthWidth = Gdx.graphics.width * .045f
         healthTable.add(health1).width(healthWidth).height(healthWidth).padRight(Gdx.graphics.width * .02f)
         healthTable.add(health2).width(healthWidth).height(healthWidth).padRight(Gdx.graphics.width * .02f)
@@ -123,13 +127,35 @@ class LevelGuiTable: Table() {
         // debug = true
     }
 
+    fun animateNewHighScore() {
+        if (BaseGame.highScore == 10) // 10 is the presumed first award for an enemy
+            newHighScore = true // kinda hacky, but it works...
+
+        if (!newHighScore) {
+            BaseGame.newHighScoreSound!!.play(BaseGame.soundVolume)
+            personalBestLabel.addAction(
+                Actions.sequence(
+                    Actions.parallel(
+                        Actions.sequence(
+                            Actions.color(Color.PURPLE, 2f),
+                            Actions.color(Color.WHITE, 2f)
+                        )
+                    )
+                )
+            )
+            newHighScore = true
+        }
+    }
+
     fun handleMiss(bonus: Int) {
         bonusLabel.setText("$bonus")
         animateBonuses(bonusTable, bonusLabel, bonusTitleLabel)
-        missLabel.addAction(Actions.sequence(
-            Actions.fadeIn(.3f),
-            Actions.fadeOut(.3f)
-        ))
+        missLabel.addAction(
+            Actions.sequence(
+                Actions.fadeIn(.3f),
+                Actions.fadeOut(.3f)
+            )
+        )
     }
 
     fun updateBonus(bonus: Int) {
@@ -166,30 +192,40 @@ class LevelGuiTable: Table() {
     }
 
     fun subtractHealth() {
+        BaseGame.heartLooseSound!!.play(BaseGame.soundVolume)
         healths[healthIndex].addAction(Actions.fadeOut(1f))
         healthIndex--
     }
 
-    fun setScoreLabel(score: Int) { statsScoreLabel.setText("$score") }
-    fun setPersonalBestLabel() { personalBestLabel.setText("${BaseGame.highScore}") }
+    fun setScoreLabel(score: Int) {
+        statsScoreLabel.setText("$score")
+    }
+
+    fun setPersonalBestLabel() {
+        personalBestLabel.setText("${BaseGame.highScore}")
+    }
 
     private fun animateBonuses(table: Table, label: Label, titleLabel: Label) {
         animateLabel(label)
         animateLabel(titleLabel)
-        table.addAction(Actions.sequence(
-            Actions.scaleTo(.5f, .5f, 0f),
-            Actions.scaleTo(1f, 1f, .7f, Interpolation.bounceOut)
-        ))
+        table.addAction(
+            Actions.sequence(
+                Actions.scaleTo(.5f, .5f, 0f),
+                Actions.scaleTo(1f, 1f, .7f, Interpolation.bounceOut)
+            )
+        )
     }
 
     private fun animateLabel(label: Label) {
         label.clearActions()
         label.color.a = 0f
         label.addAction(Actions.parallel(
-            Actions.forever(Actions.sequence(
-                Actions.alpha(.5f, .2f),
-                Actions.alpha(1f, .2f)
-            )),
+            Actions.forever(
+                Actions.sequence(
+                    Actions.alpha(.5f, .2f),
+                    Actions.alpha(1f, .2f)
+                )
+            ),
             Actions.sequence(
                 Actions.delay(2f),
                 Actions.run {

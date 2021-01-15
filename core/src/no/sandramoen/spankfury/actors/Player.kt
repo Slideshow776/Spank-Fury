@@ -83,8 +83,19 @@ class Player(x: Float, y: Float, s: Stage) : BaseActor(x, y, s) {
         else if (y > 10) addAction(Actions.moveTo(x, 6f, .25f))
     }
 
-    fun hit(distance: Float) {
+    fun hit(distance: Float, miss: Boolean = false, enableSound: Boolean = true) {
         shouldFlip(distance)
+
+        if (miss && enableSound) {
+            BaseGame.swooshSound!!.play(BaseGame.soundVolume)
+        } else if (enableSound) {
+            when (MathUtils.random(1, 3)) {
+                1 -> BaseGame.floggerSound!!.play(BaseGame.soundVolume)
+                2 -> BaseGame.caneSound!!.play(BaseGame.soundVolume)
+                3 -> BaseGame.paddleSound!!.play(BaseGame.soundVolume)
+            }
+        }
+
         BaseGame.tempo = 1f // break slow motion
         var randomHitAnimation: Int = MathUtils.random(0, hitAnimations.size - 1)
         changeAnimation(hitAnimations[randomHitAnimation], originalWidth * 4)

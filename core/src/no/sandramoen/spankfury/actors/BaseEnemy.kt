@@ -150,8 +150,7 @@ open class BaseEnemy(
         setAnimation(walkingAnimation)
     }
 
-    open fun struck(enableSound: Boolean = true): Boolean { // returns true if enemy died
-        if (enableSound) BaseGame.hitSound1!!.play(BaseGame.soundVolume)
+    open fun struck(): Boolean { // returns true if enemy died
         // SpankMarks(x + width / 2, y +MathUtils.random(height / 3, height / 2), stage) // TODO: do we want spank marks?
         health--
         if (health <= 0)

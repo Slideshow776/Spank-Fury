@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.Align
 import no.sandramoen.spankfury.screens.gameplay.LevelScreen
 import no.sandramoen.spankfury.screens.shell.MenuScreen
 import no.sandramoen.spankfury.utils.BaseGame
+import no.sandramoen.spankfury.utils.GameUtils
 
 class LevelGameOverTable : Table() {
 
@@ -102,6 +103,7 @@ class LevelGameOverTable : Table() {
                         Actions.fadeOut(1f),
                         Actions.run {
                             BaseGame.tempo = 1f // reset
+                            GameUtils.stopAllMusic()
                             BaseGame.setActiveScreen(MenuScreen())
                         }
                     ))
@@ -117,6 +119,7 @@ class LevelGameOverTable : Table() {
                         Actions.run { BaseGame.clickSound!!.play(BaseGame.soundVolume) },
                         Actions.fadeOut(1f),
                         Actions.run {
+                            GameUtils.stopAllMusic()
                             BaseGame.tempo = 1f // reset
                             BaseGame.setActiveScreen(LevelScreen())
                         }

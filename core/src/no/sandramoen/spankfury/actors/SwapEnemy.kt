@@ -26,8 +26,7 @@ class SwapEnemy(x: Float, y: Float, s: Stage, player: Player, originalSpeed: Flo
         points = 30
     }
 
-    override fun struck(enableSound: Boolean): Boolean { // returns true if enemy died
-        if (enableSound) BaseGame.hitSound1!!.play(BaseGame.soundVolume)
+    override fun struck(): Boolean { // returns true if enemy died
         health--
         if (health <= 0) return handleDeath()
         actions.clear()

@@ -226,7 +226,7 @@ class MenuScreen : BaseScreen() {
         optionsSoundSlider.addListener(object : ChangeListener() {
             override fun changed(event: ChangeEvent?, actor: Actor?) {
                 BaseGame.soundVolume = optionsSoundSlider.value
-                BaseGame.hitSound1!!.play(BaseGame.soundVolume)
+                BaseGame.hit1Sound!!.play(BaseGame.soundVolume)
                 GameUtils.saveGameState()
             }
         })
@@ -426,8 +426,8 @@ class MenuScreen : BaseScreen() {
 
             // detect enemies in range
             if (inRange && playerHitTime >= playerHitFrequency) {
-                enemy.struck(enableSound = false)
-                player.hit(distance)
+                enemy.struck()
+                player.hit(distance, enableSound = false)
                 background.act(player)
                 playerHitTime = 0f
                 if (distance < 0) pressArcadeButton(titleLeftButtonImage, true)
@@ -519,8 +519,9 @@ class MenuScreen : BaseScreen() {
         titleTitle1.addAction(
             Actions.sequence(
                 Actions.delay(1f),
-                Actions.scaleTo(.25f, 1f, .5f),
+                Actions.scaleTo(.25f, 1f, .25f),
                 Actions.run { BaseGame.whipCrackSound!!.play(BaseGame.soundVolume) },
+                Actions.delay(.25f),
                 Actions.scaleTo(1.3f, 1f, .125f, Interpolation.pow5In),
                 Actions.scaleTo(1f, 1f, .125f)
             )

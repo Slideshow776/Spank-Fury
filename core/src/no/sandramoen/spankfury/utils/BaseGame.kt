@@ -48,10 +48,18 @@ abstract class BaseGame(var googlePlayServices: GooglePlayServices?) : Game(), A
         var levelMusic1: Music? = null
         var levelMusic2: Music? = null
         var levelMusic3: Music? = null
-        var hitSound1: Sound? = null
+        var hit1Sound: Sound? = null
+        var heartInitSound: Sound? = null
+        var heartLooseSound: Sound? = null
         var whipCrackSound: Sound? = null
+        var floggerSound: Sound? = null
+        var caneSound: Sound? = null
+        var swooshSound: Sound? = null
+        var paddleSound: Sound? = null
         var titlePowerUpSound: Sound? = null
         var clickSound: Sound? = null
+        var gameOverSound: Sound? = null
+        var newHighScoreSound: Sound? = null
         var vibrations: Boolean = false
         var green = Color(0.113f, 0.968f, 0.282f, 1f)
         var yellow = Color(0.968f, 0.815f, 0.113f, 1f)
@@ -97,6 +105,14 @@ abstract class BaseGame(var googlePlayServices: GooglePlayServices?) : Game(), A
         assetManager.load("audio/music/bensound-extremeaction.mp3", Music::class.java)
         assetManager.load("audio/music/bensound-moose.mp3", Music::class.java)
         assetManager.load("audio/sound/hit.wav", Sound::class.java)
+        assetManager.load("audio/sound/heartInit.wav", Sound::class.java)
+        assetManager.load("audio/sound/heartLoose.wav", Sound::class.java)
+        assetManager.load("audio/sound/gameOver.wav", Sound::class.java)
+        assetManager.load("audio/sound/newHighScore.wav", Sound::class.java)
+        assetManager.load("audio/sound/flogger0.wav", Sound::class.java)
+        assetManager.load("audio/sound/cane0.wav", Sound::class.java)
+        assetManager.load("audio/sound/paddle0.wav", Sound::class.java)
+        assetManager.load("audio/sound/swoosh0.wav", Sound::class.java)
         assetManager.load("audio/sound/93100__cgeffex__whip-crack-01.wav", Sound::class.java)
         assetManager.load("audio/sound/Powerup5.bfxrsound.wav", Sound::class.java)
         assetManager.load("audio/sound/click1.wav", Sound::class.java)
@@ -119,7 +135,15 @@ abstract class BaseGame(var googlePlayServices: GooglePlayServices?) : Game(), A
         levelMusic1 = assetManager.get("audio/music/AlexBeroza_-_Drive.mp3", Music::class.java)
         levelMusic2 = assetManager.get("audio/music/bensound-extremeaction.mp3", Music::class.java)
         levelMusic3 = assetManager.get("audio/music/bensound-moose.mp3", Music::class.java)
-        hitSound1 = assetManager.get("audio/sound/hit.wav", Sound::class.java)
+        hit1Sound = assetManager.get("audio/sound/hit.wav", Sound::class.java)
+        heartInitSound = assetManager.get("audio/sound/heartInit.wav", Sound::class.java)
+        heartLooseSound = assetManager.get("audio/sound/heartLoose.wav", Sound::class.java)
+        gameOverSound = assetManager.get("audio/sound/gameOver.wav", Sound::class.java)
+        newHighScoreSound = assetManager.get("audio/sound/newHighScore.wav", Sound::class.java)
+        floggerSound = assetManager.get("audio/sound/flogger0.wav", Sound::class.java)
+        caneSound = assetManager.get("audio/sound/cane0.wav", Sound::class.java)
+        paddleSound = assetManager.get("audio/sound/paddle0.wav", Sound::class.java)
+        swooshSound = assetManager.get("audio/sound/swoosh0.wav", Sound::class.java)
         whipCrackSound = assetManager.get("audio/sound/93100__cgeffex__whip-crack-01.wav", Sound::class.java)
         titlePowerUpSound = assetManager.get("audio/sound/Powerup5.bfxrsound.wav", Sound::class.java)
         clickSound = assetManager.get("audio/sound/click1.wav", Sound::class.java)

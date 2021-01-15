@@ -230,9 +230,10 @@ class LevelScreen : BaseScreen() {
     override fun keyDown(keycode: Int): Boolean { // desktop controls
         if (keycode == Keys.BACK || keycode == Keys.ESCAPE) {
             BaseGame.clickSound!!.play(BaseGame.soundVolume)
-            if (pause)
+            if (pause) {
+                GameUtils.stopAllMusic()
                 BaseGame.setActiveScreen(MenuScreen())
-            else
+            } else
                 changeToPauseOverlay()
         }
 
@@ -336,8 +337,8 @@ class LevelScreen : BaseScreen() {
 
     private fun handleMiss(left: Boolean) {
         if (controlTimer >= controlFrequency) {
-            if (left) player.hit(-20f)
-            else player.hit(20f)
+            if (left) player.hit(-20f, true)
+            else player.hit(20f, true)
 
             touchIsDisabled()
             if (bonus >= bonusMissModifier) bonus = (bonus * bonusMissModifier).toInt()
@@ -359,11 +360,11 @@ class LevelScreen : BaseScreen() {
 
             if (BaseGame.highScore < score) {
                 BaseGame.highScore = score
-                if (!BaseGame.disableGPS && Gdx.app.type == Application.ApplicationType.Android) BaseGame.gps!!.submitScore(
-                    BaseGame.highScore
-                ) // TODO: Is it bad to submit GPS scores so often?
+                if (!BaseGame.disableGPS && Gdx.app.type == Application.ApplicationType.Android)
+                    BaseGame.gps!!.submitScore(BaseGame.highScore) // TODO: Is it bad to submit GPS scores so often?
                 gameOverTable.newHighScore = true
                 guiTable.setPersonalBestLabel()
+                guiTable.animateNewHighScore()
                 GameUtils.saveGameState()
             }
             val tempLabel = ScoreLabel(mainStage, "+$scoreAwarded")
@@ -480,7 +481,10 @@ class LevelScreen : BaseScreen() {
         gameOverLabelTable.color.a = 1f
         gameOverLabelTable.addAction(Actions.sequence(
             Actions.delay(2f),
-            Actions.run { changeToGameOverOverlay() }
+            Actions.run {
+                BaseGame.gameOverSound!!.play(BaseGame.soundVolume)
+                changeToGameOverOverlay()
+            }
         ))
     }
 
