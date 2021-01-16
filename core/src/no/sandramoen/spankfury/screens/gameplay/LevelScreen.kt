@@ -440,7 +440,7 @@ class LevelScreen : BaseScreen() {
     }
 
     private fun spawn(dt: Float) {
-        easySpawnTimer += dt
+        /*easySpawnTimer += dt
         if (easySpawnTimer >= easySpawnFrequency / spawnDifficulty
             && BaseActor.count(mainStage, EasyEnemy::class.java.canonicalName) <= 8
         ) {
@@ -454,15 +454,15 @@ class LevelScreen : BaseScreen() {
         ) {
             MediumEnemy(0f, 0f, mainStage, player, enemySpeed, enemyHittingDelay)
             mediumSpawnTimer = 0f
-        }
+        }*/
         swapSpawnTimer += dt
         if (swapSpawnTimer >= swapSpawnFrequency / spawnDifficulty
             && BaseActor.count(mainStage, SwapEnemy::class.java.canonicalName) <= 4
-            && gameTime > MathUtils.random(30f, 40f)
+            && gameTime > 1 // MathUtils.random(30f, 40f)
         ) {
             SwapEnemy(0f, 0f, mainStage, player, enemySpeed, enemyHittingDelay)
             swapSpawnTimer = 0f
-        }
+        }/*
         hardSpawnTimer += dt
         if (hardSpawnTimer >= hardSpawnFrequency / spawnDifficulty
             && BaseActor.count(mainStage, HardEnemy::class.java.canonicalName) <= 4
@@ -470,7 +470,7 @@ class LevelScreen : BaseScreen() {
         ) {
             HardEnemy(0f, 0f, mainStage, player, enemySpeed, enemyHittingDelay)
             hardSpawnTimer = 0f
-        }
+        }*/
     }
 
     private fun gameOver() {

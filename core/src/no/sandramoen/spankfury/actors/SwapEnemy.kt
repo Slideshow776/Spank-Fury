@@ -9,7 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.Array
 import no.sandramoen.spankfury.utils.BaseGame
 
-class SwapEnemy(x: Float, y: Float, s: Stage, player: Player, originalSpeed: Float, hittingDelay: Float) : BaseEnemy(x, y, s, player, originalSpeed, hittingDelay) {
+class SwapEnemy(x: Float, y: Float, s: Stage, player: Player, originalSpeed: Float, hittingDelay: Float) :
+    BaseEnemy(x, y, s, player, originalSpeed, hittingDelay) {
     private val token = "SwapEnemy.kt"
     override var health = 3
     lateinit var swapAnimation: Animation<TextureAtlas.AtlasRegion>
@@ -29,24 +30,37 @@ class SwapEnemy(x: Float, y: Float, s: Stage, player: Player, originalSpeed: Flo
     override fun struck(): Boolean { // returns true if enemy died
         health--
         if (health <= 0) return handleDeath()
-        actions.clear()
         resetActions()
+        // handleStun()
         swapSide()
         return false
     }
 
     private fun swapSide() {
-        changeAnimation(swapAnimation)
-        enabled = false
-        val duration = .1f
-        if (x <= player.x) { // if on left side
-            addAction(Actions.moveTo((player.x + player.width) + 5f, y + MathUtils.random(-2f, 2f), duration))
-        } else { // if on right side
-            addAction(Actions.moveTo(player.x - 5f, y + MathUtils.random(-2f, 2f), duration))
-        }
-        flip()
-        spawnFromLeft = !spawnFromLeft
-        addAction(Actions.after(Actions.run { enabled = true }))
+        changeAnimation(stunnedAnimation)
+        addAction(Actions.sequence(
+            Actions.delay(.15f),
+            Actions.run {
+                changeAnimation(swapAnimation)
+                enabled = false
+                val duration = .1f
+                if (x <= player.x) { // if on left side
+                    addAction(Actions.sequence(
+                        Actions.moveTo(player.x + player.width + 5f, y + MathUtils.random(-2f, 2f), duration),
+                        Actions.run { changeAnimation(idleAnimation) }
+                    ))
+                } else { // if on right side
+                    addAction(Actions.sequence(
+                        Actions.moveTo(player.x - 12f, y + MathUtils.random(-2f, 2f), duration),
+                        Actions.run { changeAnimation(idleAnimation) }
+                    ))
+                }
+                flip()
+                spawnFromLeft = !spawnFromLeft
+                addAction(Actions.after(Actions.run { enabled = true }))
+            }
+        ))
+
     }
 
     override fun setAnimation() {

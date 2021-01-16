@@ -3,6 +3,7 @@ package no.sandramoen.spankfury.actors
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
@@ -164,7 +165,7 @@ open class BaseEnemy(
         changeAnimation(deadAnimation)
         actions.clear()
         addAction(Actions.sequence(
-            Actions.fadeOut(1f),
+            Actions.fadeOut(1f, Interpolation.bounceOut),
             Actions.run { remove() }
         ))
         return true
@@ -228,7 +229,7 @@ open class BaseEnemy(
         setDeceleration(originalDeceleration * BaseGame.tempo)
     }
 
-    private fun handleStun() {
+    fun handleStun() {
         stunTimer = 0f
         stunned = true
         hitting = false
