@@ -31,7 +31,6 @@ class SwapEnemy(x: Float, y: Float, s: Stage, player: Player, originalSpeed: Flo
         health--
         if (health <= 0) return handleDeath()
         resetActions()
-        // handleStun()
         swapSide()
         return false
     }
@@ -72,7 +71,7 @@ class SwapEnemy(x: Float, y: Float, s: Stage, player: Player, originalSpeed: Flo
         idleAnimation = Animation(.03f, animationImages, Animation.PlayMode.LOOP)
         animationImages.clear()
 
-        for (i in 1..9)
+        for (i in 1..8)
             animationImages.add(BaseGame.textureAtlas!!.findRegion("swapEnemy-walking-0$i"))
         walkingAnimation = Animation(.1f, animationImages, Animation.PlayMode.LOOP)
         animationImages.clear()

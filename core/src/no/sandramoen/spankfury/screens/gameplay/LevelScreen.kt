@@ -446,8 +446,8 @@ class LevelScreen : BaseScreen() {
         ) {
             EasyEnemy(0f, 0f, mainStage, player, enemySpeed, enemyHittingDelay)
             easySpawnTimer = 0f
-        }
-        mediumSpawnTimer += dt
+        }*/
+        /*mediumSpawnTimer += dt
         if (mediumSpawnTimer >= mediumSpawnFrequency / spawnDifficulty
             && BaseActor.count(mainStage, MediumEnemy::class.java.canonicalName) <= 4
             && gameTime > MathUtils.random(15f, 19f)

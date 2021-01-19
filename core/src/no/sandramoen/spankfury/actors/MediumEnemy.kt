@@ -25,15 +25,16 @@ class MediumEnemy(x: Float, y: Float, s: Stage, player: Player, originalSpeed: F
 
     override fun setAnimation() {
         var animationImages: Array<TextureAtlas.AtlasRegion> = Array()
-        for (i in 1..16) animationImages.add(BaseGame.textureAtlas!!.findRegion("mediumEnemy-idle-01"))
+        for (i in 1..2) animationImages.add(BaseGame.textureAtlas!!.findRegion("mediumEnemy-idle-01"))
         for (i in 1..2) animationImages.add(BaseGame.textureAtlas!!.findRegion("mediumEnemy-idle-02"))
         animationImages.add(BaseGame.textureAtlas!!.findRegion("mediumEnemy-idle-03"))
+        for (i in 1..14) animationImages.add(BaseGame.textureAtlas!!.findRegion("mediumEnemy-idle-01"))
         idleAnimation = Animation(.25f, animationImages, Animation.PlayMode.LOOP)
         animationImages.clear()
 
         for (i in 1..8)
             animationImages.add(BaseGame.textureAtlas!!.findRegion("mediumEnemy-walking-0$i"))
-        walkingAnimation = Animation(.25f, animationImages, Animation.PlayMode.LOOP)
+        walkingAnimation = Animation(.15f, animationImages, Animation.PlayMode.LOOP)
         animationImages.clear()
 
         for (i in 1..2) animationImages.add(BaseGame.textureAtlas!!.findRegion("mediumEnemy-hitting-01"))

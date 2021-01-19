@@ -31,7 +31,7 @@ class EasyEnemy(x: Float, y: Float, s: Stage, player: Player, originalSpeed: Flo
         animationImages.clear()
 
         for (i in 1..8) animationImages.add(BaseGame.textureAtlas!!.findRegion("easyEnemy-walking-0$i"))
-        walkingAnimation = Animation(.2f, animationImages, Animation.PlayMode.LOOP)
+        walkingAnimation = Animation(.15f, animationImages, Animation.PlayMode.LOOP)
         animationImages.clear()
 
         for (i in 1..2) animationImages.add(BaseGame.textureAtlas!!.findRegion("easyEnemy-hitting-01"))
