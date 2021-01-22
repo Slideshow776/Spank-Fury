@@ -49,6 +49,7 @@ class Player(x: Float, y: Float, s: Stage) : BaseActor(x, y, s) {
         setSize(originalWidth, originalHeight)
         setAnimationSize(originalWidth, originalHeight)
         centerAtPosition(BaseGame.WORLD_WIDTH / 2, BaseGame.WORLD_HEIGHT / 3)
+        zIndex = 40
 
         // physics
         setAcceleration(playerAcceleration * BaseGame.tempo)

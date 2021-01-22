@@ -70,9 +70,8 @@ open class BaseEnemy(
         setPosition(xStartPosition, yPosition)
 
         // z-index is divided into two: below and above player, mostly works
-        var index = yPosition.toInt()
-        if (index < 3 || yPosition < player.y) index = 4
-        else index = 3
+        var index = 40
+        if (index < 3 || yPosition < player.y) index = 50
         zIndex = index
     }
 
