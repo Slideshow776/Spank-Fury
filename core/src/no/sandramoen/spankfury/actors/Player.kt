@@ -19,7 +19,10 @@ class Player(x: Float, y: Float, s: Stage) : BaseActor(x, y, s) {
     // animations
     private var idleAnimation: Animation<TextureAtlas.AtlasRegion>
     private var whipAnimation: Animation<TextureAtlas.AtlasRegion>
-    private var hitAnimations: Array<Animation<TextureAtlas.AtlasRegion>> = Array()
+    private var paddleAnimation: Animation<TextureAtlas.AtlasRegion>
+    private var caneAnimation: Animation<TextureAtlas.AtlasRegion>
+    private var floggerAnimation: Animation<TextureAtlas.AtlasRegion>
+    private var missAnimation: Animation<TextureAtlas.AtlasRegion>
 
     // properties
     var playerSpeed = 40f
@@ -40,7 +43,39 @@ class Player(x: Float, y: Float, s: Stage) : BaseActor(x, y, s) {
         for (i in 1..9)
             animationImages.add(BaseGame.textureAtlas!!.findRegion("player-hitting-0$i"))
         whipAnimation = Animation(.01f, animationImages, Animation.PlayMode.NORMAL)
-        hitAnimations.add(whipAnimation)
+        animationImages.clear()
+
+        animationImages.add(BaseGame.textureAtlas!!.findRegion("player-paddle-01"))
+        for (i in 1..2) animationImages.add(BaseGame.textureAtlas!!.findRegion("player-paddle-02"))
+        for (i in 1..2) animationImages.add(BaseGame.textureAtlas!!.findRegion("player-paddle-03"))
+        animationImages.add(BaseGame.textureAtlas!!.findRegion("player-paddle-04"))
+        animationImages.add(BaseGame.textureAtlas!!.findRegion("player-paddle-05"))
+        paddleAnimation = Animation(.04f, animationImages, Animation.PlayMode.NORMAL)
+        animationImages.clear()
+
+        animationImages.add(BaseGame.textureAtlas!!.findRegion("player-cane-0"))
+        for (i in 1..2) animationImages.add(BaseGame.textureAtlas!!.findRegion("player-cane-1"))
+        for (i in 1..2) animationImages.add(BaseGame.textureAtlas!!.findRegion("player-cane-2"))
+        animationImages.add(BaseGame.textureAtlas!!.findRegion("player-cane-3"))
+        animationImages.add(BaseGame.textureAtlas!!.findRegion("player-cane-4"))
+        caneAnimation = Animation(.04f, animationImages, Animation.PlayMode.NORMAL)
+        animationImages.clear()
+
+        animationImages.add(BaseGame.textureAtlas!!.findRegion("player-flogger-0"))
+        for (i in 1..2) animationImages.add(BaseGame.textureAtlas!!.findRegion("player-flogger-1"))
+        for (i in 1..2) animationImages.add(BaseGame.textureAtlas!!.findRegion("player-flogger-2"))
+        animationImages.add(BaseGame.textureAtlas!!.findRegion("player-flogger-3"))
+        animationImages.add(BaseGame.textureAtlas!!.findRegion("player-flogger-4"))
+        floggerAnimation = Animation(.04f, animationImages, Animation.PlayMode.NORMAL)
+        animationImages.clear()
+
+        animationImages.add(BaseGame.textureAtlas!!.findRegion("player-miss-0"))
+        animationImages.add(BaseGame.textureAtlas!!.findRegion("player-miss-1"))
+        animationImages.add(BaseGame.textureAtlas!!.findRegion("player-miss-2"))
+        for (i in 1..2) animationImages.add(BaseGame.textureAtlas!!.findRegion("player-miss-3"))
+        for (i in 1..2) animationImages.add(BaseGame.textureAtlas!!.findRegion("player-miss-4"))
+        animationImages.add(BaseGame.textureAtlas!!.findRegion("player-miss-5"))
+        missAnimation = Animation(.05f, animationImages, Animation.PlayMode.NORMAL)
         animationImages.clear()
 
         setAnimation(idleAnimation)
@@ -86,23 +121,41 @@ class Player(x: Float, y: Float, s: Stage) : BaseActor(x, y, s) {
 
     fun hit(distance: Float, miss: Boolean = false, enableSound: Boolean = true) {
         shouldFlip(distance)
+        var animation = caneAnimation // whipAnimation
+        when (MathUtils.random(1, 3)) {
+            1 -> animation = floggerAnimation
+            2 -> animation = caneAnimation
+            3 -> animation = paddleAnimation
+        }
 
         if (miss && enableSound) {
             BaseGame.swooshSound!!.play(BaseGame.soundVolume)
+            animation = missAnimation
         } else if (enableSound) {
             when (MathUtils.random(1, 3)) {
-                1 -> BaseGame.floggerSound!!.play(BaseGame.soundVolume)
-                2 -> BaseGame.caneSound!!.play(BaseGame.soundVolume)
-                3 -> BaseGame.paddleSound!!.play(BaseGame.soundVolume)
+                1 -> {
+                    println(1)
+                    BaseGame.floggerSound!!.play(BaseGame.soundVolume)
+                    animation = floggerAnimation
+                }
+                2 -> {
+                    println(2)
+                    BaseGame.caneSound!!.play(BaseGame.soundVolume)
+                    animation = caneAnimation
+                }
+                3 -> {
+                    println(3)
+                    BaseGame.paddleSound!!.play(BaseGame.soundVolume)
+                    animation = paddleAnimation
+                }
             }
         }
 
         BaseGame.tempo = 1f // break slow motion
-        var randomHitAnimation: Int = MathUtils.random(0, hitAnimations.size - 1)
-        changeAnimation(hitAnimations[randomHitAnimation], originalWidth * 4)
+        changeAnimation(animation, originalWidth * 2.8f, originalHeight * 1.15f)
         addAction(Actions.sequence(
             Actions.moveBy(distance, MathUtils.random(-2f, 2f), .25f),
-            Actions.delay(hitAnimations[randomHitAnimation].frameDuration * hitAnimations[randomHitAnimation].keyFrames.size),
+            Actions.delay(animation.frameDuration * animation.keyFrames.size),
             Actions.run { changeAnimation(idleAnimation) }
         ))
     }

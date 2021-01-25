@@ -43,6 +43,7 @@ class SplashScreen : BaseScreen() {
                 ))
         background.addAction(Actions.after(Actions.run {
             dispose()
+            GameUtils.stopAllMusic()
             BaseGame.setActiveScreen(LevelScreen())
         }))
     }

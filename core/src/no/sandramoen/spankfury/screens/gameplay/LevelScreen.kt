@@ -242,7 +242,10 @@ class LevelScreen : BaseScreen() {
             screenTransition.blackOverLay.addAction(
                 Actions.sequence(
                     Actions.fadeIn(1f),
-                    Actions.run { BaseGame.setActiveScreen(LevelScreen()) }
+                    Actions.run {
+                        GameUtils.stopAllMusic()
+                        BaseGame.setActiveScreen(LevelScreen())
+                    }
                 ))
         } else if (keycode == Keys.ENTER && pauseTable.color.a == 1f) {
             BaseGame.clickSound!!.play(BaseGame.soundVolume)

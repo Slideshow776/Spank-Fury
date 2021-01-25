@@ -20,8 +20,8 @@ android {
         applicationId "no.sandramoen.spankfury"
         minSdkVersion android_min_sdk_version
         targetSdkVersion 29
-        versionCode 3
-        versionName "3"
+        versionCode 9
+        versionName "9"
     }
     buildTypes {
         release {

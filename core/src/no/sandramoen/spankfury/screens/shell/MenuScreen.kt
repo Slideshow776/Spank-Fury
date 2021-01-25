@@ -289,7 +289,7 @@ class MenuScreen : BaseScreen() {
         optionsShowScore.addListener(object : ActorGestureListener() {
             override fun tap(event: InputEvent?, x: Float, y: Float, count: Int, button: Int) {
                 BaseGame.clickSound!!.play(BaseGame.soundVolume)
-                if (!BaseGame.disableGPS) BaseGame.gps!!.getLeaderboard()
+                if (BaseGame.gps!!.isSignedIn()) BaseGame.gps!!.getLeaderboard()
             }
         })
 
