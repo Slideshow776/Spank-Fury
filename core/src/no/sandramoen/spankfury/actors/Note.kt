@@ -35,5 +35,6 @@ class Note(x: Float, y: Float, s: Stage, opacity: Float) : BaseActor(x, y, s) {
             Actions.moveBy(MathUtils.random(-2f, -10f), MathUtils.random(-2f, -10f), 2f),
             Actions.fadeOut(2f)
         ))
+        addAction(Actions.after(Actions.run { remove() }))
     }
 }

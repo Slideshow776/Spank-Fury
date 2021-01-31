@@ -12,7 +12,7 @@ class SpankFuryGame(googlePlayServices: GooglePlayServices?) : BaseGame(googlePl
         super.create()
 
         // setActiveScreen(SplashScreen()) // TODO: @release: change to this
-        // setActiveScreen(LevelScreen())
-        setActiveScreen(MenuScreen())
+        setActiveScreen(LevelScreen())
+        // setActiveScreen(MenuScreen())
     }
 }

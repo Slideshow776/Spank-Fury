@@ -151,7 +151,11 @@ open class BaseEnemy(
     }
 
     open fun struck(): Boolean { // returns true if enemy died
-        // SpankMarks(x + width / 2, y +MathUtils.random(height / 3, height / 2), stage) // TODO: do we want spank marks?
+        SpankMarks(
+            MathUtils.random(x + width * .4f, x + width * .6f),
+            y + MathUtils.random(height / 4, height / 2),
+            stage
+        ) // TODO: do we want spank marks?
         health--
         if (health <= 0)
             return handleDeath()

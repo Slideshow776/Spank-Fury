@@ -14,33 +14,33 @@ class SpankMarks(x: Float, y: Float, s: Stage) : BaseActor(x, y, s) {
 
     init {
         // graphics
-        loadImage("whitePixel")
-        color = Color.FIREBRICK
-        color.a = .75f
+        loadImage("mark")
+        color = Color.WHITE
+        color.a = .4f
 
         // properties
         setSize(
-            (BaseGame.WORLD_WIDTH / 100) * BaseGame.scale,
-            (BaseGame.WORLD_HEIGHT / 100) * (Gdx.graphics.width.toFloat() / Gdx.graphics.height) * BaseGame.scale
+            (BaseGame.WORLD_WIDTH / 50) * BaseGame.scale,
+            (BaseGame.WORLD_HEIGHT / 50) * (Gdx.graphics.width.toFloat() / Gdx.graphics.height) * BaseGame.scale
         )
-        setPosition(x - width / 2, y)
-        // rotateBy(MathUtils.random(0f, 45f))
+        setPosition(x - width / 2, y - height / 2)
         setOrigin(Align.center)
 
         // actions
         var totalDuration = 1f
         addAction(Actions.sequence(
             Actions.parallel(
-                /*Actions.sequence( // pulsing effect
-                    Actions.alpha(.75f, .2f),
-                    Actions.alpha(.5f, .2f),
-                    Actions.alpha(.75f, .2f),
-                    Actions.alpha(.5f, .2f)
-                ),*/
-                Actions.alpha(1f, totalDuration / 2),
+                /*Actions.rotateBy(20f, totalDuration / 2),*/
                 Actions.fadeOut(totalDuration / 2)
             ),
             Actions.run { remove() }
         ))
+
+        // effects
+        val effect = SmackEffect()
+        effect.setPosition(width / 4, height / 3) // by trial and error...
+        effect.setScale(Gdx.graphics.height * .00005f)
+        this.addActor(effect)
+        effect.start()
     }
 }
