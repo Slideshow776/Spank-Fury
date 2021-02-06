@@ -93,10 +93,6 @@ abstract class BaseGame(var googlePlayServices: GooglePlayServices?) : Game(), A
             vibrations = true
         }
 
-        // google play services sign in
-        if (Gdx.app.type == Application.ApplicationType.Android && !disableGPS)
-            gps!!.signIn()
-
         // asset manager
         assetManager = AssetManager()
         assetManager.setErrorListener(this)

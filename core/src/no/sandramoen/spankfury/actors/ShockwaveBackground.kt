@@ -5,11 +5,13 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
+import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction
 import no.sandramoen.spankfury.utils.BaseActor
 import no.sandramoen.spankfury.utils.BaseGame
+import no.sandramoen.spankfury.utils.GameUtils
 
 class ShockwaveBackground(x: Float, y: Float, texturePath: String, s: Stage) : BaseActor(x, y, s) {
     private var vertexShaderCode: String
@@ -22,10 +24,8 @@ class ShockwaveBackground(x: Float, y: Float, texturePath: String, s: Stage) : B
     private var disabled = true
 
     init {
-        if (!texturePath.isBlank())
-            loadTexture(texturePath)
-        width = BaseGame.WORLD_WIDTH // width should be set to maximum screen size
-        height = BaseGame.WORLD_HEIGHT // height should be set to maximum screen size
+        if (texturePath.isNotBlank()) loadTexture(texturePath)
+        setSize(100f, 100f)
 
         ShaderProgram.pedantic = false
         vertexShaderCode = BaseGame.defaultShader.toString()
@@ -33,6 +33,15 @@ class ShockwaveBackground(x: Float, y: Float, texturePath: String, s: Stage) : B
         shaderProgram = ShaderProgram(vertexShaderCode, fragmenterShaderCode)
         if (!shaderProgram.isCompiled)
             Gdx.app.error("ShockwaveBackground", "Shader compile error: " + shaderProgram.log)
+
+        addListener { e: Event ->
+            if (GameUtils.isTouchDownEvent(e)) {
+                val x = (Gdx.input.x.toFloat() - 0) / (Gdx.graphics.width - 0)
+                val y = (Gdx.input.y.toFloat() - 0) / (Gdx.graphics.height - 0)
+                start(x, y) // x and y are normalized
+            }
+            false
+        }
     }
 
     override fun draw(batch: Batch, parentAlpha: Float) {

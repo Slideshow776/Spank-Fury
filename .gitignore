@@ -2,9 +2,11 @@
 *.jks
 *.pepk
 gps-notes.txt
+project assets/spank fury project hack/*
 
 ## LibGDX
 android/assets/images/included/packed/*
+ANDROID PROJECT FIX.bat
 
 ## Java
 
