@@ -141,6 +141,8 @@ class LevelScreen : BaseScreen() {
         if (player.health > 0) spawn(dt)
         else if (playing) gameOver()
 
+        println("gametime: $gameTime")
+
         // increasing difficulty
         when {
             gameTime < 15f -> {
@@ -149,8 +151,7 @@ class LevelScreen : BaseScreen() {
                 spawnDifficulty = 1.25f
 
                 easySpawnFrequency = 4f
-                mediumSpawnFrequency = 11f
-                swapSpawnFrequency = 19f
+                mediumSpawnFrequency = 15f
             }
             gameTime < 30f -> {
                 enemySpeed = 25f
@@ -461,7 +462,7 @@ class LevelScreen : BaseScreen() {
         swapSpawnTimer += dt
         if (swapSpawnTimer >= swapSpawnFrequency / spawnDifficulty
             && BaseActor.count(mainStage, SwapEnemy::class.java.canonicalName) <= 4
-            && gameTime > MathUtils.random(30f, 40f)
+            && gameTime > MathUtils.random(40f, 50f)
         ) {
             SwapEnemy(0f, 0f, mainStage, player, enemySpeed, enemyHittingDelay)
             swapSpawnTimer = 0f
@@ -469,7 +470,7 @@ class LevelScreen : BaseScreen() {
         hardSpawnTimer += dt
         if (hardSpawnTimer >= hardSpawnFrequency / spawnDifficulty
             && BaseActor.count(mainStage, HardEnemy::class.java.canonicalName) <= 4
-            && gameTime > MathUtils.random(50f, 60f)
+            && gameTime > MathUtils.random(70f, 80f)
         ) {
             HardEnemy(0f, 0f, mainStage, player, enemySpeed, enemyHittingDelay)
             hardSpawnTimer = 0f

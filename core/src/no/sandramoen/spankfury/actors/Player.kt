@@ -134,17 +134,14 @@ class Player(x: Float, y: Float, s: Stage) : BaseActor(x, y, s) {
         } else if (enableSound) {
             when (MathUtils.random(1, 3)) {
                 1 -> {
-                    println(1)
                     BaseGame.floggerSound!!.play(BaseGame.soundVolume)
                     animation = floggerAnimation
                 }
                 2 -> {
-                    println(2)
                     BaseGame.caneSound!!.play(BaseGame.soundVolume)
                     animation = caneAnimation
                 }
                 3 -> {
-                    println(3)
                     BaseGame.paddleSound!!.play(BaseGame.soundVolume)
                     animation = paddleAnimation
                 }
