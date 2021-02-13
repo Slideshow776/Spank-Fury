@@ -4,9 +4,7 @@ A kinky themed beat 'em up game inspired by [Kung Fury: Street Rage](https://sto
 
 [Youtube trailer](https://youtu.be/Xf3JDAgd-fQ)
 
-[Click here](https://play.google.com/store/apps/details?id=no.sandramoen.spankfury) to play it on Google Play!
-
-[Click here](https://github.com/Slideshow776/Spank-Fury/tree/master/release) to play for free on Desktop!
+[Play it now, for free!](https://github.com/Slideshow776/Spank-Fury/tree/master/release)
 
 ![screenShot of gameplay](https://user-images.githubusercontent.com/4059636/102523112-6bef0d00-4097-11eb-8eb0-c645b8f39faf.PNG)
 
