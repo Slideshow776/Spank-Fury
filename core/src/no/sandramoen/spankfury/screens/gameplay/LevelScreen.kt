@@ -364,8 +364,8 @@ class LevelScreen : BaseScreen() {
 
             if (BaseGame.highScore < score) {
                 BaseGame.highScore = score
-                if (!BaseGame.disableGPS && Gdx.app.type == Application.ApplicationType.Android)
-                    BaseGame.gps!!.submitScore(BaseGame.highScore) // TODO: Is it bad to submit GPS scores so often?
+                /*if (!BaseGame.disableGPS && Gdx.app.type == Application.ApplicationType.Android)
+                    BaseGame.gps!!.submitScore(BaseGame.highScore) // TODO: Is it bad to submit GPS scores so often?*/
                 gameOverTable.newHighScore = true
                 guiTable.setPersonalBestLabel()
                 guiTable.animateNewHighScore()
@@ -481,7 +481,7 @@ class LevelScreen : BaseScreen() {
         playing = false
         pause = true
         if (BaseGame.vibrations) Gdx.input.vibrate(100)
-        if (!BaseGame.disableGPS && Gdx.app.type == Application.ApplicationType.Android) BaseGame.gps!!.fetchHighScore()
+        // if (!BaseGame.disableGPS && Gdx.app.type == Application.ApplicationType.Android) BaseGame.gps!!.fetchHighScore()
         gameOverLabelTable.color.a = 1f
         gameOverLabelTable.addAction(Actions.sequence(
             Actions.delay(2f),

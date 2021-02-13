@@ -170,10 +170,10 @@ class LevelGameOverTable : Table() {
 
         // check global score to mystery kinkster
         var globalHighScore = BaseGame.mysteryKinksterScore
-        if (!BaseGame.disableGPS && Gdx.app.type == Application.ApplicationType.Android) {
+        /*if (!BaseGame.disableGPS && Gdx.app.type == Application.ApplicationType.Android) {
             globalHighScore = BaseGame.gps!!.getHighScore()
             BaseGame.mysteryKinksterScore = globalHighScore
-        }
+        }*/
         if (globalHighScore > highScoreTable.findActor<Label>("score0").text.toString().toInt())
             highScoreTable.findActor<Label>("score0").setText("$globalHighScore")
 

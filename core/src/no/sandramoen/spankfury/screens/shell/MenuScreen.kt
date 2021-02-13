@@ -314,7 +314,7 @@ class MenuScreen : BaseScreen() {
         optionsTable.add(optionsSoundSliderContainer).width(optionsWidgetWidth * 5 / 6).height(optionsWidgetHeight)
         optionsTable.add(Label("Sounds", BaseGame.labelStyle)).width(optionsWidgetWidth * 1 / 6)
             .padLeft(Gdx.graphics.width * .11f).row()
-        if (Gdx.app.type == Application.ApplicationType.Android) {
+        /*if (Gdx.app.type == Application.ApplicationType.Android) {
             optionsTable.add(optionsVibrationCheckBox).width(optionsWidgetWidth).height(optionsWidgetHeight).colspan(2)
                 .row()
             optionsTable.add(optionsUseGPSCheckBox).width(optionsWidgetWidth).height(optionsWidgetHeight).colspan(2)
@@ -322,7 +322,7 @@ class MenuScreen : BaseScreen() {
             optionsTable.add(optionsShowScore).width(optionsWidgetWidth * 1.15f).height(optionsWidgetHeight).colspan(2)
                 .padTop(Gdx.graphics.height * .01f)
                 .row()
-        }
+        }*/
         optionsTable.add(optionsBackButton).width(Gdx.graphics.width * .25f).height(Gdx.graphics.height * .125f)
             .colspan(2).padTop(Gdx.graphics.height * .05f)
         // optionsTable.debug = true
