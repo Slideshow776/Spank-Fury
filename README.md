@@ -4,7 +4,7 @@ A kinky themed beat 'em up game inspired by [Kung Fury: Street Rage](https://sto
 
 [Youtube trailer](https://youtu.be/Xf3JDAgd-fQ), [Play it now!](https://github.com/Slideshow776/Spank-Fury/tree/master/release)
 
-![screenShot of gameplay](https://user-images.githubusercontent.com/4059636/102523112-6bef0d00-4097-11eb-8eb0-c645b8f39faf.PNG)
+![screenShot of gameplay](https://user-images.githubusercontent.com/4059636/106881821-4b7a2100-66de-11eb-9fe5-210c8e256633.PNG)
 
 
 # Game Design Document
