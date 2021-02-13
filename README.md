@@ -122,6 +122,8 @@ Other music by https://www.bensound.com
 
 # Project comments
 ## Google Play Services (GPS)
+Sadly the game was rejected by Google Play Store because the game promoted "sex-related entertainment" (spanking/BDSM I guess). Alas my LibGDX GPS implementation notes are found below.
+
 These three resources helped me to a great extent implementing GPS.
 * Leaderboards in Android Game: https://developers.google.com/games/services/android/leaderboards
 * Google Play Services for Libgdx: https://stackoverflow.com/questions/48135531/signinsilently-failure-when-trying-to-sign-in-to-googleplay-game-services-w/48135617#48135617
