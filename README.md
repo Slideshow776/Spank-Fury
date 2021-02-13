@@ -6,7 +6,7 @@ A kinky themed beat 'em up game inspired by [Kung Fury: Street Rage](https://sto
 
 ![screenShot of gameplay](https://user-images.githubusercontent.com/4059636/106881821-4b7a2100-66de-11eb-9fe5-210c8e256633.PNG)
 
-#Content
+# Content
 1. [Game Design Document](https://github.com/Slideshow776/Spank-Fury#game-design-document)
 2. [Music License](https://github.com/Slideshow776/Spank-Fury#music-license)
 3. [Project Comments](https://github.com/Slideshow776/Spank-Fury#project-comments)
